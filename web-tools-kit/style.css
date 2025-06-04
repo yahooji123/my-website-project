@@ -1,0 +1,32 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+  text-align: center;
+  color: white;
+  padding: 40px;
+}
+
+.toolbox {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.tool {
+  background-color: white;
+  color: #4facfe;
+  text-decoration: none;
+  padding: 20px 30px;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  transition: 0.3s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.tool:hover {
+  background-color: #4facfe;
+  color: white;
+}

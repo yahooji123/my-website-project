@@ -1,0 +1,56 @@
+/* Reset default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body style - full center with background */
+body {
+  height: 100vh;
+  background: linear-gradient(to right, #8360c3, #2ebf91); /* Purple to Teal */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+  color: #fff;
+}
+
+/* Heading style */
+h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+}
+
+/* Textarea style */
+textarea {
+  width: 90%;
+  max-width: 500px;
+  height: 150px;
+  padding: 15px;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  resize: none;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+/* Counter text style */
+.counter {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 8px 20px;
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+}
+
+/* Highlight when limit is about to exceed */
+#charcount {
+  font-weight: bold;
+  color: #ffeb3b;
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎵 Music Player</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="player">
+    <div class="song-title" id="songtitle">Loading...</div>
+    
+    <audio id="audioplayer" src=""></audio>
+
+    <div class="controls">
+      <button id="prebtn">⏮</button>
+      <button id="playpausebtn">▶</button>
+      <button id="nextbtn">⏭</button>
+    </div>
+
+    <input type="range" id="progress" value="0" />
+
+    <div class="volume-section">
+      🔊 <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+    </div>
+
+    <div class="upload-section">
+      <label for="upload">🎶 Upload Your Music:</label><br>
+      <input type="file" id="upload" accept="audio/*" />
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

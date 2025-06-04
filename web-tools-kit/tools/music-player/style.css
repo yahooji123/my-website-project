@@ -1,0 +1,125 @@
+/* Reset और बेसिक सेटिंग */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  background: linear-gradient(to right, #00c6ff, #0072ff); /* Blue gradient */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', sans-serif;
+  color: #fff;
+}
+
+/* Music Player Box */
+.player {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.3);
+  text-align: center;
+  backdrop-filter: blur(10px);
+  width: 90%;
+  max-width: 400px;
+}
+
+/* Song Title */
+.song-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px #00e5ff;
+}
+
+/* Audio hidden */
+audio {
+  display: none;
+}
+
+/* Controls */
+.controls {
+  margin: 20px 0;
+}
+
+.controls button {
+  font-size: 28px;
+  padding: 12px 18px;
+  margin: 0 10px;
+  background-color: #00e5ff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 0 15px #00e5ff;
+}
+
+.controls button:hover {
+  background-color: #00b2cc;
+  box-shadow: 0 0 25px #00e5ff;
+}
+
+/* Upload Section */
+.upload-section {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #ddd;
+}
+
+.upload-section label {
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.upload-section input[type="file"] {
+  padding: 10px;
+  border: 2px dashed #00e5ff;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.upload-section input[type="file"]:hover {
+  background-color: rgba(0, 229, 255, 0.1);
+}
+
+/* Progress Slider */
+input[type="range"] {
+  width: 100%;
+  margin: 15px 0;
+  appearance: none;
+  height: 6px;
+  background: #00e5ff;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 0 10px #00e5ff;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #00e5ff;
+}
+
+/* Volume Section */
+.volume-section {
+  margin-top: 10px;
+  color: #ccc;
+  font-size: 14px;
+}
+
+.volume-section input[type="range"] {
+  width: 100%;
+  margin-top: 5px;
+}

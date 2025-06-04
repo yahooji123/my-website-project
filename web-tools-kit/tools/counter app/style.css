@@ -1,0 +1,115 @@
+   /*body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 50px;
+    background-color: #f2f2f2;
+}
+
+#count {
+    font-size: 60px;
+    margin: 20px 0;
+    color: #333;
+}
+
+button {
+    font-size: 20px;
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+#in {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#de {
+    background-color: #f44336;
+    color: white;
+}
+
+#re {
+    background-color: #2196F3;
+    color: white;
+}
+*/
+
+
+/* Resetting default margins and paddings */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+  height: 100vh;
+  background: linear-gradient(to right, #1e3c72, #2a5298); /* Gradient Blue */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: white;
+}
+
+/* Heading Styling */
+h2 {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 5px black;
+}
+
+/* Counter Text */
+#count {
+  font-size: 5rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+  background-color: white;
+  color: #2a5298;
+  padding: 20px 50px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+/* Buttons Styling */
+button {
+  padding: 12px 25px;
+  font-size: 1rem;
+  margin: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-weight: 600;
+  color: white;
+}
+
+/* Individual button colors */
+#in {
+  background-color: #28a745; /* Green */
+}
+
+#in:hover {
+  background-color: #218838;
+}
+
+#de {
+  background-color: #dc3545; /* Red */
+}
+
+#de:hover {
+  background-color: #c82333;
+}
+
+#re {
+  background-color: #ffc107; /* Yellow */
+  color: #333;
+}
+
+#re:hover {
+  background-color: #e0a800;
+}
