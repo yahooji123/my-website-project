@@ -4,6 +4,7 @@ body {
   text-align: center;
   color: white;
   padding: 40px;
+
 }
 
 .toolbox {
@@ -23,10 +24,40 @@ body {
   font-size: 20px;
   font-weight: bold;
   transition: 0.3s;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .tool:hover {
   background-color: #4facfe;
   color: white;
+}
+
+.navbar {
+  height: 25px;
+
+ 
+}
+
+#search {
+  height:25px;
+  width: 100%;
+  border: none;
+  border-radius: 25px;
+  text-decoration: none;
+  color: blue;
+  text-align: center;
+
+
+}
+
+#search:hover{
+  border: 1px solid blueviolet;
+  
+}
+
+
+* {
+  padding: 0;
+  margin: 0;
+
 }
