@@ -1,215 +1,188 @@
-  <!--  <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="msg-container hide">
-    <p id="msg">Winner</p>
-    <button id="new-btn">New Game</button>
-  </div>
-    <h1>❤️❤️Tic Tac Toe❤️❤️</h1>
-    <div class="container">
-      <div class="game">
-        <button class="box"></button>
-        <button class="box"></button>
-        <button class="box"></button>
-        <button class="box"></button>
-        <button class="box"></button>
-        <button class="box"></button>
-        <button class="box"></button>
-        <button class="box"></button>
-        <button class="box"></button>
-      </div>
-    </div>
-    <button id="reset">Reset Game</button>
-    
-    <script src="app.js"></script>
-</body>
-</html>
-
--->
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🎮 Tic Tac Toe Game</title>
+  <title>🎉 Tic Tac Toe Game 🎉</title>
   <style>
-    /* Reset बेसिक */
+    /* Reset and base styling */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
-    /* बॉडी का सेटअप और स्टार्स एनिमेशन बैकग्राउंड */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      height: 100vh;
-      background: radial-gradient(ellipse at center, #050505 0%, #0a0a0a 100%);
-      color: white;
+      background: linear-gradient(135deg, #004d99, #1a75ff);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      height: 100vh;
+      color: white;
       overflow: hidden;
       position: relative;
+      padding: 20px;
     }
 
-    /* स्टार्स की लेयर्स */
-    body::before, body::after {
+    /* Animated blue bubbles background for fun effect */
+    body::before {
       content: "";
       position: absolute;
-      top: 0; left: 0;
-      width: 200%;
-      height: 200%;
-      background-image: 
-        radial-gradient(white 1px, transparent 1px),
-        radial-gradient(white 1px, transparent 1px);
-      background-size: 100px 100px;
+      width: 300%;
+      height: 300%;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 10px, transparent 15px),
+        radial-gradient(circle at 70% 30%, rgba(255,255,255,0.2) 15px, transparent 20px),
+        radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 12px, transparent 17px);
+      background-repeat: repeat;
+      animation: bubbles 60s linear infinite;
+      top: -100%;
+      left: -100%;
       z-index: 0;
-      animation: stars 100s linear infinite;
-      opacity: 0.3;
-    }
-    body::after {
-      background-size: 50px 50px;
-      opacity: 0.15;
-      animation-duration: 150s;
     }
 
-    @keyframes stars {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(-100px, -100px); }
+    @keyframes bubbles {
+      0% {
+        transform: translate(0, 0);
+      }
+      100% {
+        transform: translate(100px, 100px);
+      }
     }
 
-    /* ऊपर का हेडिंग */
+    /* Title */
     h1 {
       font-size: 3rem;
       margin-bottom: 25px;
-      text-shadow: 0 0 15px #0ff, 0 0 30px #0ff;
+      text-shadow: 0 0 10px #00ccff;
       z-index: 1;
     }
 
-    /* गेम कंटेनर */
-    .container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1;
-    }
-
-    .game {
-      display: grid;
-      grid-template-columns: repeat(3, 120px);
-      grid-template-rows: repeat(3, 120px);
-      gap: 15px;
-      background: linear-gradient(135deg, #0ff, #06f);
-      padding: 20px;
-      border-radius: 25px;
-      box-shadow: 0 0 30px #0ff;
-    }
-
-    /* बॉक्स स्टाइल */
-    .box {
-      width: 120px;
-      height: 120px;
-      font-size: 4rem;
-      font-weight: 900;
-      color: #0ff;
-      background: linear-gradient(145deg, #111, #222);
-      border: 3px solid #0ff;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease, color 0.3s ease;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      user-select: none;
-      box-shadow: inset 0 0 15px #0ff;
-    }
-
-    /* Hover effect */
-    .box:hover:not(:disabled) {
-      background: linear-gradient(145deg, #06f, #0ff);
-      color: white;
-      transform: scale(1.1);
-      box-shadow: 0 0 25px #0ff;
-    }
-
-    /* Disabled box will have no cursor */
-    .box:disabled {
-      cursor: default;
-      color: #08a;
-      background: #111;
-      box-shadow: none;
-    }
-
-    /* Reset और New Game बटन */
-    #reset, #new-btn {
-      margin-top: 30px;
-      padding: 15px 35px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #0ff;
-      background: transparent;
-      border: 3px solid #0ff;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: background 0.4s ease, color 0.4s ease, transform 0.2s ease;
-      z-index: 1;
-      user-select: none;
-      box-shadow: 0 0 20px #0ff;
-    }
-
-    #reset:hover, #new-btn:hover {
-      background: #0ff;
-      color: #000;
-      transform: scale(1.05);
-      box-shadow: 0 0 40px #0ff;
-    }
-
-    /* संदेश दिखाने वाला कंटेनर */
+    /* Message container for winner/draw message */
     .msg-container {
-      margin-top: 20px;
-      background: rgba(0, 255, 255, 0.15);
-      padding: 15px 25px;
-      border-radius: 25px;
-      box-shadow: 0 0 25px #0ff;
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #0ff;
+      background: rgba(0, 0, 50, 0.8);
+      padding: 20px 30px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px #00ccff;
       text-align: center;
-      user-select: none;
+      font-size: 1.8rem;
+      width: 100%;
+      max-width: 320px;
+      display: none; /* hidden initially */
       z-index: 1;
-      display: none; /* डिफॉल्ट में छुपा */
     }
 
     .msg-container.show {
       display: block;
-      animation: fadeIn 0.8s ease forwards;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px);}
-      to { opacity: 1; transform: translateY(0);}
+    /* Container for game board */
+    .container {
+      z-index: 1;
+      width: 100%;
+      max-width: 320px;
     }
 
+    .game {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    /* Each box of Tic Tac Toe */
+    .box {
+      width: 100%;
+      aspect-ratio: 1/1; /* perfect square */
+      font-size: 4rem;
+      color: #00e5ff;
+      background: rgba(0, 51, 102, 0.8);
+      border: 3px solid #00ccff;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      font-weight: 900;
+      text-shadow: 0 0 5px #00e5ff;
+    }
+
+    /* Hover effect on boxes */
+    .box:hover:not(:disabled) {
+      background: #00ccff;
+      color: #004d99;
+      transform: scale(1.1);
+      box-shadow: 0 0 15px #00ccff;
+    }
+
+    /* Disabled boxes look */
+    .box:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+      background: rgba(0, 102, 204, 0.6);
+      color: #00e5ff;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Buttons styling */
+    #reset, #new-btn {
+      margin-top: 20px;
+      padding: 12px 25px;
+      font-size: 1.2rem;
+      background: #00ccff;
+      border: none;
+      border-radius: 20px;
+      color: #004d99;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 15px #00ccff;
+      transition: background 0.3s, transform 0.2s;
+      width: 100%;
+      max-width: 320px;
+      z-index: 1;
+    }
+
+    #reset:hover, #new-btn:hover {
+      background: #0099cc;
+      transform: scale(1.05);
+      color: white;
+    }
+
+    /* Responsive typography and sizing */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      .msg-container {
+        font-size: 1.4rem;
+      }
+      .box {
+        font-size: 3rem;
+        border-width: 2px;
+      }
+      #reset, #new-btn {
+        font-size: 1rem;
+        padding: 10px 15px;
+      }
+    }
   </style>
 </head>
 <body>
+  <h1> 🎮❌⭕ Tic Tac Toe 🎮 </h1>
 
-  <h1>❤️ Tic Tac Toe Game ❤️</h1>
+  <div class="msg-container" id="msg-container">
+    <p id="msg">Winner</p>
+    <button id="new-btn">New Game</button>
+  </div>
 
   <div class="container">
     <div class="game">
-      <!-- 9 बॉक्स -->
+      <!-- 9 buttons for 9 cells -->
       <button class="box"></button>
       <button class="box"></button>
       <button class="box"></button>
@@ -224,119 +197,102 @@
 
   <button id="reset">Reset Game</button>
 
-  <div class="msg-container" id="msg-container">
-    <p id="msg"></p>
-    <button id="new-btn">New Game</button>
-  </div>
-
   <script>
-    // सभी बॉक्सेज को सेलेक्ट करना
+    // JS part with Hindi comments
+
+    // 1. Required DOM elements
     const boxes = document.querySelectorAll(".box");
-    const resetBtn = document.querySelector("#reset");
-    const newGameBtn = document.querySelector("#new-btn");
+    const resetBtn = document.getElementById("reset");
+    const newGameBtn = document.getElementById("new-btn");
     const msgContainer = document.getElementById("msg-container");
     const msg = document.getElementById("msg");
 
-    // true -> O का टर्न, false -> X का टर्न
-    let turnO = true;
+    let turnO = true; // true => O ka turn, false => X ka turn
+    let count = 0;    // total moves count
 
-    // टर्न्स की गिनती
-    let count = 0;
-
-    // जीतने वाले पैटर्न्स की लिस्ट (indexes)
+    // Jeetne ke patterns (index based on grid)
     const winPatterns = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6]
+      [0,1,2],
+      [3,4,5],
+      [6,7,8],
+      [0,3,6],
+      [1,4,7],
+      [2,5,8],
+      [0,4,8],
+      [2,4,6],
     ];
 
-    // गेम रीसैट करने वाला फंक्शन
+    // Game reset function
     function resetGame() {
-      turnO = true;   // शुरू में O खेलेगा
-      count = 0;      // टर्न काउंट रीसेट
+      turnO = true;
+      count = 0;
+      msgContainer.classList.remove("show");
       boxes.forEach(box => {
-        box.innerText = "";  // सभी बॉक्स खाली करें
-        box.disabled = false; // सभी बॉक्स को क्लिक करने लायक बनाएं
+        box.disabled = false; // boxes enable karo
+        box.textContent = ""; // content clear karo
       });
-      msgContainer.classList.remove("show"); // जीत या ड्रॉ का मैसेज छुपाएं
-      msg.innerText = "";
     }
 
-    // बॉक्स पर क्लिक इवेंट लगाना
-    boxes.forEach((box) => {
+    // Boxes par click event handle karna
+    boxes.forEach((box, index) => {
       box.addEventListener("click", () => {
-        // अगर बॉक्स पहले से भरा हुआ है तो रिटर्न कर दें
-        if (box.innerText !== "") return;
+        if (box.textContent !== "") return; // agar pehle se filled ho to ignore karo
 
-        // बॉक्स में X या O डालें, टर्न के हिसाब से
-        box.innerText = turnO ? "O" : "X";
-        box.disabled = true; // एक बार क्लिक हो गया तो disable कर दें
+        box.textContent = turnO ? "O" : "X"; // current player ka symbol lagao
+        box.disabled = true;  // clicked box disable kar do
+        count++;
 
-        count++;           // टर्न्स की संख्या बढ़ाएं
         if (checkWinner()) {
-          // अगर कोई विजेता है तो गेम को खत्म करें
+          // winner mil gaya to message dikhao aur game bandh karo
           showWinner(turnO ? "O" : "X");
           return;
         }
 
         if (count === 9) {
-          // अगर सभी बॉक्स भरे और कोई विजेता नहीं है तो ड्रॉ
-          gameDraw();
+          // sab cells fill ho gaye, par winner nahi, matlab draw
+          showDraw();
           return;
         }
 
-        // टर्न बदलें
+        // Turn switch karo
         turnO = !turnO;
       });
     });
 
-    // विजेता दिखाने वाला फंक्शन
+    // Winner check karne wali function
+    function checkWinner() {
+      return winPatterns.some(pattern => {
+        const [a, b, c] = pattern;
+        return (
+          boxes[a].textContent &&
+          boxes[a].textContent === boxes[b].textContent &&
+          boxes[b].textContent === boxes[c].textContent
+        );
+      });
+    }
+
+    // Winner dikhao function
     function showWinner(winner) {
-      msg.innerText = `🎉 बधाई! विजेता है: ${winner}`;
-      msgContainer.classList.add("show");
-      disableBoxes(); // सभी बॉक्स बंद कर दें ताकि और क्लिक न हो सके
-    }
-
-    // सभी बॉक्स disable करने वाला फंक्शन
-    function disableBoxes() {
-      boxes.forEach(box => box.disabled = true);
-    }
-
-    // ड्रॉ होने पर मैसेज दिखाने वाला फंक्शन
-    function gameDraw() {
-      msg.innerText = "🤝 खेल ड्रॉ रहा!";
+      msg.textContent = `🎉 Badhaai! Jeeta hai ${winner}`;
       msgContainer.classList.add("show");
       disableBoxes();
     }
 
-    // जीत की जांच करने वाला फंक्शन
-    function checkWinner() {
-      // सभी जीतने वाले पैटर्न चेक करें
-      for (let pattern of winPatterns) {
-        const [a, b, c] = pattern;
-        const val1 = boxes[a].innerText;
-        const val2 = boxes[b].innerText;
-        const val3 = boxes[c].innerText;
-
-        // अगर तीनों बराबर हैं और खाली नहीं है, तो विजेता है
-        if (val1 && val1 === val2 && val2 === val3) {
-          return true;
-        }
-      }
-      return false;
+    // Draw message dikhao
+    function showDraw() {
+      msg.textContent = `🤝 Game Draw ho gaya.`;
+      msgContainer.classList.add("show");
+      disableBoxes();
     }
 
-    // Reset और New Game दोनों बटन के लिए event listener
-    resetBtn.addEventListener("click", resetGame);
-    newGameBtn.addEventListener("click", resetGame);
+    // Sab boxes disable kar do
+    function disableBoxes() {
+      boxes.forEach(box => box.disabled = true);
+    }
 
-    // पेज लोड होते ही गेम शुरू करें
-    window.onload = resetGame;
+    // New Game ya Reset button par click se game reset ho
+    newGameBtn.addEventListener("click", resetGame);
+    resetBtn.addEventListener("click", resetGame);
 
   </script>
 </body>
