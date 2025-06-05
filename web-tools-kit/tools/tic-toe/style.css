@@ -117,6 +117,8 @@ h1 {
 
 
 /* Reset and Font */
+
+/*
 * {
   margin: 0;
   padding: 0;
@@ -137,6 +139,8 @@ body {
 }
 
 /* Star Background using multiple layers */
+
+/*
 body::before, body::after {
   content: "";
   position: absolute;
@@ -168,19 +172,23 @@ body::after {
   }
 }
 
-/* Layering content above */
+/* Layering content above *//*
 h1, .container, .msg-container, #reset {
   z-index: 1;
 }
 
+
+
 /* Heading */
-h1 {
+
+/* h1 {
   font-size: 3rem;
   margin-bottom: 20px;
   text-shadow: 0 0 10px cyan;
 }
 
-/* Game Container */
+
+/* Game Container *//*
 .container {
   display: flex;
   justify-content: center;
@@ -193,7 +201,7 @@ h1 {
   gap: 10px;
 }
 
-/* Game Boxes */
+/* Game Boxes *//*
 .box {
   width: 100px;
   height: 100px;
@@ -211,7 +219,7 @@ h1 {
   transform: scale(1.05);
 }
 
-/* Buttons */
+/* Buttons *//*
 #reset, #new-btn {
   margin-top: 20px;
   padding: 10px 20px;
@@ -229,7 +237,7 @@ h1 {
   transform: scale(1.05);
 }
 
-/* Message Container */
+/* Message Container *//*
 .msg-container {
   background-color: rgba(0, 0, 0, 0.8);
   padding: 20px 30px;
@@ -248,3 +256,5 @@ h1 {
   font-size: 1.8rem;
   margin-bottom: 15px;
 }
+
+*/
