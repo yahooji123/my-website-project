@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Funtastic Flash Card</title>
+  <style>
+    /* बॉडी का सेटअप */
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Flashcard का container */
+    .flashcard {
+      width: 300px;
+      height: 200px;
+      perspective: 1500px; /* 3D फ्लिप के लिए पर्सपेक्टिव */
+      cursor: pointer;
+    }
+
+    /* Flashcard के अंदर का हिस्सा जो flip होगा */
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d; /* 3D effect बनाए रखने के लिए */
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      border-radius: 20px;
+    }
+
+    /* जब flashcard को flip किया जाए */
+    .flashcard.flipped .flashcard-inner {
+      transform: rotateY(180deg); /* Y-axis पर 180 डिग्री घुमाना */
+    }
+
+    /* कार्ड के Front और Back हिस्से */
+    .flashcard-front,
+    .flashcard-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      backface-visibility: hidden; /* जो तरफ दिख रहा है वही दिखे */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      padding: 20px;
+      box-sizing: border-box;
+      user-select: none; /* टेक्स्ट सेलेक्ट न हो */
+    }
+
+    /* Front का style */
+    .flashcard-front {
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      font-size: 1.6rem;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    /* Back का style */
+    .flashcard-back {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      transform: rotateY(180deg); /* पीछे वाला हिस्सा 180 डिग्री घुमाया हुआ */
+      font-size: 1.4rem;
+      font-weight: 400;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    /* नीचे क्लिक के लिए छोटा निर्देश */
+    .instruction {
+      position: fixed;
+      bottom: 20px;
+      font-size: 14px;
+      color: white;
+      font-weight: 300;
+      letter-spacing: 1px;
+      font-style: italic;
+      user-select: none;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Flash Card container -->
+  <div class="flashcard" id="flashcard">
+    <div class="flashcard-inner">
+      <div class="flashcard-front">
+        What is JavaScript?
+      </div>
+      <div class="flashcard-back">
+        JavaScript is a versatile programming language mainly used for adding interactivity to web pages.
+      </div>
+    </div>
+  </div>
+
+  <div class="instruction">Click the card to flip</div>
+
+  <script>
+    // flashcard डिव को ID से सेलेक्ट किया
+    const flashcard = document.getElementById('flashcard');
+
+    /*
+      यहाँ हम flashcard पर click इवेंट लगा रहे हैं
+      जब कार्ड पर क्लिक होगा, तो 'flipped' क्लास को टॉगल करेंगे
+      टॉगल करने का मतलब, अगर क्लास है तो हटा देंगे, नहीं है तो जोड़ देंगे
+      यह CSS में flip animation को कंट्रोल करता है
+    */
+    flashcard.addEventListener('click', () => {
+      flashcard.classList.toggle('flipped');
+    });
+
+    /*
+      विस्तार से समझाएं तो:
+      - CSS में जब 'flipped' क्लास होती है,
+        तो .flashcard-inner को rotateY(180deg) किया जाता है
+      - इसका मतलब है कि कार्ड 180 डिग्री घूमता है (पीछे की तरफ)
+      - backface-visibility:hidden का मतलब है कि
+        जो हिस्सा पीछे रहता है, वह छिपा रहता है ताकि उल्टा टेक्स्ट न दिखे
+      - perspective प्रॉपर्टी 3D प्रभाव देती है जिससे फ्लिप रियल दिखता है
+    */
+  </script>
+
+</body>
+</html>
