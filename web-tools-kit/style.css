@@ -32,6 +32,8 @@ body {
   color: white;
 }
 
+
+/*
 .navbar {
   height: 25px;
 
@@ -60,4 +62,45 @@ body {
   padding: 0;
   margin: 0;
 
+}
+  */
+
+  /* CSS */
+.navbar {
+  padding: 20px;
+  /*background: linear-gradient(to right, #0f2027, #203a43, #2c5364);*/
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-container {
+  width: 300px;
+  position: relative;
+}
+
+#search {
+  width: 100%;
+  height: 40px;
+  padding: 0 20px;
+  border: 2px solid transparent;
+  border-radius: 30px;
+  outline: none;
+  background: #fff;
+  color: #333;
+  font-size: 16px;
+  font-family: 'Segoe UI', sans-serif;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#search::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+#search:focus {
+  border: 2px solid #6a5acd;
+  box-shadow: 0 0 10px #6a5acd88;
+  transform: scale(1.03);
 }
