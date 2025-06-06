@@ -276,23 +276,30 @@
         height: 6px;
       }
     }
+
+    #fullscreenBtn {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 15px;
+    background: #1e90ff;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+  }
+  #fullscreenBtn.hide {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   </style>
 </head>
 <body>
-  <button id="fullscreenBtn" style="
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  padding: 10px 16px;
-  font-size: 14px;
-  border: none;
-  border-radius: 8px;
-  background-color: #1e90ff;
-  color: white;
-  cursor: pointer;
-  z-index: 1000;
-  user-select: none;
-">⤢ full screen</button>
+ <button id="fullscreenBtn">↗️</button>
 
   <!-- स्टार बैकग्राउंड -->
   <div class="stars" id="stars"></div>
@@ -417,32 +424,27 @@
 
     const fullscreenBtn = document.getElementById('fullscreenBtn');
 
-// फुल स्क्रीन में जाने का function
-function openFullscreen() {
-  const elem = document.documentElement; // पूरा पेज
-  
-  if (elem.requestFullscreen) {
-    elem.requestFullscreen();
-  } else if (elem.webkitRequestFullscreen) { /* Safari */
-    elem.webkitRequestFullscreen();
-  } else if (elem.msRequestFullscreen) { /* IE11 */
-    elem.msRequestFullscreen();
-  }
-}
+    const fsBtn = document.getElementById('fullscreenBtn');
 
-// बटन पर क्लिक करते ही फुल स्क्रीन चालू हो
-fullscreenBtn.addEventListener('click', () => {
-  openFullscreen();
-  fullscreenBtn.style.display = 'none'; // एक बार क्लिक के बाद बटन हटा दें
-});
+  // जब बटन क्लिक हो तो fullscreen toggle करें
+  fsBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  });
 
-// पेज लोड होते ही बटन को क्लिक करवाने की कोशिश (यूजर इंटरैक्शन पर निर्भर)
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    fullscreenBtn.click();
-  }, 1000);
-});
-
+  // Fullscreen change event detect करें
+  document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement) {
+      // Fullscreen में हो, तो button छुपा दो
+      fsBtn.classList.add('hide');
+    } else {
+      // Fullscreen से बाहर आ गए हो, तो button दिखाओ
+      fsBtn.classList.remove('hide');
+    }
+  });
   </script>
 </body>
 </html>
