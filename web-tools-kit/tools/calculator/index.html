@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Responsive Blue Themed Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: white;
+    }
+    .calculator {
+      background: #1c2a47;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+      width: 320px;
+      max-width: 90vw; /* Responsive max width */
+    }
+    #display {
+      background: #14375b;
+      border-radius: 10px;
+      padding: 20px;
+      font-size: 2.5rem;
+      text-align: right;
+      overflow-x: auto;
+      min-height: 60px;
+      user-select: none;
+      box-shadow: inset 0 0 10px #0d2240;
+      margin-bottom: 20px;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+    button {
+      font-size: 1.3rem;
+      padding: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.15s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      background: #2a5298;
+      color: white;
+    }
+    button:hover {
+      background-color: #3a6bbf;
+      transform: scale(1.05);
+    }
+    button:active {
+      transform: scale(0.95);
+    }
+    button.operator {
+      background-color: #ff7f50;
+      color: #1c2a47;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(255,127,80,0.7);
+    }
+    button.operator:hover {
+      background-color: #ff906b;
+    }
+    button.equal {
+      background-color: #00bfff;
+      color: #1c2a47;
+      font-weight: bold;
+      grid-column: span 2;
+      box-shadow: 0 4px 12px rgba(0,191,255,0.7);
+    }
+    button.equal:hover {
+      background-color: #33ccff;
+    }
+    button#clearBtn {
+      background-color: #ff4c4c;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(255,76,76,0.8);
+    }
+    button#clearBtn:hover {
+      background-color: #ff6666;
+    }
+    button#deleteBtn {
+      background-color: #ffa500;
+      color: #1c2a47;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(255,165,0,0.8);
+    }
+    button#deleteBtn:hover {
+      background-color: #ffb733;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 400px) {
+      .calculator {
+        width: 95vw;
+        padding: 20px;
+      }
+      button {
+        padding: 14px;
+        font-size: 1.1rem;
+      }
+      #display {
+        font-size: 2rem;
+        padding: 15px;
+      }
+    }
+
+    @media (min-width: 800px) {
+      .calculator {
+        width: 400px;
+      }
+      button {
+        padding: 20px;
+        font-size: 1.5rem;
+      }
+      #display {
+        font-size: 3rem;
+        padding: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div id="display">0</div>
+    <div class="buttons">
+      <button id="clearBtn">C</button>
+      <button id="deleteBtn">DEL</button>
+      <button class="operator" data-value="/">÷</button>
+      <button class="operator" data-value="*">×</button>
+
+      <button data-value="7">7</button>
+      <button data-value="8">8</button>
+      <button data-value="9">9</button>
+      <button class="operator" data-value="-">−</button>
+
+      <button data-value="4">4</button>
+      <button data-value="5">5</button>
+      <button data-value="6">6</button>
+      <button class="operator" data-value="+">+</button>
+
+      <button data-value="1">1</button>
+      <button data-value="2">2</button>
+      <button data-value="3">3</button>
+      <button class="equal" id="equalBtn">=</button>
+
+      <button data-value="0" style="grid-column: span 2;">0</button>
+      <button data-value=".">.</button>
+    </div>
+  </div>
+
+  <script>
+   // Sabse pehle, hum display element ko select karte hain jahan hum expression aur result dikhayenge
+const display = document.getElementById('display');
+
+// Hum sabhi buttons ko select karte hain jinme 'data-value' attribute hota hai
+// Ye buttons wo hain jinse user numbers aur operators dalta hai
+const buttons = document.querySelectorAll('button[data-value]');
+
+// Clear (C) button ko select karte hain
+const clearBtn = document.getElementById('clearBtn');
+
+// Delete (DEL) button ko select karte hain
+const deleteBtn = document.getElementById('deleteBtn');
+
+// Equal (=) button ko select karte hain
+const equalBtn = document.getElementById('equalBtn');
+
+// Ek variable jisme hum user ke input ka pura expression (formula) store karenge
+// Jaise user "12+5*3" type karega to ye string isi tarah store hogi
+let currentExpression = '';
+
+// Hum sabhi data-value buttons ke liye ek event listener lagate hain
+// Jab user in buttons pe click kare to ye function chalega
+buttons.forEach(button => {
+  button.addEventListener('click', () => {
+    // Sabse pehle hum button ke data-value attribute ko lete hain
+    let value = button.getAttribute('data-value');
+
+    // Fir is value ko hum apne current expression ke end me jod dete hain
+    currentExpression += value;
+
+    // Display ko update karte hain taaki user ko dikhai de ki expression kya hai
+    display.textContent = currentExpression;
+  });
+});
+
+// Clear button par click hone par
+clearBtn.addEventListener('click', () => {
+  // Expression ko bilkul khali kar dete hain
+  currentExpression = '';
+
+  // Display ko reset kar dete hain aur 0 dikhate hain
+  display.textContent = '0';
+});
+
+// Delete button par click hone par
+deleteBtn.addEventListener('click', () => {
+  // Expression ke last character ko hata dete hain
+  currentExpression = currentExpression.slice(0, -1);
+
+  // Agar expression ab khali ho gaya to display pe 0 dikhate hain
+  // Nahi to updated expression dikhate hain
+  display.textContent = currentExpression || '0';
+});
+
+// Equal button par click hone par
+equalBtn.addEventListener('click', () => {
+  try {
+    // Hum JavaScript ka eval() function use kar ke expression ko calculate karte hain
+    // eval("2+3*4") === 14 jaisa calculation karega
+    let result = eval(currentExpression);
+
+    // Result ko display pe dikhate hain
+    display.textContent = result;
+
+    // Aur expression ko result se update kar dete hain
+    // Taaki user next calculation isi result se kar sake
+    currentExpression = result.toString();
+
+  } catch (error) {
+    // Agar expression invalid hai, ya koi error aaye to catch block chalega
+    // Display pe "Error" likh kar dikhate hain
+    display.textContent = 'Error';
+
+    // Expression ko reset kar dete hain
+    currentExpression = '';
+  }
+});
+
+  </script>
+</body>
+</html>
