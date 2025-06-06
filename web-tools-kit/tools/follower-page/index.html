@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Follower Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: linear-gradient(-45deg, #1e3c72, #2a5298, #1cb5e0, #000046);
+      background-size: 400% 400%;
+      animation: gradient 12s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .profile-card {
+      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 35px 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      text-align: center;
+      width: 100%;
+      max-width: 350px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      transition: transform 0.3s ease;
+    }
+
+    .profile-card:hover {
+      transform: scale(1.03);
+    }
+
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 3px solid #00c6ff;
+      box-shadow: 0 0 10px #00c6ff;
+    }
+
+    .username {
+      font-size: 24px;
+      margin-bottom: 8px;
+      text-shadow: 0 0 4px #000;
+    }
+
+    .follower-count {
+      font-size: 18px;
+      margin: 12px 0;
+      text-shadow: 0 0 4px #000;
+    }
+
+    #followBtn {
+      padding: 10px 30px;
+      font-size: 16px;
+      border: none;
+      border-radius: 25px;
+      background-color: #00c6ff;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00c6ff;
+      transition: background-color 0.4s ease, transform 0.2s;
+    }
+
+    #followBtn:hover {
+      transform: scale(1.05);
+    }
+
+    #followBtn.unfollow {
+      background-color: #ff4d4d;
+      box-shadow: 0 0 10px #ff4d4d;
+    }
+
+    @media (max-width: 400px) {
+      .profile-card {
+        padding: 25px 20px;
+      }
+
+      .username {
+        font-size: 20px;
+      }
+
+      .follower-count {
+        font-size: 16px;
+      }
+
+      #followBtn {
+        padding: 10px 25px;
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Profile Card Start -->
+  <div class="profile-card">
+    <img 
+      src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d" 
+      alt="Profile" 
+      class="profile-pic"
+    >
+    <h2 class="username">Anurag</h2>
+    <p class="follower-count">Followers: <span id="count">100</span></p>
+    <button id="followBtn">Follow</button>
+  </div>
+
+  <!-- JavaScript Section with Full Explanation -->
+  <script>
+    // 🧠 STEP 1: ज़रूरी elements को पकड़ते हैं ताकि हम उनके साथ काम कर सकें
+    const followBtn = document.getElementById('followBtn');   // Follow/Unfollow बटन
+    const countText = document.getElementById('count');       // जहां follower count दिखता है
+
+    // 🧠 STEP 2: दो variables बनाते हैं – एक state track करने के लिए और एक follower count के लिए
+    let isFollowing = false;   // यह बताएगा कि अभी user ने follow किया है या नहीं
+    let followers = 100;       // शुरुवात में 100 followers हैं
+
+    // 🧠 STEP 3: बटन पर click event लगाते हैं
+    followBtn.addEventListener('click', function () {
+
+      // 🔄 अगर user पहले से follow कर रहा था
+      if (isFollowing) {
+        followers--;  // followers count को 1 कम कर दो
+        followBtn.textContent = "Follow";  // बटन पर दिखाए: "Follow"
+        followBtn.classList.remove("unfollow"); // लाल रंग हटाओ (CSS class हटाएं)
+      } else {
+        // 🔄 अगर user follow नहीं कर रहा था
+        followers++;  // followers count को 1 बढ़ा दो
+        followBtn.textContent = "Unfollow";  // बटन पर दिखाए: "Unfollow"
+        followBtn.classList.add("unfollow"); // बटन को लाल रंग दो (CSS class जोड़ो)
+      }
+
+      // ✍️ STEP 4: Count को update करो UI में (DOM में)
+      countText.textContent = followers;
+
+      // 🔁 STEP 5: isFollowing की value को उल्टा कर दो
+      // अगर पहले true था तो अब false हो जाएगा और अगर false था तो true
+      isFollowing = !isFollowing;
+    });
+  </script>
+
+</body>
+</html>

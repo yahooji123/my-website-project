@@ -3,154 +3,1240 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🚀 pdf generator</title>
+  <title>🚀 PDF Master 9000 - World's Most Advanced PDF Converter</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.1.1/tesseract.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://unpkg.com/sortablejs@1.14.0/Sortable.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
       --primary: #6c5ce7;
+      --primary-dark: #5649c0;
       --secondary: #a29bfe;
       --accent: #fd79a8;
+      --accent-dark: #e66797;
       --success: #00b894;
+      --success-dark: #00a383;
       --danger: #d63031;
+      --danger-dark: #c02a2a;
       --warning: #fdcb6e;
       --dark: #2d3436;
+      --darker: #1a1e1f;
       --light: #f5f6fa;
-      --dark-mode-bg: #1e272e;
-      --dark-mode-card: #2f3640;
+      --lighter: #ffffff;
+      --dark-mode-bg: #121212;
+      --dark-mode-card: #1e1e1e;
+      --dark-mode-text: #e0e0e0;
+      --neon-glow: 0 0 10px rgba(108, 92, 231, 0.7), 0 0 20px rgba(108, 92, 231, 0.5);
     }
     
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: all 0.3s; }
-    body { background: var(--light); color: var(--dark); }
-    body.dark-mode { background: var(--dark-mode-bg); color: white; }
-    .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-    h1 { font-size: 2.8rem; margin-bottom: 10px; background: linear-gradient(45deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; }
-    .subtitle { text-align: center; margin-bottom: 30px; color: #666; font-weight: 300; }
-    .dark-mode .subtitle { color: #aaa; }
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+      font-family: 'Poppins', sans-serif; 
+      transition: all 0.3s ease; 
+    }
+    
+    body { 
+      background: var(--light); 
+      color: var(--dark); 
+      min-height: 100vh;
+      background-image: radial-gradient(circle at 10% 20%, rgba(108, 92, 231, 0.05) 0%, transparent 20%),
+                      radial-gradient(circle at 90% 80%, rgba(253, 121, 168, 0.05) 0%, transparent 20%);
+    }
+    
+    body.dark-mode { 
+      background: var(--dark-mode-bg); 
+      color: var(--dark-mode-text);
+      background-image: radial-gradient(circle at 10% 20%, rgba(108, 92, 231, 0.03) 0%, transparent 20%),
+                      radial-gradient(circle at 90% 80%, rgba(253, 121, 168, 0.03) 0%, transparent 20%);
+    }
+    
+    .container { 
+      max-width: 1600px; 
+      margin: 0 auto; 
+      padding: 30px 20px; 
+    }
+    
+    h1 { 
+      font-size: 3.5rem; 
+      margin-bottom: 15px; 
+      background: linear-gradient(45deg, var(--primary), var(--accent)); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+      text-align: center; 
+      text-shadow: var(--neon-glow);
+      letter-spacing: -1px;
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+    
+    h1::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 2px;
+    }
+    
+    .subtitle { 
+      text-align: center; 
+      margin-bottom: 40px; 
+      color: #666; 
+      font-weight: 300; 
+      font-size: 1.2rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .dark-mode .subtitle { 
+      color: #aaa; 
+    }
     
     /* Upload Section */
-    .upload-section { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px; }
-    .dark-mode .upload-section { background: var(--dark-mode-card); }
-    .drag-area { border: 3px dashed var(--primary); border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; margin-bottom: 20px; }
-    .drag-area.active { background: rgba(108, 92, 231, 0.1); }
-    .drag-area i { font-size: 4rem; margin-bottom: 15px; color: var(--primary); }
-    .drag-area p { font-size: 1.2rem; margin-bottom: 15px; }
-    input[type="file"] { display: none; }
-    .upload-btn { padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; margin: 10px; }
-    .upload-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4); }
+    .upload-section { 
+      background: var(--lighter); 
+      border-radius: 20px; 
+      padding: 40px; 
+      box-shadow: 0 15px 40px rgba(0,0,0,0.12); 
+      margin-bottom: 40px; 
+      border: 1px solid rgba(0,0,0,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .upload-section::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+    
+    .dark-mode .upload-section { 
+      background: var(--dark-mode-card); 
+      border-color: rgba(255,255,255,0.05);
+    }
+    
+    .drag-area { 
+      border: 3px dashed var(--primary); 
+      border-radius: 15px; 
+      padding: 50px 40px; 
+      text-align: center; 
+      cursor: pointer; 
+      margin-bottom: 30px;
+      transition: all 0.3s;
+      position: relative;
+      background: rgba(108, 92, 231, 0.03);
+    }
+    
+    .drag-area:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(108, 92, 231, 0.15);
+    }
+    
+    .drag-area.active { 
+      background: rgba(108, 92, 231, 0.1); 
+      border-color: var(--accent);
+    }
+    
+    .drag-area i { 
+      font-size: 5rem; 
+      margin-bottom: 20px; 
+      color: var(--primary); 
+      opacity: 0.8;
+    }
+    
+    .drag-area p { 
+      font-size: 1.3rem; 
+      margin-bottom: 15px; 
+    }
+    
+    input[type="file"] { 
+      display: none; 
+    }
+    
+    .upload-btn { 
+      padding: 14px 30px; 
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      border-radius: 10px; 
+      cursor: pointer; 
+      font-size: 1.1rem; 
+      margin: 15px; 
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+    }
+    
+    .upload-btn:hover { 
+      transform: translateY(-3px); 
+      box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4); 
+      background: var(--primary-dark);
+    }
+    
+    .upload-btn.danger {
+      background: var(--danger);
+    }
+    
+    .upload-btn.danger:hover {
+      background: var(--danger-dark);
+      box-shadow: 0 8px 20px rgba(214, 48, 49, 0.4);
+    }
     
     /* Image Preview Grid */
-    #images-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin: 20px 0; }
-    .image-card { position: relative; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-    .image-card img { width: 100%; height: 180px; object-fit: cover; }
-    .image-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 5px; }
-    .action-btn { width: 30px; height: 30px; border-radius: 50%; border: none; background: rgba(0,0,0,0.7); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .action-btn:hover { background: var(--accent); transform: scale(1.1); }
+    #images-preview { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+      gap: 20px; 
+      margin: 30px 0; 
+    }
+    
+    .image-card { 
+      position: relative; 
+      border-radius: 12px; 
+      overflow: hidden; 
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1); 
+      transition: all 0.3s;
+      background: white;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .dark-mode .image-card {
+      background: var(--dark-mode-card);
+      border-color: rgba(255,255,255,0.05);
+    }
+    
+    .image-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+    
+    .image-card img { 
+      width: 100%; 
+      height: 220px; 
+      object-fit: cover; 
+      display: block;
+    }
+    
+    .image-info {
+      padding: 15px;
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .dark-mode .image-info {
+      border-top-color: rgba(255,255,255,0.05);
+    }
+    
+    .image-info h4 {
+      font-size: 0.95rem;
+      margin-bottom: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .image-info p {
+      font-size: 0.8rem;
+      color: #777;
+    }
+    
+    .dark-mode .image-info p {
+      color: #aaa;
+    }
+    
+    .image-actions { 
+      position: absolute; 
+      top: 15px; 
+      right: 15px; 
+      display: flex; 
+      gap: 8px; 
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .image-card:hover .image-actions {
+      opacity: 1;
+    }
+    
+    .action-btn { 
+      width: 36px; 
+      height: 36px; 
+      border-radius: 50%; 
+      border: none; 
+      background: rgba(0,0,0,0.7); 
+      color: white; 
+      cursor: pointer; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+    
+    .action-btn:hover { 
+      background: var(--accent); 
+      transform: scale(1.15); 
+    }
     
     /* PDF Options (Tabs System) */
-    .options-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-    .tab-btn { padding: 10px 20px; background: #eee; border: none; border-radius: 8px 8px 0 0; cursor: pointer; }
-    .dark-mode .tab-btn { background: #333; color: white; }
-    .tab-btn.active { background: var(--primary); color: white; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+    .options-tabs { 
+      display: flex; 
+      gap: 15px; 
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+    
+    .tab-btn { 
+      padding: 12px 25px; 
+      background: #eee; 
+      border: none; 
+      border-radius: 10px; 
+      cursor: pointer; 
+      font-weight: 500;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+    }
+    
+    .dark-mode .tab-btn { 
+      background: #333; 
+      color: white; 
+    }
+    
+    .tab-btn.active { 
+      background: var(--primary); 
+      color: white; 
+      box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+    }
+    
+    .tab-btn:hover:not(.active) {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .dark-mode .tab-btn:hover:not(.active) {
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    .tab-content { 
+      display: none; 
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .tab-content.active { 
+      display: block; 
+    }
     
     /* Option Cards */
-    .option-card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .dark-mode .option-card { background: var(--dark-mode-card); }
-    .option-card h3 { margin-bottom: 15px; color: var(--primary); }
-    .form-group { margin-bottom: 15px; }
-    label { display: block; margin-bottom: 5px; font-weight: 500; }
-    input, select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
-    .dark-mode input, .dark-mode select { background: #333; border-color: #555; color: white; }
+    .option-card { 
+      background: var(--lighter); 
+      border-radius: 15px; 
+      padding: 25px; 
+      margin-bottom: 25px; 
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08); 
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .dark-mode .option-card { 
+      background: var(--dark-mode-card); 
+      border-color: rgba(255,255,255,0.05);
+    }
+    
+    .option-card h3 { 
+      margin-bottom: 20px; 
+      color: var(--primary); 
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .form-group { 
+      margin-bottom: 20px; 
+    }
+    
+    label { 
+      display: block; 
+      margin-bottom: 8px; 
+      font-weight: 500; 
+      color: #555;
+    }
+    
+    .dark-mode label {
+      color: #ccc;
+    }
+    
+    input, select, textarea { 
+      width: 100%; 
+      padding: 12px 15px; 
+      border-radius: 10px; 
+      border: 1px solid #ddd; 
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+      outline: none;
+    }
+    
+    .dark-mode input, 
+    .dark-mode select, 
+    .dark-mode textarea { 
+      background: #2a2a2a; 
+      border-color: #444; 
+      color: white; 
+    }
+    
+    .dark-mode input:focus,
+    .dark-mode select:focus,
+    .dark-mode textarea:focus {
+      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.3);
+    }
+    
+    /* Range Input Styling */
+    input[type="range"] {
+      -webkit-appearance: none;
+      height: 8px;
+      background: #ddd;
+      border-radius: 5px;
+      padding: 0;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 5px rgba(108, 92, 231, 0.5);
+    }
+    
+    .dark-mode input[type="range"] {
+      background: #444;
+    }
+    
+    /* Checkbox Styling */
+    input[type="checkbox"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    
+    input[type="checkbox"]:checked {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    
+    input[type="checkbox"]:checked::after {
+      content: "✓";
+      position: absolute;
+      color: white;
+      font-size: 14px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    
+    .dark-mode input[type="checkbox"] {
+      border-color: #666;
+    }
+    
+    /* Color Input Styling */
+    input[type="color"] {
+      width: 60px;
+      height: 40px;
+      padding: 2px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
     
     /* AI Tools Section */
-    .ai-tools { display: flex; flex-wrap: wrap; gap: 15px; margin: 20px 0; }
-    .ai-tool { background: white; border-radius: 10px; padding: 15px; flex: 1; min-width: 200px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .dark-mode .ai-tool { background: var(--dark-mode-card); }
-    .ai-tool h4 { margin-bottom: 10px; color: var(--accent); }
+    .ai-tools { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px; 
+      margin: 25px 0; 
+    }
+    
+    .ai-tool { 
+      background: var(--lighter); 
+      border-radius: 15px; 
+      padding: 20px; 
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08); 
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: all 0.3s;
+    }
+    
+    .ai-tool:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+    
+    .dark-mode .ai-tool { 
+      background: var(--dark-mode-card); 
+      border-color: rgba(255,255,255,0.05);
+    }
+    
+    .ai-tool h4 { 
+      margin-bottom: 15px; 
+      color: var(--accent); 
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .ai-tool p {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+    
+    .dark-mode .ai-tool p {
+      color: #aaa;
+    }
     
     /* Action Buttons */
-    .action-btns { display: flex; gap: 15px; margin: 30px 0; justify-content: center; }
-    .main-btn { padding: 15px 30px; font-size: 1.1rem; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; }
-    .generate-btn { background: var(--success); color: white; }
-    .generate-btn:hover { background: #00a884; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4); }
-    .preview-btn { background: var(--primary); color: white; }
-    .preview-btn:hover { background: #5a4fcf; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4); }
-    .cloud-btn { background: #4285F4; color: white; }
-    .cloud-btn:hover { background: #3367d6; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4); }
+    .action-btns { 
+      display: flex; 
+      gap: 20px; 
+      margin: 40px 0; 
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .main-btn { 
+      padding: 18px 35px; 
+      font-size: 1.2rem; 
+      border-radius: 12px; 
+      border: none; 
+      cursor: pointer; 
+      font-weight: 600; 
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .main-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+    }
+    
+    .generate-btn { 
+      background: var(--success); 
+      color: white; 
+    }
+    
+    .generate-btn:hover { 
+      background: var(--success-dark); 
+      box-shadow: 0 12px 25px rgba(0, 184, 148, 0.3); 
+    }
+    
+    .preview-btn { 
+      background: var(--primary); 
+      color: white; 
+    }
+    
+    .preview-btn:hover { 
+      background: var(--primary-dark); 
+      box-shadow: 0 12px 25px rgba(108, 92, 231, 0.3); 
+    }
+    
+    .cloud-btn { 
+      background: #4285F4; 
+      color: white; 
+    }
+    
+    .cloud-btn:hover { 
+      background: #3367d6; 
+      box-shadow: 0 12px 25px rgba(66, 133, 244, 0.3); 
+    }
     
     /* Progress Bar */
-    .progress-container { width: 100%; background: #eee; border-radius: 10px; margin: 20px 0; display: none; }
-    .dark-mode .progress-container { background: #333; }
-    .progress-bar { height: 20px; border-radius: 10px; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: width 0.5s; text-align: center; color: white; font-size: 12px; line-height: 20px; }
+    .progress-container { 
+      width: 100%; 
+      background: #eee; 
+      border-radius: 10px; 
+      margin: 30px 0; 
+      display: none; 
+      height: 25px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .dark-mode .progress-container { 
+      background: #333; 
+    }
+    
+    .progress-bar { 
+      height: 100%; 
+      border-radius: 10px; 
+      background: linear-gradient(90deg, var(--primary), var(--accent)); 
+      width: 0%; 
+      transition: width 0.5s; 
+      text-align: center; 
+      color: white; 
+      font-size: 0.9rem; 
+      line-height: 25px;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .progress-bar::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      animation: shimmer 2s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
     
     /* Dark Mode Toggle */
-    .dark-mode-toggle { position: fixed; top: 20px; right: 20px; z-index: 100; }
-    .toggle-btn { background: var(--dark); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .dark-mode .toggle-btn { background: var(--light); color: var(--dark); }
+    .dark-mode-toggle { 
+      position: fixed; 
+      top: 25px; 
+      right: 25px; 
+      z-index: 100; 
+    }
+    
+    .toggle-btn { 
+      background: var(--dark); 
+      color: white; 
+      border: none; 
+      border-radius: 50%; 
+      width: 50px; 
+      height: 50px; 
+      cursor: pointer; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 1.3rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+    }
+    
+    .toggle-btn:hover {
+      transform: scale(1.1) rotate(30deg);
+    }
+    
+    .dark-mode .toggle-btn { 
+      background: var(--light); 
+      color: var(--dark); 
+    }
+    
+    /* Notification Toast */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--success);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.4s;
+    }
+    
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .toast.error {
+      background: var(--danger);
+    }
+    
+    .toast.warning {
+      background: var(--warning);
+      color: var(--dark);
+    }
     
     /* Responsive */
+    @media (max-width: 1200px) {
+      .container {
+        padding: 25px 15px;
+      }
+      
+      h1 {
+        font-size: 3rem;
+      }
+    }
+    
+    @media (max-width: 992px) {
+      .upload-section {
+        padding: 30px;
+      }
+      
+      .drag-area {
+        padding: 40px 30px;
+      }
+      
+      .ai-tools {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+    
     @media (max-width: 768px) {
-      #images-preview { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-      .action-btns { flex-direction: column; }
+      h1 {
+        font-size: 2.5rem;
+      }
+      
+      .subtitle {
+        font-size: 1.1rem;
+      }
+      
+      .upload-section {
+        padding: 25px 20px;
+      }
+      
+      .drag-area {
+        padding: 30px 20px;
+      }
+      
+      #images-preview { 
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+      }
+      
+      .image-card img {
+        height: 180px;
+      }
+      
+      .main-btn {
+        padding: 15px 25px;
+        font-size: 1.1rem;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      
+      .options-tabs {
+        gap: 10px;
+      }
+      
+      .tab-btn {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+      }
+      
+      .action-btns {
+        gap: 15px;
+      }
+      
+      .main-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      #images-preview { 
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+      }
+      
+      .image-card img {
+        height: 150px;
+      }
+    }
+    
+    /* Floating Particles */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    .particle {
+      position: absolute;
+      background: rgba(108, 92, 231, 0.3);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    
+    /* Loading Spinner */
+    .spinner {
+      display: none;
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(108, 92, 231, 0.2);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s ease-in-out infinite;
+      margin: 20px auto;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Advanced Features Panel */
+    .advanced-features {
+      background: rgba(108, 92, 231, 0.05);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 30px 0;
+      border: 1px dashed var(--primary);
+    }
+    
+    .dark-mode .advanced-features {
+      background: rgba(108, 92, 231, 0.1);
+      border-color: var(--accent);
+    }
+    
+    .feature-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .dark-mode .feature-toggle {
+      border-bottom-color: rgba(255,255,255,0.05);
+    }
+    
+    .feature-toggle:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(30px);
+    }
+    
+    /* Watermark Section */
+    .watermark-section {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .watermark-preview {
+      width: 200px;
+      height: 150px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .dark-mode .watermark-preview {
+      background: #2a2a2a;
+      border-color: #444;
+    }
+    
+    .watermark-text {
+      position: absolute;
+      opacity: 0.5;
+      transform: rotate(-45deg);
+      font-size: 24px;
+      color: #333;
+      pointer-events: none;
+    }
+    
+    .dark-mode .watermark-text {
+      color: #ccc;
+    }
+    
+    /* PDF Preview Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .modal.show {
+      display: flex;
+      opacity: 1;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 900px;
+      max-height: 90vh;
+      overflow: auto;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      animation: modalFadeIn 0.3s;
+    }
+    
+    .dark-mode .modal-content {
+      background: var(--dark-mode-card);
+    }
+    
+    @keyframes modalFadeIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .close-modal:hover {
+      background: var(--danger-dark);
+      transform: rotate(90deg);
+    }
+    
+    .modal-body {
+      padding: 40px;
+    }
+    
+    /* Tooltips */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      margin-left: 5px;
+    }
+    
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 10px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.9rem;
+      font-weight: normal;
+    }
+    
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    
+    .badge.new {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .badge.ai {
+      background: var(--success);
+      color: white;
+    }
+    
+    /* Floating Action Button */
+    .fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4);
+      cursor: pointer;
+      z-index: 100;
+      transition: all 0.3s;
+    }
+    
+    .fab:hover {
+      transform: scale(1.1) rotate(15deg);
+      box-shadow: 0 8px 25px rgba(108, 92, 231, 0.6);
+    }
+    
+    /* Feature Highlights */
+    .feature-highlights {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+    
+    .feature-card {
+      background: var(--lighter);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: all 0.3s;
+    }
+    
+    .dark-mode .feature-card {
+      background: var(--dark-mode-card);
+      border-color: rgba(255,255,255,0.05);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+    
+    .feature-card i {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+    
+    .feature-card h4 {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      color: var(--primary);
+    }
+    
+    .feature-card p {
+      color: #666;
+      line-height: 1.6;
+    }
+    
+    .dark-mode .feature-card p {
+      color: #aaa;
     }
   </style>
 </head>
 <body>
+  <!-- Floating Particles Background -->
+  <div class="particles" id="particles"></div>
+  
+  <!-- Dark Mode Toggle -->
   <div class="dark-mode-toggle">
     <button class="toggle-btn" id="darkModeToggle">🌙</button>
   </div>
   
+  <!-- Floating Action Button -->
+  <div class="fab" id="helpFab">
+    <i class="fas fa-question"></i>
+  </div>
+  
   <div class="container">
-    <h1>🚀 PDF Master 9000</h1>
-    <p class="subtitle">The World's Most Advanced Image-to-PDF Converter with AI & Cloud Integration</p>
+    <h1>🚀 PDF Master 9000 Ultra</h1>
+    <p class="subtitle">The World's Most Advanced AI-Powered PDF Conversion Platform with Cloud Integration and Enterprise Features</p>
     
     <!-- Upload Section -->
     <div class="upload-section">
       <div class="drag-area" id="dragArea">
-        <i>📁</i>
-        <p><strong>Drag & Drop Images Here</strong></p>
-        <p>or</p>
-        <input type="file" id="image-upload" multiple accept="image/*,.pdf" />
-        <button class="upload-btn" id="uploadBtn">Browse Files</button>
+        <i class="fas fa-cloud-upload-alt"></i>
+        <p><strong>Drag & Drop Images or PDFs Here</strong></p>
+        <p>Supports JPG, PNG, GIF, WEBP, PDF and more</p>
+        <input type="file" id="image-upload" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt" />
+        <button class="upload-btn" id="uploadBtn"><i class="fas fa-folder-open"></i> Browse Files</button>
       </div>
       
       <div id="images-preview"></div>
       
       <div class="action-btns">
-        <button class="upload-btn danger" onclick="clearAll()">🗑️ Clear All</button>
-        <button class="upload-btn" onclick="reorderImages()">🔄 Reorder</button>
+        <button class="upload-btn danger" onclick="clearAll()"><i class="fas fa-trash-alt"></i> Clear All</button>
+        <button class="upload-btn" onclick="reorderImages()"><i class="fas fa-sort"></i> Reorder</button>
+        <button class="upload-btn" onclick="batchEdit()"><i class="fas fa-edit"></i> Batch Edit</button>
+      </div>
+    </div>
+    
+    <!-- Feature Highlights -->
+    <div class="feature-highlights">
+      <div class="feature-card">
+        <i class="fas fa-robot"></i>
+        <h4>AI-Powered OCR</h4>
+        <p>Extract text from images with industry-leading accuracy using our advanced AI algorithms.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-cloud"></i>
+        <h4>Cloud Integration</h4>
+        <p>Seamlessly connect with Google Drive, Dropbox, and OneDrive for easy file management.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-lock"></i>
+        <h4>Bank-Grade Security</h4>
+        <p>256-bit encryption ensures your documents are protected at all times.</p>
       </div>
     </div>
     
     <!-- PDF Options Tabs -->
     <div class="options-tabs">
-      <button class="tab-btn active" data-tab="basic-options">Basic</button>
-      <button class="tab-btn" data-tab="advanced-options">Advanced</button>
-      <button class="tab-btn" data-tab="ai-tools">AI Tools</button>
-      <button class="tab-btn" data-tab="cloud-integration">Cloud</button>
+      <button class="tab-btn active" data-tab="basic-options"><i class="fas fa-cog"></i> Basic</button>
+      <button class="tab-btn" data-tab="advanced-options"><i class="fas fa-sliders-h"></i> Advanced</button>
+      <button class="tab-btn" data-tab="ai-tools"><i class="fas fa-robot"></i> AI Tools</button>
+      <button class="tab-btn" data-tab="cloud-integration"><i class="fas fa-cloud"></i> Cloud</button>
+      <button class="tab-btn" data-tab="enterprise-features"><i class="fas fa-building"></i> Enterprise <span class="badge new">NEW</span></button>
     </div>
     
     <!-- Basic Options -->
     <div class="tab-content active" id="basic-options">
       <div class="option-card">
-        <h3>📄 Document Settings</h3>
+        <h3><i class="fas fa-file-pdf"></i> Document Settings</h3>
         <div class="form-group">
-          <label>PDF Name</label>
+          <label>PDF Name <span class="tooltip">?<span class="tooltiptext">Name of the output PDF file</span></span></label>
           <input type="text" id="pdf-name" placeholder="MyDocument" value="MyDocument">
         </div>
         <div class="form-group">
           <label>Page Size</label>
           <select id="page-size">
-            <option value="a4">A4</option>
-            <option value="letter">Letter</option>
-            <option value="legal">Legal</option>
-            <option value="a3">A3</option>
+            <option value="a4">A4 (210 × 297 mm)</option>
+            <option value="letter">Letter (8.5 × 11 in)</option>
+            <option value="legal">Legal (8.5 × 14 in)</option>
+            <option value="a3">A3 (297 × 420 mm)</option>
+            <option value="a5">A5 (148 × 210 mm)</option>
+            <option value="custom">Custom Size</option>
           </select>
+        </div>
+        <div class="form-group" id="custom-size-group" style="display: none;">
+          <label>Custom Size (mm)</label>
+          <div style="display: flex; gap: 10px;">
+            <input type="number" id="custom-width" placeholder="Width" style="flex: 1;">
+            <input type="number" id="custom-height" placeholder="Height" style="flex: 1;">
+          </div>
         </div>
         <div class="form-group">
           <label>Orientation</label>
@@ -159,10 +1245,15 @@
             <option value="landscape">Landscape</option>
           </select>
         </div>
+        <div class="form-group">
+          <label>Margin (mm)</label>
+          <input type="range" id="page-margin" min="0" max="50" value="10">
+          <span id="margin-value">10 mm</span>
+        </div>
       </div>
       
       <div class="option-card">
-        <h3>🎨 Appearance</h3>
+        <h3><i class="fas fa-palette"></i> Appearance</h3>
         <div class="form-group">
           <label>Background Color</label>
           <input type="color" id="bg-color" value="#ffffff">
@@ -172,36 +1263,102 @@
           <input type="range" id="image-quality" min="0.1" max="1" step="0.1" value="0.9">
           <span id="quality-value">90%</span>
         </div>
+        <div class="form-group">
+          <label>PDF Resolution (DPI)</label>
+          <select id="pdf-resolution">
+            <option value="72">72 DPI (Web)</option>
+            <option value="150">150 DPI (Standard)</option>
+            <option value="300" selected>300 DPI (High Quality)</option>
+            <option value="600">600 DPI (Professional)</option>
+          </select>
+        </div>
       </div>
     </div>
     
     <!-- Advanced Options -->
     <div class="tab-content" id="advanced-options">
       <div class="option-card">
-        <h3>⚙️ Advanced PDF Settings</h3>
+        <h3><i class="fas fa-lock"></i> Security</h3>
         <div class="form-group">
           <label>Password Protection</label>
           <input type="password" id="pdf-password" placeholder="Optional password">
         </div>
         <div class="form-group">
-          <label>Compression Level</label>
-          <select id="compression">
-            <option value="low">Low (Best Quality)</option>
-            <option value="medium" selected>Medium (Balanced)</option>
-            <option value="high">High (Smallest Size)</option>
+          <label>Encryption Level</label>
+          <select id="encryption-level">
+            <option value="40-bit">40-bit (Basic)</option>
+            <option value="128-bit" selected>128-bit (Standard)</option>
+            <option value="256-bit">256-bit (High Security)</option>
           </select>
+        </div>
+        <div class="form-group">
+          <label>Permissions</label>
+          <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+            <label><input type="checkbox" id="allow-printing" checked> Printing</label>
+            <label><input type="checkbox" id="allow-copying" checked> Copying</label>
+            <label><input type="checkbox" id="allow-modifying" checked> Modifying</label>
+            <label><input type="checkbox" id="allow-annotations" checked> Annotations</label>
+          </div>
         </div>
       </div>
       
       <div class="option-card">
-        <h3>📑 Document Structure</h3>
+        <h3><i class="fas fa-layer-group"></i> Document Structure</h3>
         <div class="form-group">
-          <label>Add Table of Contents</label>
-          <input type="checkbox" id="add-toc" checked>
+          <label><input type="checkbox" id="add-toc" checked> Add Table of Contents</label>
         </div>
         <div class="form-group">
-          <label>Add Page Numbers</label>
-          <input type="checkbox" id="page-numbers" checked>
+          <label><input type="checkbox" id="page-numbers" checked> Add Page Numbers</label>
+          <div style="margin-top: 10px; display: none;" id="page-numbers-options">
+            <select id="page-numbers-position" style="margin-bottom: 10px;">
+              <option value="bottom-right">Bottom Right</option>
+              <option value="bottom-center">Bottom Center</option>
+              <option value="top-right">Top Right</option>
+              <option value="top-center">Top Center</option>
+            </select>
+            <input type="text" id="page-numbers-format" placeholder="Page {n} of {total}" value="Page {n} of {total}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="add-bookmarks"> Add Bookmarks for Each Page</label>
+        </div>
+      </div>
+      
+      <div class="option-card">
+        <h3><i class="fas fa-water"></i> Watermark</h3>
+        <div class="form-group">
+          <label><input type="checkbox" id="enable-watermark"> Add Watermark</label>
+          <div style="margin-top: 15px; display: none;" id="watermark-options">
+            <div class="watermark-section">
+              <div style="flex: 1;">
+                <div class="form-group">
+                  <label>Watermark Text</label>
+                  <input type="text" id="watermark-text" placeholder="Confidential">
+                </div>
+                <div class="form-group">
+                  <label>Opacity</label>
+                  <input type="range" id="watermark-opacity" min="0.1" max="1" step="0.1" value="0.5">
+                  <span id="watermark-opacity-value">50%</span>
+                </div>
+                <div class="form-group">
+                  <label>Color</label>
+                  <input type="color" id="watermark-color" value="#000000">
+                </div>
+                <div class="form-group">
+                  <label>Size</label>
+                  <select id="watermark-size">
+                    <option value="small">Small</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="large">Large</option>
+                    <option value="xlarge">Extra Large</option>
+                  </select>
+                </div>
+              </div>
+              <div class="watermark-preview">
+                <div class="watermark-text" id="watermark-preview-text">Confidential</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -210,24 +1367,120 @@
     <div class="tab-content" id="ai-tools">
       <div class="ai-tools">
         <div class="ai-tool">
-          <h4>🔍 OCR (Text Recognition)</h4>
-          <p>Extract text from images into searchable PDF</p>
-          <input type="checkbox" id="enable-ocr" checked>
+          <h4><i class="fas fa-eye"></i> OCR (Text Recognition) <span class="badge ai">AI</span></h4>
+          <p>Extract text from images into searchable PDF with industry-leading accuracy</p>
+          <label><input type="checkbox" id="enable-ocr" checked> Enable OCR</label>
+          <div style="margin-top: 15px; display: none;" id="ocr-options">
+            <div class="form-group">
+              <label>Language</label>
+              <select id="ocr-language">
+                <option value="eng">English</option>
+                <option value="spa">Spanish</option>
+                <option value="fra">French</option>
+                <option value="deu">German</option>
+                <option value="chi_sim">Chinese (Simplified)</option>
+                <option value="jpn">Japanese</option>
+                <option value="ara">Arabic</option>
+                <option value="rus">Russian</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>OCR Engine</label>
+              <select id="ocr-engine">
+                <option value="fast">Fast (Balanced)</option>
+                <option value="accurate">Accurate (Slower)</option>
+                <option value="neural">Neural Network (Best)</option>
+              </select>
+            </div>
+          </div>
         </div>
         <div class="ai-tool">
-          <h4>✂️ Smart Cropping</h4>
-          <p>Auto-detect and crop document edges</p>
-          <input type="checkbox" id="smart-crop" checked>
+          <h4><i class="fas fa-crop"></i> Smart Cropping <span class="badge ai">AI</span></h4>
+          <p>Auto-detect and crop document edges, remove backgrounds and align documents</p>
+          <label><input type="checkbox" id="smart-crop" checked> Enable Smart Cropping</label>
+          <div style="margin-top: 15px; display: none;" id="crop-options">
+            <div class="form-group">
+              <label>Crop Mode</label>
+              <select id="crop-mode">
+                <option value="auto">Auto Detect</option>
+                <option value="margin">Remove Margins</option>
+                <option value="content">Content Only</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label><input type="checkbox" id="remove-bg"> Remove Background</label>
+            </div>
+          </div>
         </div>
         <div class="ai-tool">
-          <h4>🎨 Auto-Enhance</h4>
-          <p>Improve image quality automatically</p>
-          <input type="checkbox" id="auto-enhance" checked>
+          <h4><i class="fas fa-magic"></i> Auto-Enhance <span class="badge ai">AI</span></h4>
+          <p>Automatically improve image quality, adjust contrast and remove noise</p>
+          <label><input type="checkbox" id="auto-enhance" checked> Enable Auto-Enhance</label>
+          <div style="margin-top: 15px; display: none;" id="enhance-options">
+            <div class="form-group">
+              <label>Enhancement Level</label>
+              <select id="enhance-level">
+                <option value="light">Light</option>
+                <option value="medium" selected>Medium</option>
+                <option value="strong">Strong</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label><input type="checkbox" id="fix-perspective"> Fix Perspective</label>
+            </div>
+          </div>
         </div>
         <div class="ai-tool">
-          <h4>🏷️ AI Tagging</h4>
-          <p>Automatically generate PDF tags</p>
-          <input type="checkbox" id="ai-tagging">
+          <h4><i class="fas fa-tags"></i> AI Tagging <span class="badge ai">AI</span></h4>
+          <p>Automatically analyze content and generate PDF tags/metadata</p>
+          <label><input type="checkbox" id="ai-tagging"> Enable AI Tagging</label>
+          <div style="margin-top: 15px; display: none;" id="tagging-options">
+            <div class="form-group">
+              <label>Tagging Mode</label>
+              <select id="tagging-mode">
+                <option value="basic">Basic Tags</option>
+                <option value="detailed">Detailed Tags</option>
+                <option value="smart">Smart Analysis</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label><input type="checkbox" id="generate-keywords"> Generate Keywords</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="advanced-features">
+        <h3><i class="fas fa-star"></i> Premium AI Features</h3>
+        <div class="feature-toggle">
+          <div>
+            <h4><i class="fas fa-font"></i> Handwriting Recognition <span class="badge new">NEW</span></h4>
+            <p>Convert handwritten notes to digital text with 95% accuracy</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="handwriting-recognition">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="feature-toggle">
+          <div>
+            <h4><i class="fas fa-object-group"></i> Object Detection <span class="badge new">BETA</span></h4>
+            <p>Identify and label objects in images automatically</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="object-detection">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="feature-toggle">
+          <div>
+            <h4><i class="fas fa-language"></i> Auto-Translation <span class="badge new">NEW</span></h4>
+            <p>Translate extracted text to 100+ languages</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="auto-translation">
+            <span class="slider"></span>
+          </label>
         </div>
       </div>
     </div>
@@ -235,12 +1488,81 @@
     <!-- Cloud Integration -->
     <div class="tab-content" id="cloud-integration">
       <div class="option-card">
-        <h3>☁️ Cloud Storage</h3>
-        <p>Save your PDF directly to cloud storage</p>
+        <h3><i class="fas fa-cloud-upload-alt"></i> Cloud Storage</h3>
+        <p>Save your PDF directly to cloud storage services</p>
         <div class="action-btns">
-          <button class="cloud-btn" id="googleDriveBtn">Google Drive</button>
-          <button class="cloud-btn" id="dropboxBtn">Dropbox</button>
-          <button class="cloud-btn" id="oneDriveBtn">OneDrive</button>
+          <button class="cloud-btn" id="googleDriveBtn"><i class="fab fa-google-drive"></i> Google Drive</button>
+          <button class="cloud-btn" id="dropboxBtn"><i class="fab fa-dropbox"></i> Dropbox</button>
+          <button class="cloud-btn" id="oneDriveBtn"><i class="fab fa-microsoft"></i> OneDrive</button>
+        </div>
+      </div>
+      
+      <div class="option-card">
+        <h3><i class="fas fa-link"></i> Share Options</h3>
+        <div class="form-group">
+          <label><input type="checkbox" id="generate-share-link"> Generate Shareable Link</label>
+        </div>
+        <div class="form-group" style="display: none;" id="share-options">
+          <label>Link Expiration</label>
+          <select id="link-expiration">
+            <option value="1day">1 Day</option>
+            <option value="1week">1 Week</option>
+            <option value="1month">1 Month</option>
+            <option value="never" selected>Never</option>
+          </select>
+        </div>
+        <div class="form-group" style="display: none;" id="share-permissions">
+          <label>Permissions</label>
+          <select id="link-permissions">
+            <option value="view">View Only</option>
+            <option value="comment">Can Comment</option>
+            <option value="edit">Can Edit</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Enterprise Features -->
+    <div class="tab-content" id="enterprise-features">
+      <div class="option-card">
+        <h3><i class="fas fa-users"></i> Team Collaboration</h3>
+        <div class="form-group">
+          <label><input type="checkbox" id="enable-collaboration"> Enable Real-time Collaboration</label>
+        </div>
+        <div class="form-group" style="display: none;" id="collaboration-options">
+          <label>Team Members</label>
+          <textarea id="team-emails" placeholder="Enter email addresses separated by commas"></textarea>
+        </div>
+      </div>
+      
+      <div class="option-card">
+        <h3><i class="fas fa-barcode"></i> Batch Processing</h3>
+        <div class="form-group">
+          <label><input type="checkbox" id="enable-batch"> Process Multiple Documents</label>
+        </div>
+        <div class="form-group" style="display: none;" id="batch-options">
+          <label>Output Format</label>
+          <select id="batch-output">
+            <option value="single">Single PDF</option>
+            <option value="multiple">Multiple PDFs</option>
+            <option value="zip">ZIP Archive</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="option-card">
+        <h3><i class="fas fa-history"></i> Version Control</h3>
+        <div class="form-group">
+          <label><input type="checkbox" id="enable-versioning"> Enable Document Versioning</label>
+        </div>
+        <div class="form-group" style="display: none;" id="versioning-options">
+          <label>Version History Retention</label>
+          <select id="version-retention">
+            <option value="7days">7 Days</option>
+            <option value="30days">30 Days</option>
+            <option value="90days">90 Days</option>
+            <option value="forever">Forever</option>
+          </select>
         </div>
       </div>
     </div>
@@ -250,280 +1572,32 @@
       <div class="progress-bar" id="progressBar">0%</div>
     </div>
     
+    <!-- Loading Spinner -->
+    <div class="spinner" id="spinner"></div>
+    
     <!-- Main Action Buttons -->
     <div class="action-btns">
-      <button class="main-btn generate-btn" onclick="generatePDF()">✨ Generate PDF</button>
-      <button class="main-btn preview-btn" onclick="previewPDF()">👁️ Preview PDF</button>
+      <button class="main-btn generate-btn" onclick="generatePDF()"><i class="fas fa-magic"></i> Generate PDF</button>
+      <button class="main-btn preview-btn" onclick="previewPDF()"><i class="fas fa-eye"></i> Preview PDF</button>
+      <button class="main-btn cloud-btn" onclick="saveToCloud()"><i class="fas fa-cloud-upload-alt"></i> Save to Cloud</button>
     </div>
   </div>
+  
+  <!-- PDF Preview Modal -->
+  <div class="modal" id="pdfPreviewModal">
+    <div class="modal-content">
+      <button class="close-modal" id="closeModal">&times;</button>
+      <div class="modal-body">
+        <iframe id="pdfPreviewFrame" style="width: 100%; height: 70vh; border: none;"></iframe>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Notification Toast -->
+  <div class="toast" id="toast"></div>
 
-  <script>
-    // Initialize JS PDF
-    const { jsPDF } = window.jspdf;
-    let imageFiles = [];
-    
-    // Dark Mode Toggle
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    darkModeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      darkModeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-    });
-    
-    // Tab System
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    tabBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        tabBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        
-        const tabId = btn.getAttribute('data-tab');
-        document.querySelectorAll('.tab-content').forEach(content => {
-          content.classList.remove('active');
-        });
-        document.getElementById(tabId).classList.add('active');
-      });
-    });
-    
-    // Drag and Drop
-    const dragArea = document.getElementById('dragArea');
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
-      dragArea.addEventListener(event, preventDefaults, false);
-    });
-    
-    function preventDefaults(e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    
-    ['dragenter', 'dragover'].forEach(event => {
-      dragArea.addEventListener(event, () => dragArea.classList.add('active'), false);
-    });
-    
-    ['dragleave', 'drop'].forEach(event => {
-      dragArea.addEventListener(event, () => dragArea.classList.remove('active'), false);
-    });
-    
-    dragArea.addEventListener('drop', handleDrop, false);
-    
-    function handleDrop(e) {
-      const files = e.dataTransfer.files;
-      handleFiles(files);
-    }
-    
-    // File Upload
-    document.getElementById('uploadBtn').addEventListener('click', () => {
-      document.getElementById('image-upload').click();
-    });
-    
-    document.getElementById('image-upload').addEventListener('change', (e) => {
-      handleFiles(e.target.files);
-    });
-    
-    // Handle Uploaded Files
-    function handleFiles(files) {
-      const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
-      const validFiles = Array.from(files).filter(file => validTypes.includes(file.type));
-      
-      if (validFiles.length === 0) {
-        alert('Please upload valid files (JPG, PNG, GIF, WEBP, or PDF)');
-        return;
-      }
-      
-      imageFiles = [...imageFiles, ...validFiles];
-      updatePreview();
-    }
-    
-    // Update Image Preview
-    function updatePreview() {
-      const preview = document.getElementById('images-preview');
-      preview.innerHTML = '';
-      
-      imageFiles.forEach((file, index) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const card = document.createElement('div');
-          card.className = 'image-card';
-          
-          const img = document.createElement('img');
-          img.src = file.type.includes('image') ? e.target.result : 'https://cdn-icons-png.flaticon.com/512/337/337946.png';
-          img.alt = file.name;
-          
-          const actions = document.createElement('div');
-          actions.className = 'image-actions';
-          
-          const removeBtn = document.createElement('button');
-          removeBtn.className = 'action-btn';
-          removeBtn.innerHTML = '×';
-          removeBtn.onclick = () => removeImage(index);
-          
-          actions.appendChild(removeBtn);
-          card.appendChild(img);
-          card.appendChild(actions);
-          preview.appendChild(card);
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-    
-    // Remove Image
-    function removeImage(index) {
-      imageFiles.splice(index, 1);
-      updatePreview();
-    }
-    
-    // Clear All Images
-    function clearAll() {
-      imageFiles = [];
-      updatePreview();
-    }
-    
-    // Reorder Images (TODO: Implement drag-and-drop reordering)
-    function reorderImages() {
-      alert('Drag and drop reordering will be implemented in the next update!');
-    }
-    
-    // Generate PDF (Main Function)
-    async function generatePDF() {
-      if (imageFiles.length === 0) {
-        alert('Please upload at least one file');
-        return;
-      }
-      
-      // Show progress bar
-      const progressContainer = document.getElementById('progressContainer');
-      const progressBar = document.getElementById('progressBar');
-      progressContainer.style.display = 'block';
-      progressBar.style.width = '0%';
-      progressBar.textContent = '0%';
-      
-      try {
-        // Get all settings
-        const pdfName = document.getElementById('pdf-name').value || 'MyDocument';
-        const bgColor = document.getElementById('bg-color').value;
-        const pageSize = document.getElementById('page-size').value;
-        const orientation = document.getElementById('page-orientation').value;
-        const quality = parseFloat(document.getElementById('image-quality').value);
-        const password = document.getElementById('pdf-password').value;
-        const addTOC = document.getElementById('add-toc').checked;
-        const addPageNumbers = document.getElementById('page-numbers').checked;
-        const enableOCR = document.getElementById('enable-ocr').checked;
-        
-        // Initialize PDF
-        const pdf = new jsPDF({
-          orientation: orientation,
-          unit: 'pt',
-          format: pageSize
-        });
-        
-        // Process images
-        for (let i = 0; i < imageFiles.length; i++) {
-          const file = imageFiles[i];
-          
-          // Update progress
-          const progress = Math.round(((i + 1) / imageFiles.length) * 100);
-          progressBar.style.width = `${progress}%`;
-          progressBar.textContent = `${progress}%`;
-          
-          // Add new page (except first)
-          if (i > 0) pdf.addPage();
-          
-          // Handle PDF files (merge)
-          if (file.type === 'application/pdf') {
-            // TODO: Implement PDF merging
-            alert('PDF merging will be implemented in the next update!');
-            continue;
-          }
-          
-          // Handle images
-          const imgData = await loadImage(file, quality);
-          const pageWidth = pdf.internal.pageSize.getWidth();
-          const pageHeight = pdf.internal.pageSize.getHeight();
-          
-          // Add background
-          pdf.setFillColor(bgColor);
-          pdf.rect(0, 0, pageWidth, pageHeight, 'F');
-          
-          // Add image
-          pdf.addImage(imgData, 'JPEG', 20, 20, pageWidth - 40, pageHeight - 40);
-          
-          // OCR Processing
-          if (enableOCR) {
-            const text = await performOCR(imgData);
-            if (text) {
-              pdf.setTextColor('#0000FF');
-              pdf.text(`Extracted Text: ${text.substring(0, 100)}...`, 20, pageHeight - 20);
-            }
-          }
-        }
-        
-        // Add TOC if enabled
-        if (addTOC) {
-          // TODO: Implement table of contents
-        }
-        
-        // Add page numbers if enabled
-        if (addPageNumbers) {
-          const pageCount = pdf.internal.getNumberOfPages();
-          for (let i = 1; i <= pageCount; i++) {
-            pdf.setPage(i);
-            pdf.setFontSize(10);
-            pdf.setTextColor('#666666');
-            pdf.text(`Page ${i} of ${pageCount}`, pdf.internal.pageSize.getWidth() - 50, pdf.internal.pageSize.getHeight() - 20);
-          }
-        }
-        
-        // Password protect if specified
-        if (password) {
-          // TODO: Implement password protection
-          alert('Password protection will be implemented in the next update!');
-        }
-        
-        // Save PDF
-        pdf.save(`${pdfName}.pdf`);
-      } catch (error) {
-        console.error('Error generating PDF:', error);
-        alert('An error occurred while generating the PDF. Please try again.');
-      } finally {
-        progressContainer.style.display = 'none';
-      }
-    }
-    
-    // Load Image with Quality Control
-    function loadImage(file, quality = 0.9) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-          resolve(canvas.toDataURL('image/jpeg', quality));
-        };
-        img.src = URL.createObjectURL(file);
-      });
-    }
-    
-    // Perform OCR using Tesseract.js
-    async function performOCR(imageData) {
-      try {
-        const { data: { text } } = await Tesseract.recognize(imageData, 'eng');
-        return text.trim();
-      } catch (error) {
-        console.error('OCR Error:', error);
-        return null;
-      }
-    }
-    
-    // Preview PDF (TODO: Implement proper preview)
-    function previewPDF() {
-      alert('PDF preview will open in a new tab in the final version!');
-    }
-    
-    // Cloud Integration (TODO: Implement)
-    document.getElementById('googleDriveBtn').addEventListener('click', () => {
-      alert('Google Drive integration coming soon!');
-    });
-  </script>
-</body>
-</html>
+ 
+
+<script src="script.js"></script>
+   </body>
+   </html>
