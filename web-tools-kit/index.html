@@ -13,7 +13,7 @@
 
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #4facfe, #00f2fe); /* DON'T CHANGE */
+      background: linear-gradient(to right, #4facfe, #00f2fe);
       color: white;
       text-align: center;
       padding: 40px;
@@ -24,7 +24,7 @@
     }
 
     body.dark-mode {
-      background: black; /* only dark mode bg changes */
+      background: black;
       color: white;
     }
 
@@ -50,6 +50,7 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       position: relative;
       z-index: 10;
+      display: inline-block;
     }
 
     .tool:hover {
@@ -58,9 +59,19 @@
       transform: scale(1.05);
     }
 
+    /* Dark mode styles for tools */
     body.dark-mode .tool {
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(255, 255, 255, 0.1); /* light transparent bg */
+      color: #fff; /* white text */
+      box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    body.dark-mode .tool:hover {
+      background-color: #4facfe;
       color: white;
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #4facfe;
     }
 
     .navbar {
@@ -86,6 +97,7 @@
       color: white;
     }
 
+    /* Simple fixed emoji toggle button */
     .theme-toggle {
       position: fixed;
       top: 20px;
@@ -96,13 +108,15 @@
       color: white;
       cursor: pointer;
       z-index: 999;
+      padding: 0;
+      line-height: 1;
     }
 
     .theme-toggle:hover {
       transform: scale(1.2);
+      transition: transform 0.3s ease;
     }
 
-    /* 🌌 Star effect only for dark mode */
     .starfield {
       position: fixed;
       top: 0;
@@ -127,12 +141,8 @@
     }
 
     @keyframes blink {
-      0%, 100% {
-        opacity: 0.2;
-      }
-      50% {
-        opacity: 1;
-      }
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
     }
 
     @media (max-width: 600px) {
@@ -157,7 +167,7 @@
 
   <h1>🧰 Welcome to Anurag's Web Tools Kit</h1>
 
-  <div class="toolbox">
+  <div class="toolbox" id="toolbox">
     <a href="tools/clock/clock.html" class="tool">🕒 Digital Clock</a>
     <a href="tools/dice/index.html" class="tool">🎲 Dice Roller</a>
     <a href="tools/button/index.html" class="tool">✅ Button</a>
@@ -223,14 +233,24 @@
 
     window.addEventListener("DOMContentLoaded", () => {
       let theme = localStorage.getItem("theme");
-
       if (!theme) {
-        const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        theme = systemPrefersDark ? "dark" : "light";
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        theme = prefersDark ? "dark" : "light";
         localStorage.setItem("theme", theme);
       }
-
       applyTheme(theme);
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById("search");
+    const tools = document.querySelectorAll(".tool");
+
+    searchInput.addEventListener("input", () => {
+      const value = searchInput.value.toLowerCase();
+      tools.forEach(tool => {
+        const text = tool.textContent.toLowerCase();
+        tool.style.display = text.includes(value) ? "inline-block" : "none";
+      });
     });
   </script>
 </body>
