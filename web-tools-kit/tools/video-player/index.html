@@ -2,20 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Simple Video Player with Next & Previous</title>
+  <title>🎥 Beautiful Video Player</title>
   <style>
     body {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
       text-align: center;
-      background: #f2f2f2;
-      font-family: Arial, sans-serif;
       padding: 40px;
     }
 
+    h2, h3 {
+      margin-top: 10px;
+    }
+
     video {
-      border: 4px solid #333;
+      border: 4px solid #fff;
       border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
       margin-bottom: 10px;
+      width: 90%;
+      max-width: 720px;
     }
 
     button {
@@ -33,16 +40,11 @@
     button:hover {
       background-color: #45a049;
     }
-
-    h3 {
-      margin-top: 10px;
-      color: #333;
-    }
   </style>
 </head>
 <body>
 
-  <h2>🎥 My Simple Video Player</h2>
+  <h2>🎥 Beautiful Video Player</h2>
 
   <!-- Next and Previous Buttons -->
   <div>
@@ -51,13 +53,13 @@
   </div>
 
   <!-- Video Player -->
-  <video id="myVideo" width="640" height="360" controls>
-    <source src="videos/intro.mp4" type="video/mp4" />
+  <video id="myVideo" controls>
+    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
     Your browser does not support HTML5 video.
   </video>
 
   <!-- Current video name -->
-  <h3 id="videoTitle">Intro Video</h3>
+  <h3 id="videoTitle">Nature in 4K</h3>
 
   <!-- Control Buttons -->
   <div>
@@ -71,38 +73,45 @@
 
   <script>
     const videos = [
-      { name: "Intro Video", src: "videos/intro.mp4" },
-      { name: "Tutorial", src: "videos/tutorial.mp4" },
-      { name: "Fun Time", src: "videos/fun.mp4" }
+      {
+        title: "Nature in 4K",
+        src: "https://www.w3schools.com/html/mov_bbb.mp4"
+      },
+      {
+        title: "Space View 🌌",
+        src: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+      },
+      {
+        title: "Waves and Beach 🌊",
+        src: "https://media.w3.org/2010/05/sintel/trailer_hd.mp4"
+      },
+      {
+        title: "lehanga",
+        src: "lehanga.mp4"
+      }
     ];
 
     const video = document.getElementById("myVideo");
     const title = document.getElementById("videoTitle");
 
-    let currentIndex = 0;  // Track current video index
+    let currentIndex = 0;
 
-    // Function to load video by index
     function loadVideo(index) {
       currentIndex = index;
-      if (currentIndex < 0) currentIndex = videos.length - 1;       // Loop back to last video
-      if (currentIndex >= videos.length) currentIndex = 0;          // Loop back to first video
+      if (currentIndex < 0) currentIndex = videos.length - 1;
+      if (currentIndex >= videos.length) currentIndex = 0;
       video.src = videos[currentIndex].src;
-      title.innerText = videos[currentIndex].name;
+      title.innerText = videos[currentIndex].title;
+      video.load();
       video.play();
     }
 
-    // Initial load
+    // Load first video
     loadVideo(currentIndex);
 
-    // Buttons
-    document.getElementById("nextBtn").addEventListener("click", () => {
-      loadVideo(currentIndex + 1);
-    });
-
-    document.getElementById("prevBtn").addEventListener("click", () => {
-      loadVideo(currentIndex - 1);
-    });
-
+    // Button Event Listeners
+    document.getElementById("nextBtn").addEventListener("click", () => loadVideo(currentIndex + 1));
+    document.getElementById("prevBtn").addEventListener("click", () => loadVideo(currentIndex - 1));
     document.getElementById("playBtn").addEventListener("click", () => video.play());
     document.getElementById("pauseBtn").addEventListener("click", () => video.pause());
     document.getElementById("rewindBtn").addEventListener("click", () => video.currentTime -= 5);
@@ -112,4 +121,4 @@
   </script>
 
 </body>
-</html>  
+</html>
