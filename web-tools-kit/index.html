@@ -2,73 +2,264 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>🧰 Anurag's Web Tools Kit</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      text-align: center;
+      color: white;
+      padding: 40px;
+      transition: background 0.5s ease, color 0.5s ease;
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    body.dark-mode {
+      background: #000;
+      color: #fff !important;
+      overflow: hidden;
+    }
+
+    .toolbox {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 40px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .tool {
+      background-color: white;
+      color: #4facfe;
+      text-decoration: none;
+      padding: 20px 30px;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: bold;
+      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      position: relative;
+      z-index: 10;
+    }
+
+    body.dark-mode .tool {
+      background-color: #1e1e1e;
+      color: #fff;
+      border: 1px solid #444;
+    }
+
+    .tool:hover {
+      background-color: #4facfe;
+      color: white;
+    }
+
+    .navbar {
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .search-container {
+      width: 300px;
+      position: relative;
+    }
+
+    #search {
+      width: 100%;
+      height: 40px;
+      padding: 0 20px;
+      border: 2px solid transparent;
+      border-radius: 30px;
+      outline: none;
+      background: #fff;
+      color: #333;
+      font-size: 16px;
+      font-family: 'Segoe UI', sans-serif;
+      transition: all 0.3s ease-in-out;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 10;
+    }
+
+    body.dark-mode #search {
+      background-color: #2a2a2a;
+      color: white;
+      border: 1px solid #555;
+    }
+
+    #search::placeholder {
+      color: #aaa;
+      font-style: italic;
+    }
+
+    #search:focus {
+      border: 2px solid #6a5acd;
+      box-shadow: 0 0 10px #6a5acd88;
+      transform: scale(1.03);
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      font-size: 30px;
+      cursor: pointer;
+      color: white;
+      transition: color 0.3s ease;
+      z-index: 1000;
+      user-select: none;
+    }
+
+    .theme-toggle:hover {
+      color: #4facfe;
+    }
+
+    /* स्टारफील्ड कंटेनर */
+    .starfield {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+      background: transparent;
+
+      /* फेड इन-आउट ट्रांज़िशन */
+      opacity: 0;
+      transition: opacity 1s ease;
+      will-change: opacity;
+    }
+
+    /* दिखाओ फेड इन */
+    .starfield.visible {
+      opacity: 1;
+    }
+
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation-name: twinkle;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-in-out;
+      will-change: opacity, transform;
+    }
+
+    @keyframes twinkle {
+      0%,
+      100% {
+        opacity: 0.2;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="starfield" id="starfield"></div>
 
-  <!--
-<div class="navbar">
-  <input type="search" name="" id="search" placeholder="search here ">
-</div>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle Dark Mode">🌙</button>
 
--->
-
-
-
-
-<!-- HTML -->
-<div class="navbar">
-  <div class="search-container">
-    <input type="search" id="search" placeholder="🔍 Search something cool...">
+  <div class="navbar">
+    <div class="search-container">
+      <input type="search" id="search" placeholder="🔍 Search something cool..." />
+    </div>
   </div>
-</div>
-
 
   <h1>🧰 Welcome to Anurag's Web Tools Kit</h1>
+
   <div class="toolbox">
-    <!--
     <a href="tools/clock/clock.html" class="tool">🕒 Digital Clock</a>
     <a href="tools/dice/index.html" class="tool">🎲 Dice Roller</a>
-    <a href="tools/button/index.html" class="tool">✅button</a>
-    <a href="tools/Bulb On/Off Toggle/index.html" class="tool">💡Bulb on/off</a>
-    <a href="tools/password show/hide/index.html" class="tool"> 🔑password Show/hide</a>
-    <a href="tools/counter app/index.html" class="tool">Counter</a>
-    <a href="tools/character-count/index.html" class="tool"> character-count</a>
-    <a href="tools/to-do/index.html" class="tool">to-do list</a>
-    <a href="tools/image slider/index.html" class="tool">image-slider</a>
-    <a href="tools/music-player/index.html" class="tool">🎵Music-player</a>
-    <a href="tools/video-player/index.html" class="tool">🎵video-player</a>
-    <a href="tools/netlify-audio/index.html" class="tool">🎵netlify-audio</a>
-    <a href="tools/neo-videoplayer/index.html" class="tool">🎵neo-videoplayer</a>
-     <a href="tools/pdf-maker/index.html" class="tool">🎵neo-videoplayer</a>
-  -->
-
-
-
-<a href="tools/clock/clock.html" class="tool">🕒 Digital Clock</a>
-<a href="tools/dice/index.html" class="tool">🎲 Dice Roller</a>
-<a href="tools/button/index.html" class="tool">✅ Button</a>
-<a href="tools/Bulb On/Off Toggle/index.html" class="tool">💡 Bulb On/Off</a>
-<a href="tools/password show/hide/index.html" class="tool">🔑 Password Show/Hide</a>
-<a href="tools/counter app/index.html" class="tool">🧮 Counter</a>
-<a href="tools/character-count/index.html" class="tool">🔤 Character Count</a>
-<a href="tools/to-do/index.html" class="tool">📝 To-Do List</a>
-<a href="tools/image slider/index.html" class="tool">🖼️ Image Slider</a>
-<a href="tools/music-player/index.html" class="tool">🎵 Music Player</a>
-<a href="tools/video-player/index.html" class="tool">🎬 Video Player</a>
-<a href="tools/netlify-audio/index.html" class="tool">🎧 Netlify Audio</a>
-<a href="tools/neo-videoplayer/index.html" class="tool">📽️ Neo Video Player</a>
-<a href="tools/pdf-maker/index.html" class="tool">📄 PDF Maker</a>
-<a href="tools/tic-toe/index.html" class="tool">🎮 Tic Tac Toe Game</a>
-<a href="tools/flash-cards/index.html" class="tool">🃏 Flash Cards</a>
-<a href="tools/follower-page/index.html" class="tool">👤 Anurag followers</a>
-
-
-    <!-- आगे जैसे-जैसे project सीखो, और जोड़ते जाओ -->
+    <a href="tools/button/index.html" class="tool">✅ Button</a>
+    <a href="tools/Bulb On/Off Toggle/index.html" class="tool">💡 Bulb On/Off</a>
+    <a href="tools/password show/hide/index.html" class="tool">🔑 Password Show/Hide</a>
+    <a href="tools/counter app/index.html" class="tool">🧮 Counter</a>
+    <a href="tools/character-count/index.html" class="tool">🔤 Character Count</a>
+    <a href="tools/to-do/index.html" class="tool">📝 To-Do List</a>
+    <a href="tools/image slider/index.html" class="tool">🖼️ Image Slider</a>
+    <a href="tools/music-player/index.html" class="tool">🎵 Music Player</a>
+    <a href="tools/video-player/index.html" class="tool">🎬 Video Player</a>
+    <a href="tools/netlify-audio/index.html" class="tool">🎧 Netlify Audio</a>
+    <a href="tools/neo-videoplayer/index.html" class="tool">📽️ Neo Video Player</a>
+    <a href="tools/pdf-maker/index.html" class="tool">📄 PDF Maker</a>
+    <a href="tools/tic-toe/index.html" class="tool">🎮 Tic Tac Toe Game</a>
+    <a href="tools/flash-cards/index.html" class="tool">🃏 Flash Cards</a>
+    <a href="tools/follower-page/index.html" class="tool">👤 Anurag followers</a>
   </div>
+
+  <script>
+    const starfield = document.getElementById('starfield');
+    const themeToggle = document.getElementById('themeToggle');
+    let starsCreated = false;
+
+    function createStar() {
+      const star = document.createElement('div');
+      star.classList.add('star');
+
+      const size = Math.random() * 2 + 1;
+      star.style.width = size + 'px';
+      star.style.height = size + 'px';
+
+      star.style.top = Math.random() * 100 + 'vh';
+      star.style.left = Math.random() * 100 + 'vw';
+
+      star.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+
+      return star;
+    }
+
+    function addStars(count = 80) {
+      if (starsCreated) return;
+      for (let i = 0; i < count; i++) {
+        const star = createStar();
+        starfield.appendChild(star);
+      }
+      starsCreated = true;
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+
+      if (document.body.classList.contains('dark-mode')) {
+        addStars();
+        starfield.classList.add('visible');
+        themeToggle.textContent = '☀️';  // Light mode icon on dark mode
+      } else {
+        starfield.classList.remove('visible');
+        themeToggle.textContent = '🌙';  // Dark mode icon on light mode
+      }
+    }
+
+    themeToggle.addEventListener('click', toggleTheme);
+
+    window.onload = () => {
+      if (document.body.classList.contains('dark-mode')) {
+        addStars();
+        starfield.classList.add('visible');
+        themeToggle.textContent = '☀️';
+      } else {
+        starfield.classList.remove('visible');
+        themeToggle.textContent = '🌙';
+      }
+    };
+  </script>
 </body>
 
 </html>
