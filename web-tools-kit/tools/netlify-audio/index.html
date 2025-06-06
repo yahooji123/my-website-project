@@ -64,8 +64,7 @@
       outline: none;
       margin-bottom: 15px;
       background: transparent;
-  appearance: none;
-
+      appearance: none;
     }
 
     .controls {
@@ -150,12 +149,153 @@
       color: #ccc;
       margin-top: 6px;
     }
+
+    #darkModeToggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      font-size: 22px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* 🌞 Light Mode Styling */
+    body.light-mode {
+      background: linear-gradient(135deg, #dff6ff, #ffffff);
+      color: #111;
+    }
+
+    body.light-mode .container {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(15px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    body.light-mode h1 {
+      color: #0077b6;
+    }
+
+    body.light-mode #song-name {
+      color: #ff6f00;
+    }
+
+    body.light-mode .controls button,
+    body.light-mode input[type="file"] {
+      color: #0077b6;
+      border-color: #0077b6;
+      background: rgba(0, 119, 182, 0.05);
+    }
+
+    body.light-mode .controls button:hover,
+    body.light-mode input[type="file"]:hover {
+      background: rgba(0, 119, 182, 0.2);
+    }
+
+    body.light-mode .progress-container {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    body.light-mode .progress {
+      background: #0077b6;
+    }
+
+    body.light-mode .bar {
+      background: #0077b6;
+    }
+
+    body.light-mode .time-display {
+      color: #444;
+    }
+
+    /* 📱 Responsive Design */
+    @media screen and (max-width: 480px) {
+      h1 {
+        font-size: 1.3rem;
+      }
+
+      .container {
+        padding: 15px;
+        width: 95%;
+        max-width: 100%;
+        border-radius: 16px;
+      }
+
+      audio {
+        width: 100%;
+      }
+
+      .controls button {
+        font-size: 0.8rem;
+        padding: 8px 10px;
+      }
+
+      input[type="file"] {
+        font-size: 0.8rem;
+        padding: 8px 10px;
+        width: 100%;
+      }
+
+      .wave {
+        gap: 4px;
+      }
+
+      .bar {
+        width: 4px;
+      }
+
+      .time-display {
+        font-size: 0.8rem;
+      }
+
+      #darkModeToggle {
+        font-size: 20px;
+        top: 10px;
+        right: 10px;
+      }
+    }
+
+    @media screen and (min-width: 481px) and (max-width: 768px) {
+      .container {
+        padding: 20px;
+        width: 90%;
+        max-width: 100%;
+        border-radius: 20px;
+      }
+
+      h1 {
+        font-size: 1.7rem;
+      }
+
+      .controls button {
+        font-size: 0.9rem;
+      }
+
+      input[type="file"] {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media screen and (min-width: 769px) and (max-width: 1024px) {
+      .container {
+        width: 80%;
+      }
+    }
+
+    @media screen and (min-width: 1025px) {
+      .container {
+        width: 60%;
+      }
+    }
   </style>
 </head>
 <body>
   <canvas id="bg-canvas"></canvas>
   <div class="container">
     <h1>Ultra Music Player 🚀</h1>
+    <button id="darkModeToggle">🌙</button>
+
     <p id="song-name">No song loaded</p>
     <audio id="audio" controls></audio>
     <div class="controls">
@@ -233,16 +373,13 @@
       requestAnimationFrame(drawVisualizer);
       analyser.getByteFrequencyData(dataArray);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       const barWidth = canvas.width / dataArray.length * 2.5;
       let x = 0;
-
       for (let i = 0; i < dataArray.length; i++) {
         const barHeight = dataArray[i];
         const r = barHeight + 25 * (i / dataArray.length);
         const g = 250 * (i / dataArray.length);
         const b = 50;
-
         ctx.fillStyle = `rgb(${r},${g},${b})`;
         ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
         x += barWidth + 1;
@@ -307,6 +444,12 @@
       } else if (e.code === 'ArrowLeft') {
         skipBackward();
       }
+    });
+
+    const darkModeToggle = document.getElementById("darkModeToggle");
+    darkModeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("light-mode");
+      darkModeToggle.textContent = document.body.classList.contains("light-mode") ? "☀️" : "🌙";
     });
   </script>
 </body>
