@@ -71,6 +71,8 @@
       display: flex;
       justify-content: space-between;
       margin-top: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
     .controls button {
@@ -81,12 +83,15 @@
       border-radius: 12px;
       cursor: pointer;
       transition: background 0.3s;
+      flex: 1 1 22%;
+      min-width: 60px;
     }
 
     .controls button:hover {
       background-color: rgba(0, 255, 224, 0.2);
     }
 
+    /* Transparent file input with custom style */
     input[type="file"] {
       margin-top: 25px;
       background: transparent;
@@ -96,9 +101,30 @@
       border-radius: 20px;
       cursor: pointer;
       transition: background 0.3s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      position: relative;
+      overflow: hidden;
     }
 
-    input[type="file"]:hover {
+    /* Hide default file selector button */
+    input[type="file"]::-webkit-file-upload-button {
+      visibility: hidden;
+    }
+
+    input[type="file"]::before {
+      content: 'Choose file';
+      color: #00ffe0;
+      display: inline-block;
+      background: transparent;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    input[type="file"]:hover::before {
       background: rgba(0, 255, 224, 0.2);
     }
 
@@ -158,6 +184,23 @@
       font-size: 22px;
       border: none;
       cursor: pointer;
+    }
+
+    /* Fullscreen button styling */
+    #fullscreenBtn {
+      background-color: transparent;
+      color: #00ffe0;
+      border: 1px solid #00ffe0;
+      padding: 10px 15px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s;
+      flex: 1 1 22%;
+      min-width: 60px;
+    }
+
+    #fullscreenBtn:hover {
+      background-color: rgba(0, 255, 224, 0.2);
     }
 
     /* 🌞 Light Mode Styling */
@@ -302,6 +345,7 @@
       <button onclick="skipBackward()">⏮ 10s</button>
       <button onclick="togglePlay()">▶️/⏸</button>
       <button onclick="skipForward()">10s ⏭</button>
+      <button id="fullscreenBtn">⛶</button>
     </div>
     <div class="progress-container" id="progress-container">
       <div class="progress" id="progress"></div>
@@ -317,7 +361,7 @@
       <div class="bar"></div>
       <div class="bar"></div>
     </div>
-    <input type="file" id="fileInput" accept="audio/*">
+    <input type="file" id="fileInput" accept="audio/*" />
   </div>
 
   <script>
@@ -373,7 +417,7 @@
       requestAnimationFrame(drawVisualizer);
       analyser.getByteFrequencyData(dataArray);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const barWidth = canvas.width / dataArray.length * 2.5;
+      const barWidth = (canvas.width / dataArray.length) * 2.5;
       let x = 0;
       for (let i = 0; i < dataArray.length; i++) {
         const barHeight = dataArray[i];
@@ -450,6 +494,17 @@
     darkModeToggle.addEventListener("click", () => {
       document.body.classList.toggle("light-mode");
       darkModeToggle.textContent = document.body.classList.contains("light-mode") ? "☀️" : "🌙";
+    });
+
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    fullscreenBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
     });
   </script>
 </body>

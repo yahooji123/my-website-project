@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎶 Ultra Music Player</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    canvas#bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 40px;
+      border-radius: 30px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+      z-index: 2;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #00ffe0;
+      margin-bottom: 20px;
+    }
+
+    #song-name {
+      font-size: 1.1em;
+      margin-bottom: 15px;
+      color: #facc15;
+    }
+
+    audio {
+      width: 100%;
+      border-radius: 12px;
+      outline: none;
+      margin-bottom: 15px;
+      background: transparent;
+      appearance: none;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .controls button {
+      background-color: transparent;
+      color: #00ffe0;
+      border: 1px solid #00ffe0;
+      padding: 10px 15px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s;
+      flex: 1 1 22%;
+      min-width: 60px;
+    }
+
+    .controls button:hover {
+      background-color: rgba(0, 255, 224, 0.2);
+    }
+
+    /* Transparent file input with custom style */
+    input[type="file"] {
+      margin-top: 25px;
+      background: transparent;
+      color: #00ffe0;
+      border: 1px solid #00ffe0;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Hide default file selector button */
+    input[type="file"]::-webkit-file-upload-button {
+      visibility: hidden;
+    }
+
+    input[type="file"]::before {
+      content: 'Choose file';
+      color: #00ffe0;
+      display: inline-block;
+      background: transparent;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    input[type="file"]:hover::before {
+      background: rgba(0, 255, 224, 0.2);
+    }
+
+    .wave {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 25px;
+    }
+
+    .bar {
+      width: 6px;
+      height: 15px;
+      background: #00ffe0;
+      animation: wave 1s infinite ease-in-out;
+    }
+
+    .bar:nth-child(2) { animation-delay: 0.1s; }
+    .bar:nth-child(3) { animation-delay: 0.2s; }
+    .bar:nth-child(4) { animation-delay: 0.3s; }
+    .bar:nth-child(5) { animation-delay: 0.4s; }
+
+    @keyframes wave {
+      0%, 100% { height: 15px; }
+      50% { height: 35px; }
+    }
+
+    .progress-container {
+      background: rgba(255, 255, 255, 0.2);
+      height: 10px;
+      width: 100%;
+      border-radius: 50px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    .progress {
+      height: 100%;
+      background: #00ffe0;
+      width: 0%;
+      border-radius: 50px;
+    }
+
+    .time-display {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9em;
+      color: #ccc;
+      margin-top: 6px;
+    }
+
+    #darkModeToggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      font-size: 22px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Fullscreen button styling */
+    #fullscreenBtn {
+      background-color: transparent;
+      color: #00ffe0;
+      border: 1px solid #00ffe0;
+      padding: 10px 15px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s;
+      flex: 1 1 22%;
+      min-width: 60px;
+    }
+
+    #fullscreenBtn:hover {
+      background-color: rgba(0, 255, 224, 0.2);
+    }
+
+    /* 🌞 Light Mode Styling */
+    body.light-mode {
+      background: linear-gradient(135deg, #dff6ff, #ffffff);
+      color: #111;
+    }
+
+    body.light-mode .container {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(15px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    body.light-mode h1 {
+      color: #0077b6;
+    }
+
+    body.light-mode #song-name {
+      color: #ff6f00;
+    }
+
+    body.light-mode .controls button,
+    body.light-mode input[type="file"] {
+      color: #0077b6;
+      border-color: #0077b6;
+      background: rgba(0, 119, 182, 0.05);
+    }
+
+    body.light-mode .controls button:hover,
+    body.light-mode input[type="file"]:hover {
+      background: rgba(0, 119, 182, 0.2);
+    }
+
+    body.light-mode .progress-container {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    body.light-mode .progress {
+      background: #0077b6;
+    }
+
+    body.light-mode .bar {
+      background: #0077b6;
+    }
+
+    body.light-mode .time-display {
+      color: #444;
+    }
+
+    /* 📱 Responsive Design */
+    @media screen and (max-width: 480px) {
+      h1 {
+        font-size: 1.3rem;
+      }
+
+      .container {
+        padding: 15px;
+        width: 95%;
+        max-width: 100%;
+        border-radius: 16px;
+      }
+
+      audio {
+        width: 100%;
+      }
+
+      .controls button {
+        font-size: 0.8rem;
+        padding: 8px 10px;
+      }
+
+      input[type="file"] {
+        font-size: 0.8rem;
+        padding: 8px 10px;
+        width: 100%;
+      }
+
+      .wave {
+        gap: 4px;
+      }
+
+      .bar {
+        width: 4px;
+      }
+
+      .time-display {
+        font-size: 0.8rem;
+      }
+
+      #darkModeToggle {
+        font-size: 20px;
+        top: 10px;
+        right: 10px;
+      }
+    }
+
+    @media screen and (min-width: 481px) and (max-width: 768px) {
+      .container {
+        padding: 20px;
+        width: 90%;
+        max-width: 100%;
+        border-radius: 20px;
+      }
+
+      h1 {
+        font-size: 1.7rem;
+      }
+
+      .controls button {
+        font-size: 0.9rem;
+      }
+
+      input[type="file"] {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media screen and (min-width: 769px) and (max-width: 1024px) {
+      .container {
+        width: 80%;
+      }
+    }
+
+    @media screen and (min-width: 1025px) {
+      .container {
+        width: 60%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <div class="container">
+    <h1>Ultra Music Player 🚀</h1>
+    <button id="darkModeToggle">🌙</button>
+
+    <p id="song-name">No song loaded</p>
+    <audio id="audio" ></audio>
+    <div class="controls">
+      <button onclick="skipBackward()">⏮ 10s</button>
+      <button onclick="togglePlay()">▶️/⏸</button>
+      <button onclick="skipForward()">10s ⏭</button>
+      <button id="fullscreenBtn">⛶</button>
+    </div>
+    <div class="progress-container" id="progress-container">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="time-display">
+      <span id="current-time">0:00</span>
+      <span id="total-duration">0:00</span>
+    </div>
+    <div class="wave" id="wave" style="display: none">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <input type="file" id="fileInput" accept="audio/*" />
+  </div>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const audio = document.getElementById("audio");
+    const songName = document.getElementById("song-name");
+    const wave = document.getElementById("wave");
+    const progress = document.getElementById("progress");
+    const progressContainer = document.getElementById("progress-container");
+    const currentTimeEl = document.getElementById("current-time");
+    const totalDurationEl = document.getElementById("total-duration");
+    const canvas = document.getElementById("bg-canvas");
+    const ctx = canvas.getContext("2d");
+    let isPlaying = false;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    let audioCtx, analyser, source, dataArray;
+
+    fileInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const fileURL = URL.createObjectURL(file);
+        audio.src = fileURL;
+        songName.innerText = file.name;
+        audio.play();
+        isPlaying = true;
+      }
+    });
+
+    audio.addEventListener("play", () => {
+      wave.style.display = "flex";
+      isPlaying = true;
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        source = audioCtx.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        analyser.fftSize = 256;
+        const bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+        drawVisualizer();
+      }
+    });
+
+    function drawVisualizer() {
+      requestAnimationFrame(drawVisualizer);
+      analyser.getByteFrequencyData(dataArray);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const barWidth = (canvas.width / dataArray.length) * 2.5;
+      let x = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        const barHeight = dataArray[i];
+        const r = barHeight + 25 * (i / dataArray.length);
+        const g = 250 * (i / dataArray.length);
+        const b = 50;
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        x += barWidth + 1;
+      }
+    }
+
+    audio.addEventListener("pause", () => {
+      wave.style.display = "none";
+      isPlaying = false;
+    });
+
+    audio.addEventListener("ended", () => {
+      wave.style.display = "none";
+      isPlaying = false;
+    });
+
+    audio.addEventListener("loadedmetadata", () => {
+      totalDurationEl.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progress.style.width = percent + "%";
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+    });
+
+    progressContainer.addEventListener("click", (e) => {
+      const width = progressContainer.clientWidth;
+      const clickX = e.offsetX;
+      const duration = audio.duration;
+      audio.currentTime = (clickX / width) * duration;
+    });
+
+    function togglePlay() {
+      if (isPlaying) {
+        audio.pause();
+      } else {
+        audio.play();
+      }
+    }
+
+    function skipForward() {
+      audio.currentTime += 10;
+    }
+
+    function skipBackward() {
+      audio.currentTime -= 10;
+    }
+
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlay();
+      } else if (e.code === 'ArrowRight') {
+        skipForward();
+      } else if (e.code === 'ArrowLeft') {
+        skipBackward();
+      }
+    });
+
+    const darkModeToggle = document.getElementById("darkModeToggle");
+    darkModeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("light-mode");
+      darkModeToggle.textContent = document.body.classList.contains("light-mode") ? "☀️" : "🌙";
+    });
+
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    fullscreenBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
