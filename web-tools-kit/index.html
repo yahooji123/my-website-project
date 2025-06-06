@@ -51,20 +51,34 @@
       position: relative;
       z-index: 10;
       display: inline-block;
+
+      /* Fade-in + scale animation */
+      opacity: 0;
+      transform: scale(0.9);
+      animation: fadeInScale 0.3s forwards;
+    }
+
+    @keyframes fadeInScale {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     .tool:hover {
       background-color: #4facfe;
       color: white;
       transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(79, 172, 254, 0.7);
     }
 
     /* Dark mode styles for tools */
     body.dark-mode .tool {
       background-color: rgba(255, 255, 255, 0.1); /* light transparent bg */
       color: #fff; /* white text */
-      box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+      box-shadow: none;
       border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: fadeInScale 0.3s forwards; /* keep animation on dark mode too */
     }
 
     body.dark-mode .tool:hover {
@@ -110,11 +124,12 @@
       z-index: 999;
       padding: 0;
       line-height: 1;
+      user-select: none;
+      transition: transform 0.2s ease;
     }
 
     .theme-toggle:hover {
       transform: scale(1.2);
-      transition: transform 0.3s ease;
     }
 
     .starfield {
