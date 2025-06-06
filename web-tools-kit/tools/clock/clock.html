@@ -1,84 +1,403 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Attractive Digital Clock</title>
+  <title>Enhanced Blue Analog Clock with Elegant Design</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
-
+    /* बॉडी को पूरी स्क्रीन पर फैलाना और बैकग्राउंड नीला-ग्रेडिएंट देना */
     body {
-      background: linear-gradient(to right, #00c6ff, #0072ff);
-      color: #00e5ff; /* Neon Blue */
-      font-family: 'Orbitron', monospace;
-      font-weight: 700;
-      font-size: 90px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
       margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #0a1929, #041a2e, #0d2b4e);
+      display: flex;
+      justify-content: center;
+      align-items: center;
       user-select: none;
+      font-family: 'Arial', sans-serif;
       overflow: hidden;
     }
 
-    #clock {
-      position: relative;
-      padding: 30px 60px;
-      border: 4px solid #00e5ff;
-      border-radius: 20px;
-      background: rgba(0, 0, 0, 0.3);
-      box-shadow:
-        0 0 10px #00e5ff,
-        0 0 40px #00e5ff,
-        0 0 80px #00e5ff;
-      letter-spacing: 12px;
-      text-shadow:
-        0 0 10px #00e5ff,
-        0 0 20px #00e5ff,
-        0 0 30px #00e5ff;
-      animation: pulse 2s infinite alternate;
-      user-select: none;
+    /* बैकग्राउंड में स्टार इफेक्ट */
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    
+    .star {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      animation: twinkle 2s infinite alternate;
+    }
+    
+    @keyframes twinkle {
+      0% { opacity: 0.3; }
+      100% { opacity: 1; }
     }
 
-    /* Blue glowing pulse animation */
+    /* घड़ी का बाहरी गोल डिब्बा */
+    .clock {
+      position: relative;
+      width: 380px;
+      height: 380px;
+      border: 15px solid #1e90ff;
+      border-radius: 50%;
+      background: #031b34;
+      box-shadow:
+        0 0 40px rgba(30, 144, 255, 0.6),
+        inset 0 0 50px rgba(30, 144, 255, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* घड़ी के अंदर का डिज़ाइन */
+    .clock-face {
+      position: relative;
+      width: 92%;
+      height: 92%;
+      border-radius: 50%;
+      background: radial-gradient(circle, #041f3a 0%, #030f1a 100%);
+      box-shadow: 
+        inset 0 0 30px rgba(0, 0, 0, 0.8),
+        0 0 20px rgba(30, 144, 255, 0.3);
+    }
+
+    /* सेंटर पॉइंट जो पिनों का बेस होगा */
+    .center {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: #1e90ff;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 
+        0 0 15px #1e90ff,
+        0 0 5px #00bfff;
+      z-index: 10;
+    }
+    
+    /* सेंटर पॉइंट का इनर डॉट */
+    .center::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #00bfff;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 5px #00bfff;
+    }
+
+    /* नंबर के लिए स्टाइल */
+    .number {
+      position: absolute;
+      color: #7fc7ff;
+      font-size: 26px;
+      font-weight: bold;
+      user-select: none;
+      text-shadow: 
+        0 0 8px #1e90ff,
+        0 0 3px #00bfff;
+      transform: translate(-50%, -50%);
+    }
+
+    /* मिनट/सेकंड मार्कर्स */
+    .marker {
+      position: absolute;
+      background: #3a7bb8;
+      border-radius: 3px;
+      transform-origin: bottom center;
+    }
+    
+    .hour-marker {
+      width: 4px;
+      height: 15px;
+      background: #7fc7ff;
+      box-shadow: 0 0 5px #1e90ff;
+    }
+    
+    .minute-marker {
+      width: 2px;
+      height: 8px;
+      background: #3a7bb8;
+    }
+
+    /* सभी पिनों का बेस क्लास */
+    .hand {
+      position: absolute;
+      background: linear-gradient(to top, transparent, #1e90ff);
+      top: 50%;
+      left: 50%;
+      transform-origin: bottom center;
+      transform: translateX(-50%) translateY(-100%) rotate(0deg);
+      border-radius: 10px;
+      z-index: 5;
+      box-shadow: 0 0 10px rgba(30, 144, 255, 0.7);
+    }
+
+    /* घंटे की पिन मोटी और छोटी */
+    .hour {
+      width: 10px;
+      height: 90px;
+      z-index: 7;
+      background: linear-gradient(to top, transparent, #1e90ff);
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+    
+    /* घंटे की पिन का टॉप डिज़ाइन */
+    .hour::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 14px;
+      background: #1e90ff;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    }
+
+    /* मिनट की पिन थोड़ी पतली और लंबी */
+    .minute {
+      width: 6px;
+      height: 140px;
+      z-index: 8;
+      background: linear-gradient(to top, transparent, #7fc7ff);
+    }
+    
+    /* मिनट पिन का टॉप डिज़ाइन */
+    .minute::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 10px;
+      background: #7fc7ff;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    }
+
+    /* सेकंड की पिन बहुत पतली और सबसे लंबी */
+    .second {
+      width: 2px;
+      height: 170px;
+      background: linear-gradient(to top, transparent, #00bfff);
+      z-index: 9;
+      box-shadow: 0 0 15px #00bfff;
+    }
+    
+    /* सेकंड पिन का टॉप डिज़ाइन */
+    .second::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 20px;
+      background: #00bfff;
+      clip-path: polygon(50% 0%, 20% 100%, 80% 100%);
+    }
+    
+    /* सेकंड पिन का बॉटम डिज़ाइन */
+    .second::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 8px;
+      height: 8px;
+      background: #00bfff;
+      border-radius: 50%;
+      box-shadow: 0 0 5px #00bfff;
+    }
+
+    /* घड़ी के बाहर ग्लो इफेक्ट */
+    .clock::after {
+      content: '';
+      position: absolute;
+      width: 110%;
+      height: 110%;
+      border-radius: 50%;
+      background: radial-gradient(circle, transparent 40%, rgba(30, 144, 255, 0.1) 70%);
+      z-index: -1;
+      animation: pulse 4s infinite alternate;
+    }
+    
     @keyframes pulse {
-      0% {
-        box-shadow:
-          0 0 10px #00e5ff,
-          0 0 40px #00e5ff,
-          0 0 80px #00e5ff;
-        text-shadow:
-          0 0 10px #00e5ff,
-          0 0 20px #00e5ff,
-          0 0 30px #00e5ff;
+      0% { transform: scale(1); opacity: 0.3; }
+      100% { transform: scale(1.05); opacity: 0.6; }
+    }
+
+    /* Responsive: छोटे स्क्रीन पर clock छोटा कर देंगे */
+    @media (max-width: 500px) {
+      .clock {
+        width: 300px;
+        height: 300px;
+        border-width: 12px;
       }
-      100% {
-        box-shadow:
-          0 0 20px #66f0ff,
-          0 0 60px #66f0ff,
-          0 0 120px #66f0ff;
-        text-shadow:
-          0 0 20px #66f0ff,
-          0 0 40px #66f0ff,
-          0 0 60px #66f0ff;
+      
+      .number {
+        font-size: 20px;
+      }
+      
+      .hour {
+        height: 75px;
+        width: 8px;
+      }
+      
+      .minute {
+        height: 110px;
+        width: 5px;
+      }
+      
+      .second {
+        height: 140px;
+      }
+      
+      .hour-marker {
+        height: 12px;
+      }
+      
+      .minute-marker {
+        height: 6px;
       }
     }
   </style>
 </head>
 <body>
-  <div id="clock">00:00:00</div>
+  <!-- स्टार बैकग्राउंड -->
+  <div class="stars" id="stars"></div>
+  
+  <!-- Analog clock container -->
+  <div class="clock">
+    <div class="clock-face">
+      <!-- नंबर 1 से 12 -->
+      <!-- इन्हें हम JavaScript से dynamically डालेंगे -->
+      
+      <!-- मिनट/सेकंड मार्कर्स -->
+      <!-- इन्हें भी JavaScript से डालेंगे -->
+      
+      <!-- पिन/needle -->
+      <div class="hand hour" id="hourHand"></div>
+      <div class="hand minute" id="minuteHand"></div>
+      <div class="hand second" id="secondHand"></div>
+      
+      <!-- घड़ी का सेंटर पॉइंट -->
+      <div class="center"></div>
+    </div>
+  </div>
 
   <script>
+    // स्टार बैकग्राउंड जनरेट करना
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 100; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      
+      // रैंडम पोजीशन और साइज
+      const size = Math.random() * 3 + 1;
+      star.style.width = `${size}px`;
+      star.style.height = `${size}px`;
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.top = `${Math.random() * 100}%`;
+      
+      // रैंडम एनिमेशन डिले
+      star.style.animationDelay = `${Math.random() * 2}s`;
+      
+      starsContainer.appendChild(star);
+    }
+    
+    // घड़ी के लिए रेफरेंस
+    const clockFace = document.querySelector('.clock-face');
+    
+    // 1 से 12 तक नंबर को घड़ी के चारों ओर लगाना
+    for(let num = 1; num <= 12; num++) {
+      // नंबर के लिए div बनाएं
+      const numberElement = document.createElement('div');
+      numberElement.classList.add('number');
+      numberElement.innerText = num;
+      
+      // नंबर की स्थिति निकालने के लिए त्रिकोणमिति (trigonometry) का उपयोग
+      const angle = num * 30; // डिग्री में कोण
+      const radius = 150; // clock radius का केंद्र से नंबर की दूरी
+      
+      // रैडियन में कन्वर्ट करें (12 ऊपर है, इसलिए -90 डिग्री एडजस्ट)
+      const radian = (angle - 90) * (Math.PI / 180);
+      
+      // x और y पॉइशन निकालें
+      const x = 50 + 50 * Math.cos(radian);
+      const y = 50 + 50 * Math.sin(radian);
+      
+      // नंबर की position सेट करें (percentage based)
+      numberElement.style.left = `${x}%`;
+      numberElement.style.top = `${y}%`;
+      
+      // नंबर को clock में जोड़ें
+      clockFace.appendChild(numberElement);
+    }
+    
+    // मिनट/सेकंड मार्कर्स जनरेट करना
+    for(let i = 0; i < 60; i++) {
+      const marker = document.createElement('div');
+      
+      // हर 5वें मार्कर को बड़ा बनाएं (घंटे के मार्कर)
+      if(i % 5 === 0) {
+        marker.classList.add('marker', 'hour-marker');
+      } else {
+        marker.classList.add('marker', 'minute-marker');
+      }
+      
+      const angle = i * 6; // हर मार्कर 6 डिग्री पर
+      const radian = (angle - 90) * (Math.PI / 180);
+      
+      // मार्कर पोजीशन (inner radius)
+      const radius = i % 5 === 0 ? 42 : 44;
+      const x = 50 + radius * Math.cos(radian);
+      const y = 50 + radius * Math.sin(radian);
+      
+      marker.style.left = `${x}%`;
+      marker.style.top = `${y}%`;
+      marker.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+      
+      clockFace.appendChild(marker);
+    }
+    
+    // पिनों को घुमाने के लिए function
     function updateClock() {
       const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      const s = String(now.getSeconds()).padStart(2, '0');
-      document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+      const milliseconds = now.getMilliseconds();
+      
+      // स्मूथ मूवमेंट के लिए milliseconds को भी शामिल करें
+      const hourDegree = (hours % 12) * 30 + (minutes / 60) * 30;
+      const minuteDegree = minutes * 6 + (seconds / 60) * 6;
+      const secondDegree = seconds * 6 + (milliseconds / 1000) * 6;
+      
+      document.getElementById('hourHand').style.transform = `translateX(-50%) translateY(-100%) rotate(${hourDegree}deg)`;
+      document.getElementById('minuteHand').style.transform = `translateX(-50%) translateY(-100%) rotate(${minuteDegree}deg)`;
+      document.getElementById('secondHand').style.transform = `translateX(-50%) translateY(-100%) rotate(${secondDegree}deg)`;
+      
+      // स्मूथ एनिमेशन के लिए requestAnimationFrame का उपयोग
+      requestAnimationFrame(updateClock);
     }
-
-    setInterval(updateClock, 1000);
+    
+    // घड़ी अपडेट शुरू करें
     updateClock();
   </script>
 </body>

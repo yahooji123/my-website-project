@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blue Analog Clock with Pins and Numbers</title>
+  <style>
+    /* बॉडी को पूरी स्क्रीन पर फैलाना और बैकग्राउंड नीला-ग्रेडिएंट देना */
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #0f2027, #051113, #8b9ca3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* घड़ी का बाहरी गोल डिब्बा */
+    .clock {
+      position: relative;
+      width: 350px;
+      height: 350px;
+      border: 12px solid #1e90ff; /* डार्क ब्लू बॉर्डर */
+      border-radius: 50%; /* गोल घड़ी */
+      background: #031b34; /* गहरा नीला बैकग्राउंड */
+      box-shadow:
+        0 0 30px #1e90ff, /* नीली लाइट इफेक्ट */
+        inset 0 0 40px #1e90ff;
+    }
+
+    /* सेंटर पॉइंट जो पिनों का बेस होगा */
+    .center {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: #1e90ff;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px #1e90ff;
+      z-index: 10;
+    }
+
+    /* नंबर के लिए स्टाइल */
+    .number {
+      position: absolute;
+      color: #1e90ff;
+      font-size: 24px;
+      font-weight: bold;
+      user-select: none;
+      text-shadow: 0 0 5px #1e90ff;
+    }
+
+    /* सभी पिनों का बेस क्लास */
+    .hand {
+      position: absolute;
+      background: #1e90ff;
+      top: 50%;
+      left: 50%;
+      transform-origin: bottom center; /* पिन का घुमाव नीचे से होगा */
+      transform: translateX(-50%) translateY(-100%) rotate(0deg);
+      box-shadow: 0 0 8px #1e90ff;
+      border-radius: 10px;
+    }
+
+    /* घंटे की पिन मोटी और छोटी */
+    .hour {
+      width: 10px;
+      height: 90px;
+      z-index: 7;
+    }
+
+    /* मिनट की पिन थोड़ी पतली और लंबी */
+    .minute {
+      width: 6px;
+      height: 130px;
+      z-index: 8;
+    }
+
+    /* सेकंड की पिन बहुत पतली और सबसे लंबी */
+    .second {
+      width: 2px;
+      height: 160px;
+      background: #00bfff;
+      box-shadow: 0 0 10px #00bfff;
+      z-index: 9;
+    }
+
+    /* Responsive: छोटे स्क्रीन पर clock छोटा कर देंगे */
+    @media (max-width: 400px) {
+      .clock {
+        width: 280px;
+        height: 280px;
+      }
+      .number {
+        font-size: 18px;
+      }
+      .hour {
+        height: 75px;
+        width: 8px;
+      }
+      .minute {
+        height: 110px;
+        width: 5px;
+      }
+      .second {
+        height: 140px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Analog clock container -->
+  <div class="clock" id="clock">
+    <!-- नंबर 1 से 12 -->
+    <!-- इन्हें हम JavaScript से dynamically डालेंगे -->
+
+    <!-- पिन/needle -->
+    <div class="hand hour" id="hourHand"></div>
+    <div class="hand minute" id="minuteHand"></div>
+    <div class="hand second" id="secondHand"></div>
+
+    <!-- घड़ी का सेंटर पॉइंट -->
+    <div class="center"></div>
+  </div>
+
+  <script>
+    // सबसे पहले 1 से 12 तक नंबर को घड़ी के चारों ओर लगाना है
+
+    const clock = document.getElementById('clock');
+
+    for(let num = 1; num <= 12; num++) {
+      // नंबर के लिए div बनाएं
+      const numberElement = document.createElement('div');
+      numberElement.classList.add('number');
+      numberElement.innerText = num;
+
+      // नंबर की स्थिति निकालने के लिए त्रिकोणमिति (trigonometry) का उपयोग
+      // हर नंबर का कोण 30 डिग्री (360/12) होता है
+      // 12 नंबर सबसे ऊपर, 3 नंबर दाएं, 6 नंबर नीचे, 9 नंबर बाएं
+
+      const angle = num * 30; // डिग्री में कोण
+
+      // clock radius का केंद्र से नंबर की दूरी (अंदर की तरफ से थोड़ा space छोड़े)
+      const radius = 140;
+
+      // x और y की calculation: Math.sin और Math.cos रैडियन में लेते हैं,
+      // इसलिए degrees को radians में convert करना होगा:
+      const radian = (angle - 90) * (Math.PI / 180);
+
+      // x और y पॉइशन निकालें, clock के center के हिसाब से (clock की width/height से)
+      const x = clock.clientWidth / 2 + radius * Math.cos(radian);
+      const y = clock.clientHeight / 2 + radius * Math.sin(radian);
+
+      // नंबर की position सेट करें
+      numberElement.style.left = `${x}px`;
+      numberElement.style.top = `${y}px`;
+
+      // नंबर को clock में जोड़ें
+      clock.appendChild(numberElement);
+    }
+
+    // अब पिनों को घुमाने के लिए function लिखते हैं जो हर सेकंड चलाएगा
+
+    function updateClock() {
+      // अभी की तारीख और समय लें
+      const now = new Date();
+
+      // घंटे, मिनट और सेकंड निकालें
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      // घंटे की पिन के लिए डिग्री निकालना:
+      // 12 घंटे में 360 डिग्री => 1 घंटे = 30 डिग्री
+      // साथ ही मिनट के हिसाब से थोड़ा एडजस्ट करेंगे ताकि घंटे की पिन स्मूद मूव हो
+      const hourDegree = (hours % 12) * 30 + (minutes / 60) * 30;
+
+      // मिनट की पिन के लिए डिग्री:
+      // 60 मिनट में 360 डिग्री => 1 मिनट = 6 डिग्री
+      const minuteDegree = minutes * 6 + (seconds / 60) * 6;
+
+      // सेकंड की पिन के लिए डिग्री:
+      // 60 सेकंड में 360 डिग्री => 1 सेकंड = 6 डिग्री
+      const secondDegree = seconds * 6;
+
+      // पिनों को rotate करें CSS के transform property से
+      document.getElementById('hourHand').style.transform = `translateX(-50%) translateY(-100%) rotate(${hourDegree}deg)`;
+      document.getElementById('minuteHand').style.transform = `translateX(-50%) translateY(-100%) rotate(${minuteDegree}deg)`;
+      document.getElementById('secondHand').style.transform = `translateX(-50%) translateY(-100%) rotate(${secondDegree}deg)`;
+    }
+
+    // हर 1000 milliseconds (1 सेकंड) में updateClock चलाएं ताकि पिन हिलते रहें
+    setInterval(updateClock, 1000);
+
+    // पेज लोड होते ही पहली बार घड़ी अपडेट कर दें ताकि टाइम तुरंत दिखे
+    updateClock();
+  </script>
+</body>
+</html>
