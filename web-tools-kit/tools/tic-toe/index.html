@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>🎉 Tic Tac Toe Game 🎉</title>
   <style>
     /* Reset and base styling */
@@ -10,6 +11,12 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
 
     body {
@@ -21,9 +28,8 @@
       justify-content: center;
       min-height: 100vh;
       color: white;
-      overflow-x: hidden;
       position: relative;
-      padding: 20px;
+      padding: 10px;
     }
 
     /* Animated background with floating shapes */
@@ -57,10 +63,25 @@
       }
     }
 
+    /* Main game container */
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+      max-height: 100vh;
+      padding: 10px;
+      z-index: 1;
+      overflow: hidden;
+    }
+
     /* Glowing title */
     h1 {
-      font-size: clamp(2rem, 6vw, 3.5rem);
-      margin-bottom: 15px;
+      font-size: clamp(1.8rem, 5vw, 2.5rem);
+      margin-bottom: 10px;
       text-shadow: 0 0 15px #00ccff, 0 0 30px rgba(0, 204, 255, 0.5);
       z-index: 1;
       background: linear-gradient(to right, #00e5ff, #ffffff);
@@ -73,6 +94,7 @@
       animation: glow 2s ease-in-out infinite alternate;
       text-align: center;
       padding: 0 10px;
+      white-space: nowrap;
     }
 
     @keyframes glow {
@@ -87,17 +109,16 @@
     /* Game mode selector */
     .mode-selector {
       display: flex;
-      gap: 15px;
-      margin-bottom: 15px;
+      gap: 10px;
+      margin-bottom: 10px;
       z-index: 1;
       width: 100%;
-      max-width: 350px;
-      flex-wrap: wrap;
+      max-width: 300px;
       justify-content: center;
     }
 
     .mode-btn {
-      padding: 10px 20px;
+      padding: 8px 15px;
       background: rgba(0, 0, 0, 0.3);
       border: 2px solid #00ccff;
       border-radius: 30px;
@@ -105,8 +126,10 @@
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s;
-      font-size: clamp(0.9rem, 3vw, 1rem);
-      min-width: 120px;
+      font-size: clamp(0.8rem, 3vw, 1rem);
+      min-width: 100px;
+      flex: 1;
+      text-align: center;
     }
 
     .mode-btn:hover {
@@ -120,17 +143,76 @@
       box-shadow: 0 0 15px #00ccff;
     }
 
+    /* Score board */
+    .score-board {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 10px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 8px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 204, 255, 0.3);
+      z-index: 1;
+      gap: 5px;
+    }
+
+    .score {
+      text-align: center;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .score h3 {
+      margin-bottom: 3px;
+      font-size: clamp(0.7rem, 3vw, 0.9rem);
+      color: #00ccff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .score p {
+      font-size: clamp(0.9rem, 4vw, 1.3rem);
+      font-weight: bold;
+    }
+
+    /* Turn indicator */
+    .turn-indicator {
+      margin-bottom: 10px;
+      font-size: clamp(0.9rem, 3.5vw, 1.2rem);
+      text-shadow: 0 0 10px rgba(0, 204, 255, 0.7);
+      z-index: 1;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 8px 15px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      max-width: 300px;
+      justify-content: center;
+    }
+
+    .turn-indicator span {
+      font-weight: bold;
+      color: #00ffaa;
+      min-width: 30px;
+      text-align: center;
+    }
+
     /* Message container for winner/draw message */
     .msg-container {
       background: rgba(0, 0, 50, 0.9);
-      padding: 20px;
-      border-radius: 20px;
-      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 15px;
+      margin-bottom: 10px;
       box-shadow: 0 0 30px #00ccff, inset 0 0 10px rgba(0, 204, 255, 0.5);
       text-align: center;
-      font-size: clamp(1.2rem, 4vw, 2rem);
+      font-size: clamp(1rem, 4vw, 1.5rem);
       width: 100%;
-      max-width: 350px;
+      max-width: 300px;
       display: none;
       z-index: 1;
       backdrop-filter: blur(5px);
@@ -150,28 +232,27 @@
     .container {
       z-index: 1;
       width: 100%;
-      max-width: 350px;
+      max-width: 300px;
       perspective: 1000px;
-      margin: 0 auto;
+      margin: 0 auto 10px;
     }
 
     .game {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      gap: 8px;
       transform-style: preserve-3d;
-      margin-bottom: 15px;
     }
 
     /* Each box of Tic Tac Toe */
     .box {
       width: 100%;
       aspect-ratio: 1/1;
-      font-size: clamp(3rem, 12vw, 5rem);
+      font-size: clamp(2.5rem, 10vw, 4rem);
       color: #00e5ff;
       background: rgba(0, 51, 102, 0.7);
-      border: 3px solid #00ccff;
-      border-radius: 15px;
+      border: 2px solid #00ccff;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       display: flex;
@@ -183,14 +264,6 @@
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
       position: relative;
       overflow: hidden;
-      min-height: 60px;
-    }
-
-    /* Hover effect on boxes */
-    .box:hover:not(:disabled) {
-      background: rgba(0, 204, 255, 0.3);
-      transform: translateY(-5px) scale(1.05);
-      box-shadow: 0 10px 20px rgba(0, 204, 255, 0.4);
     }
 
     /* X and O symbols styling */
@@ -215,9 +288,9 @@
 
     /* Buttons styling */
     #reset, #new-btn, #change-mode {
-      margin-top: 15px;
-      padding: 12px 20px;
-      font-size: clamp(1rem, 3.5vw, 1.2rem);
+      margin-top: 10px;
+      padding: 10px 15px;
+      font-size: clamp(0.9rem, 3.5vw, 1.1rem);
       background: linear-gradient(135deg, #00ccff, #0066ff);
       border: none;
       border-radius: 25px;
@@ -227,7 +300,7 @@
       box-shadow: 0 5px 20px rgba(0, 204, 255, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.2);
       transition: all 0.3s ease;
       width: 100%;
-      max-width: 350px;
+      max-width: 300px;
       z-index: 1;
       position: relative;
       overflow: hidden;
@@ -255,63 +328,12 @@
       left: 100%;
     }
 
-    /* Turn indicator */
-    .turn-indicator {
-      margin-bottom: 15px;
-      font-size: clamp(1rem, 3.5vw, 1.5rem);
-      text-shadow: 0 0 10px rgba(0, 204, 255, 0.7);
-      z-index: 1;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 10px 15px;
-      border-radius: 50px;
+    /* Button container in message */
+    .button-container {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 8px;
-      width: 100%;
-      max-width: 350px;
-      justify-content: center;
-    }
-
-    .turn-indicator span {
-      font-weight: bold;
-      color: #00ffaa;
-      min-width: 30px;
-      text-align: center;
-    }
-
-    /* Score board */
-    .score-board {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 350px;
-      margin-bottom: 15px;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 12px;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0, 204, 255, 0.3);
-      z-index: 1;
-      gap: 5px;
-    }
-
-    .score {
-      text-align: center;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .score h3 {
-      margin-bottom: 5px;
-      font-size: clamp(0.8rem, 3vw, 1.2rem);
-      color: #00ccff;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .score p {
-      font-size: clamp(1rem, 4vw, 1.5rem);
-      font-weight: bold;
+      margin-top: 12px;
     }
 
     /* Confetti effect */
@@ -336,143 +358,105 @@
       }
     }
 
-    /* Button container in message */
-    .button-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    /* Responsive design */
-    @media (max-width: 768px) {
-      body {
-        padding: 15px;
-        justify-content: flex-start;
-      }
-      
+    /* Very small devices (e.g., iPhone 5/SE) */
+    @media (max-height: 600px) {
       h1 {
-        margin-top: 20px;
-        margin-bottom: 10px;
-      }
-      
-      .game {
-        gap: 8px;
-      }
-      
-      .box {
-        border-radius: 12px;
-        min-height: 50px;
-      }
-      
-      .msg-container {
-        padding: 15px;
-      }
-      
-      .score-board {
-        padding: 10px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      body {
-        padding: 10px;
+        margin-bottom: 5px;
+        font-size: 1.5rem;
       }
       
       .mode-selector {
-        gap: 10px;
+        margin-bottom: 5px;
       }
       
-      .mode-btn {
-        padding: 8px 15px;
-        min-width: 100px;
-      }
-      
-      .box {
-        border-width: 2px;
+      .score-board {
+        margin-bottom: 5px;
+        padding: 5px;
       }
       
       .turn-indicator {
-        padding: 8px 12px;
+        margin-bottom: 5px;
+        padding: 5px 10px;
+      }
+      
+      .game {
+        gap: 5px;
+      }
+      
+      .box {
+        font-size: 2rem;
+        border-radius: 8px;
+      }
+      
+      .msg-container {
+        padding: 10px;
       }
       
       #reset, #new-btn, #change-mode {
-        padding: 10px 15px;
-      }
-    }
-
-    /* Very small devices (e.g., iPhone 5/SE) */
-    @media (max-width: 320px) {
-      .box {
-        min-height: 40px;
-      }
-      
-      .score h3 {
-        font-size: 0.7rem;
-      }
-      
-      .score p {
-        font-size: 1rem;
+        margin-top: 5px;
+        padding: 8px 12px;
       }
     }
   </style>
 </head>
 <body>
-  <h1>🎮 Tic Tac Toe ❌⭕</h1>
+  <div class="game-container">
+    <h1>🎮 Tic Tac Toe ❌⭕</h1>
 
-  <!-- Game Mode Selector -->
-  <div class="mode-selector">
-    <button class="mode-btn active" id="two-player">2 Players</button>
-    <button class="mode-btn" id="vs-computer">VS Computer</button>
-  </div>
-
-  <!-- Score Board -->
-  <div class="score-board">
-    <div class="score">
-      <h3>Player X</h3>
-      <p id="x-score">0</p>
+    <!-- Game Mode Selector -->
+    <div class="mode-selector">
+      <button class="mode-btn active" id="two-player">2 Players</button>
+      <button class="mode-btn" id="vs-computer">VS Computer</button>
     </div>
-    <div class="score">
-      <h3>Draws</h3>
-      <p id="draw-score">0</p>
-    </div>
-    <div class="score">
-      <h3>Player O</h3>
-      <p id="o-score">0</p>
-    </div>
-  </div>
 
-  <!-- Turn Indicator -->
-  <div class="turn-indicator">
-    Current Turn: <span id="current-turn">X</span>
-  </div>
-
-  <!-- Winner Message Container -->
-  <div class="msg-container" id="msg-container">
-    <p id="msg">Winner</p>
-    <div class="button-container">
-      <button id="new-btn">New Game</button>
-      <button id="change-mode">Change Mode</button>
+    <!-- Score Board -->
+    <div class="score-board">
+      <div class="score">
+        <h3>Player X</h3>
+        <p id="x-score">0</p>
+      </div>
+      <div class="score">
+        <h3>Draws</h3>
+        <p id="draw-score">0</p>
+      </div>
+      <div class="score">
+        <h3>Player O</h3>
+        <p id="o-score">0</p>
+      </div>
     </div>
-  </div>
 
-  <!-- Game Board -->
-  <div class="container">
-    <div class="game">
-      <!-- 9 buttons for 9 cells -->
-      <button class="box" data-index="0"></button>
-      <button class="box" data-index="1"></button>
-      <button class="box" data-index="2"></button>
-      <button class="box" data-index="3"></button>
-      <button class="box" data-index="4"></button>
-      <button class="box" data-index="5"></button>
-      <button class="box" data-index="6"></button>
-      <button class="box" data-index="7"></button>
-      <button class="box" data-index="8"></button>
+    <!-- Turn Indicator -->
+    <div class="turn-indicator">
+      Current Turn: <span id="current-turn">X</span>
     </div>
-  </div>
 
-  <button id="reset">Reset Game</button>
+    <!-- Winner Message Container -->
+    <div class="msg-container" id="msg-container">
+      <p id="msg">Winner</p>
+      <div class="button-container">
+        <button id="new-btn">New Game</button>
+        <button id="change-mode">Change Mode</button>
+      </div>
+    </div>
+
+    <!-- Game Board -->
+    <div class="container">
+      <div class="game">
+        <!-- 9 buttons for 9 cells -->
+        <button class="box" data-index="0"></button>
+        <button class="box" data-index="1"></button>
+        <button class="box" data-index="2"></button>
+        <button class="box" data-index="3"></button>
+        <button class="box" data-index="4"></button>
+        <button class="box" data-index="5"></button>
+        <button class="box" data-index="6"></button>
+        <button class="box" data-index="7"></button>
+        <button class="box" data-index="8"></button>
+      </div>
+    </div>
+
+    <button id="reset">Reset Game</button>
+  </div>
 
   <script>
     // 1. DOM elements ko select karna (सभी जरूरी HTML elements को चुनना)
@@ -812,19 +796,30 @@
 
     // पहली बार टर्न इंडिकेटर अपडेट करो
     updateTurnIndicator();
+
+
+
+    
+// Disable right click
+document.addEventListener('contextmenu', function(e) {
+  e.preventDefault();
+});
+
+// Disable text selection
+document.addEventListener('selectstart', function(e) {
+  e.preventDefault();
+});
+
+// Disable Ctrl+U, F12, Ctrl+Shift+I
+document.onkeydown = function(e) {
+  if (e.keyCode == 123 || // F12
+      (e.ctrlKey && e.shiftKey && e.keyCode == 73) || // Ctrl+Shift+I
+      (e.ctrlKey && e.keyCode == 85)) { // Ctrl+U
+    e.preventDefault();
+    return false;
+  }
+};
+
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
