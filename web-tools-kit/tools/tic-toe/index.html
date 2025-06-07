@@ -21,7 +21,7 @@
       justify-content: center;
       min-height: 100vh;
       color: white;
-      overflow: hidden;
+      overflow-x: hidden;
       position: relative;
       padding: 20px;
     }
@@ -59,8 +59,8 @@
 
     /* Glowing title */
     h1 {
-      font-size: 3.5rem;
-      margin-bottom: 25px;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      margin-bottom: 15px;
       text-shadow: 0 0 15px #00ccff, 0 0 30px rgba(0, 204, 255, 0.5);
       z-index: 1;
       background: linear-gradient(to right, #00e5ff, #ffffff);
@@ -68,9 +68,11 @@
       background-clip: text;
       color: transparent;
       font-weight: 800;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       position: relative;
       animation: glow 2s ease-in-out infinite alternate;
+      text-align: center;
+      padding: 0 10px;
     }
 
     @keyframes glow {
@@ -86,8 +88,12 @@
     .mode-selector {
       display: flex;
       gap: 15px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       z-index: 1;
+      width: 100%;
+      max-width: 350px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .mode-btn {
@@ -99,6 +105,8 @@
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s;
+      font-size: clamp(0.9rem, 3vw, 1rem);
+      min-width: 120px;
     }
 
     .mode-btn:hover {
@@ -115,12 +123,12 @@
     /* Message container for winner/draw message */
     .msg-container {
       background: rgba(0, 0, 50, 0.9);
-      padding: 25px 35px;
+      padding: 20px;
       border-radius: 20px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       box-shadow: 0 0 30px #00ccff, inset 0 0 10px rgba(0, 204, 255, 0.5);
       text-align: center;
-      font-size: 2rem;
+      font-size: clamp(1.2rem, 4vw, 2rem);
       width: 100%;
       max-width: 350px;
       display: none;
@@ -144,24 +152,26 @@
       width: 100%;
       max-width: 350px;
       perspective: 1000px;
+      margin: 0 auto;
     }
 
     .game {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
+      gap: 10px;
       transform-style: preserve-3d;
+      margin-bottom: 15px;
     }
 
     /* Each box of Tic Tac Toe */
     .box {
       width: 100%;
       aspect-ratio: 1/1;
-      font-size: 5rem;
+      font-size: clamp(3rem, 12vw, 5rem);
       color: #00e5ff;
       background: rgba(0, 51, 102, 0.7);
       border: 3px solid #00ccff;
-      border-radius: 20px;
+      border-radius: 15px;
       cursor: pointer;
       transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       display: flex;
@@ -173,6 +183,7 @@
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
       position: relative;
       overflow: hidden;
+      min-height: 60px;
     }
 
     /* Hover effect on boxes */
@@ -205,8 +216,8 @@
     /* Buttons styling */
     #reset, #new-btn, #change-mode {
       margin-top: 15px;
-      padding: 12px 25px;
-      font-size: 1.2rem;
+      padding: 12px 20px;
+      font-size: clamp(1rem, 3.5vw, 1.2rem);
       background: linear-gradient(135deg, #00ccff, #0066ff);
       border: none;
       border-radius: 25px;
@@ -246,21 +257,26 @@
 
     /* Turn indicator */
     .turn-indicator {
-      margin-bottom: 20px;
-      font-size: 1.5rem;
+      margin-bottom: 15px;
+      font-size: clamp(1rem, 3.5vw, 1.5rem);
       text-shadow: 0 0 10px rgba(0, 204, 255, 0.7);
       z-index: 1;
       background: rgba(0, 0, 0, 0.2);
-      padding: 10px 20px;
+      padding: 10px 15px;
       border-radius: 50px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      width: 100%;
+      max-width: 350px;
+      justify-content: center;
     }
 
     .turn-indicator span {
       font-weight: bold;
       color: #00ffaa;
+      min-width: 30px;
+      text-align: center;
     }
 
     /* Score board */
@@ -269,27 +285,32 @@
       justify-content: space-between;
       width: 100%;
       max-width: 350px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       background: rgba(0, 0, 0, 0.2);
-      padding: 15px;
+      padding: 12px;
       border-radius: 15px;
       box-shadow: 0 0 15px rgba(0, 204, 255, 0.3);
       z-index: 1;
+      gap: 5px;
     }
 
     .score {
       text-align: center;
       flex: 1;
+      min-width: 0;
     }
 
     .score h3 {
       margin-bottom: 5px;
-      font-size: 1.2rem;
+      font-size: clamp(0.8rem, 3vw, 1.2rem);
       color: #00ccff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .score p {
-      font-size: 1.5rem;
+      font-size: clamp(1rem, 4vw, 1.5rem);
       font-weight: bold;
     }
 
@@ -315,32 +336,83 @@
       }
     }
 
+    /* Button container in message */
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
     /* Responsive design */
-    @media (max-width: 480px) {
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+        justify-content: flex-start;
+      }
+      
       h1 {
-        font-size: 2.5rem;
+        margin-top: 20px;
+        margin-bottom: 10px;
       }
-      .msg-container {
-        font-size: 1.6rem;
-        padding: 20px;
+      
+      .game {
+        gap: 8px;
       }
+      
       .box {
-        font-size: 4rem;
+        border-radius: 12px;
+        min-height: 50px;
       }
-      #reset, #new-btn, #change-mode {
-        font-size: 1.1rem;
-        padding: 12px 20px;
+      
+      .msg-container {
+        padding: 15px;
       }
-      .turn-indicator {
-        font-size: 1.2rem;
+      
+      .score-board {
+        padding: 10px;
       }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      
       .mode-selector {
-        flex-direction: column;
-        width: 100%;
-        max-width: 350px;
+        gap: 10px;
       }
+      
       .mode-btn {
-        width: 100%;
+        padding: 8px 15px;
+        min-width: 100px;
+      }
+      
+      .box {
+        border-width: 2px;
+      }
+      
+      .turn-indicator {
+        padding: 8px 12px;
+      }
+      
+      #reset, #new-btn, #change-mode {
+        padding: 10px 15px;
+      }
+    }
+
+    /* Very small devices (e.g., iPhone 5/SE) */
+    @media (max-width: 320px) {
+      .box {
+        min-height: 40px;
+      }
+      
+      .score h3 {
+        font-size: 0.7rem;
+      }
+      
+      .score p {
+        font-size: 1rem;
       }
     }
   </style>
@@ -378,8 +450,10 @@
   <!-- Winner Message Container -->
   <div class="msg-container" id="msg-container">
     <p id="msg">Winner</p>
-    <button id="new-btn">New Game</button>
-    <button id="change-mode">Change Mode</button>
+    <div class="button-container">
+      <button id="new-btn">New Game</button>
+      <button id="change-mode">Change Mode</button>
+    </div>
   </div>
 
   <!-- Game Board -->
@@ -741,3 +815,16 @@
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
