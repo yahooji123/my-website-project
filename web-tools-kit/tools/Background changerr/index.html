@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Responsive Background Color Changer</title>
+  <style>
+    /* Body aur html 100% height aur width le rahe hain, flexbox se center align */
+    body, html {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #3498db;
+      transition: background-color 0.7s ease;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 0px; /* Mobile me thoda space dene ke liye */
+      box-sizing: border-box;
+    }
+
+    /* Button styling */
+    button {
+      background: linear-gradient(135deg, #f43b47, #453a94);
+      border: none;
+      color: white;
+      padding: 20px 50px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(244, 59, 71, 0.6);
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+      user-select: none;
+      max-width: 100%;
+      white-space: nowrap; /* Button ke andar text wrap na ho */
+    }
+
+    /* Hover effect */
+    button:hover {
+      background: linear-gradient(135deg, #453a94, #f43b47);
+      box-shadow: 0 10px 30px rgba(69, 58, 148, 0.8);
+      transform: scale(1.05);
+    }
+
+    /* Click effect */
+    button:active {
+      transform: scale(0.95);
+    }
+
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 480px) {
+      button {
+        padding: 15px 30px;
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width: 320px) {
+      button {
+        padding: 12px 20px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <button id="colorBtn">Change Background Color</button>
+
+  <script>
+ // Step 1: सबसे पहले हम अपने HTML में मौजूद button को पकड़ेंगे,
+// ताकि हम उसके ऊपर काम (event) कर सकें.
+// 'document.getElementById' एक ऐसा तरीका है जिससे हम HTML में दिए गए id वाले element को पकड़ते हैं.
+// यहाँ हमने button को उसके id 'colorBtn' से पकड़ा है.
+const button = document.getElementById('colorBtn');
+
+
+// Step 2: अब हम एक function बनाएंगे जो हमें कोई भी random रंग (color) देगा.
+// JavaScript में रंग (color) hexadecimal (जैसे #FF00FF) फॉर्मेट में होते हैं.
+// यह function एक ऐसा रंग बनाएगा जो हर बार अलग होगा.
+function getRandomColor() {
+
+  // Math.random() एक number देता है 0 से 1 के बीच (1 के बिल्कुल कम).
+  // हम इसे 0xFFFFFF (decimal में 16777215) से multiply करेंगे,
+  // जिससे हमें 0 से 16777215 तक कोई भी random number मिलेगा.
+  let randomNumber = Math.floor(Math.random() * 0xFFFFFF);
+
+  // अब हम इस number को hexadecimal string में बदल देंगे.
+  // toString(16) मतलब number को base-16 (hexadecimal) में बदलना.
+  let randomColor = randomNumber.toString(16);
+
+  // कभी-कभी hexadecimal string छोटी हो सकती है,
+  // जैसे 'ff0' (तीन अक्षर), जबकि हमें 6 अक्षर चाहिए।
+  // इसलिए padStart(6, '0') से हम string के आगे ज़रूरी zeros जोड़ देते हैं
+  // ताकि string की लंबाई हमेशा 6 हो।
+  randomColor = randomColor.padStart(6, '0');
+
+  // अंत में '#' जोड़कर पूरा रंग return करते हैं, जैसे "#a1b2c3"
+  return `#${randomColor}`;
+}
+
+
+// Step 3: यह function page का background रंग बदलने के लिए है.
+// जब हम इस function को call करेंगे तो background का रंग बदल जाएगा.
+function changeBackgroundColor() {
+
+  // सबसे पहले हम getRandomColor() function से एक नया रंग प्राप्त करेंगे.
+  const newColor = getRandomColor();
+
+  // फिर हम document.body.style.backgroundColor को उस नए रंग से बदल देंगे,
+  // मतलब पूरा page का background रंग बदल जाएगा.
+  document.body.style.backgroundColor = newColor;
+}
+
+
+// Step 4: अब हम button के click event को सेट करेंगे.
+// जब भी button पर click होगा, changeBackgroundColor() function चलेगा,
+// और background रंग बदलेगा.
+button.addEventListener('click', changeBackgroundColor);
+
+  </script>
+  
+
+</body>
+</html>

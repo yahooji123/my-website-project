@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>College Study Material</title>
+<style>
+  /* Reset & base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa; color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  a {
+    color: #007bff;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  /* Container */
+  #app {
+    max-width: 900px;
+    margin: auto;
+    padding: 15px 20px 40px;
+    flex: 1;
+  }
+  header {
+    text-align: center;
+    padding: 15px 0 10px;
+    border-bottom: 2px solid #007bff;
+  }
+  header h1 {
+    margin: 0; font-weight: 700; font-size: 2.4rem;
+    color: #007bff;
+  }
+  nav.breadcrumbs {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+  nav.breadcrumbs span {
+    margin-right: 5px;
+  }
+  nav.breadcrumbs span:not(:last-child)::after {
+    content: '›';
+    margin-left: 5px;
+    color: #999;
+  }
+
+  /* Lists */
+  ul.list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  ul.list li {
+    background: white;
+    margin-bottom: 10px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: box-shadow 0.3s ease;
+  }
+  ul.list li:hover {
+    box-shadow: 0 6px 15px rgb(0 123 255 / 0.3);
+  }
+  ul.list li button, ul.list li a.view-btn {
+    background: #007bff;
+    border: none;
+    color: white;
+    padding: 7px 15px;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 0.9rem;
+  }
+  ul.list li button:hover, ul.list li a.view-btn:hover {
+    background: #0056b3;
+  }
+
+  /* Titles & subtitles */
+  h2, h3 {
+    color: #222;
+    margin-top: 0;
+  }
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
+  h3 {
+    margin-bottom: 12px;
+  }
+
+  /* Viewer styles */
+  #viewer {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 8px rgb(0 0 0 / 0.15);
+    margin-top: 20px;
+    min-height: 300px;
+    display: none;
+    flex-direction: column;
+  }
+  #viewer iframe, #viewer img, #viewer video {
+    width: 100%;
+    max-height: 600px;
+    border-radius: 6px;
+  }
+  #viewer video {
+    outline: none;
+  }
+  #viewer .viewer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  #viewer .viewer-header h3 {
+    margin: 0;
+    font-weight: 700;
+  }
+  #viewer .viewer-header a.download-link {
+    background: #28a745;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+  }
+  #viewer .viewer-header a.download-link:hover {
+    background: #1e7e34;
+  }
+  #viewer .close-btn {
+    background: #dc3545;
+    border: none;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    align-self: flex-end;
+  }
+  #viewer .close-btn:hover {
+    background: #a71d2a;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    ul.list li {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    ul.list li button, ul.list li a.view-btn {
+      margin-top: 8px;
+      width: 100%;
+      text-align: center;
+    }
+    #app {
+      padding: 10px 15px 30px;
+    }
+    header h1 {
+      font-size: 1.8rem;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>College Study Material</h1>
+</header>
+
+<div id="app" role="main" aria-live="polite" aria-atomic="true">
+  <!-- Content will be injected here -->
+</div>
+
+<script>
+  // ==========================
+  // Data: Semesters, categories, and materials
+  // ==========================
+  const data = {
+    "Semester 1": {
+      "Notes": [
+        {
+          title: "Introduction to Programming",
+          type: "pdf",
+          src: "https://example.com/materials/semester1/intro_programming.pdf"
+        },
+        {
+          title: "Discrete Mathematics Notes",
+          type: "pdf",
+          src: "https://example.com/materials/semester1/discrete_math.pdf"
+        },
+        {
+          title: "Calculus Fundamentals",
+          type: "pdf",
+          src: "https://example.com/materials/semester1/calculus.pdf"
+        }
+      ],
+      "Practice Sets": [
+        {
+          title: "Programming Practice Set 1",
+          type: "pdf",
+          src: "https://example.com/materials/semester1/practice_set1.pdf"
+        },
+        {
+          title: "Mock Test - Sem 1",
+          type: "pdf",
+          src: "https://example.com/materials/semester1/mock_test1.pdf"
+        }
+      ],
+      "Previous Year Papers": [
+        {
+          title: "Semester 1 Exam 2023",
+          type: "pdf",
+          src: "https://example.com/materials/semester1/previous_paper_2023.pdf"
+        },
+        {
+          title: "Semester 1 Exam 2022",
+          type: "pdf",
+          src: "https://example.com/materials/semester1/previous_paper_2022.pdf"
+        }
+      ],
+      "Tutorials": [
+        {
+          title: "Programming Basics Video",
+          type: "video",
+          src: "https://www.w3schools.com/html/mov_bbb.mp4"
+        },
+        {
+          title: "Discrete Math PDF",
+          type: "pdf",
+          src: "https://example.com/materials/semester1/discrete_math_tutorial.pdf"
+        },
+        {
+          title: "Flowchart Image",
+          type: "image",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Flowchart_symbol_-_process.svg/600px-Flowchart_symbol_-_process.svg.png"
+        }
+      ]
+    },
+    "Semester 2": {
+      "Notes": [
+        {
+          title: "Data Structures Notes",
+          type: "pdf",
+          src: "https://example.com/materials/semester2/data_structures.pdf"
+        },
+        {
+          title: "Digital Electronics",
+          type: "pdf",
+          src: "https://example.com/materials/semester2/digital_electronics.pdf"
+        }
+      ],
+      "Practice Sets": [
+        {
+          title: "Data Structures Practice",
+          type: "pdf",
+          src: "https://example.com/materials/semester2/practice_set_ds.pdf"
+        },
+        {
+          title: "Digital Circuits Problems",
+          type: "pdf",
+          src: "https://example.com/materials/semester2/digital_circuits.pdf"
+        }
+      ],
+      "Previous Year Papers": [
+        {
+          title: "Semester 2 Exam 2022",
+          type: "pdf",
+          src: "https://example.com/materials/semester2/previous_paper_2022.pdf"
+        },
+        {
+          title: "Semester 2 Exam 2021",
+          type: "pdf",
+          src: "https://example.com/materials/semester2/previous_paper_2021.pdf"
+        }
+      ],
+      "Tutorials": [
+        {
+          title: "Data Structures Tutorial Video",
+          type: "video",
+          src: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+        },
+        {
+          title: "Linked List Image",
+          type: "image",
+          src: "https://upload.wikimedia.org/wikipedia/commons/6/6d/Singly-linked-list.svg"
+        }
+      ],
+      "Others": [
+        {
+          title: "Sample PPT",
+          type: "ppt",
+          src: "https://example.com/materials/semester2/sample_ppt.pptx"
+        }
+      ]
+    },
+    "Semester 3": {
+      "Notes": [
+        {
+          title: "Algorithms Notes",
+          type: "pdf",
+          src: "https://example.com/materials/semester3/algorithms.pdf"
+        },
+        {
+          title: "Computer Organization",
+          type: "pdf",
+          src: "https://example.com/materials/semester3/computer_org.pdf"
+        }
+      ],
+      "Practice Sets": [
+        {
+          title: "Algorithm Problems",
+          type: "pdf",
+          src: "https://example.com/materials/semester3/algorithm_problems.pdf"
+        },
+        {
+          title: "Mock Test - Sem 3",
+          type: "pdf",
+          src: "https://example.com/materials/semester3/mock_test.pdf"
+        }
+      ],
+      "Previous Year Papers": [
+        {
+          title: "Semester 3 Exam 2022",
+          type: "pdf",
+          src: "https://example.com/materials/semester3/previous_paper_2022.pdf"
+        }
+      ],
+      "Tutorials": [
+        {
+          title: "Sorting Algorithms Video",
+          type: "video",
+          src: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+        }
+      ]
+    },
+    "Semester 4": {
+      "Notes": [
+        {
+          title: "Operating Systems",
+          type: "pdf",
+          src: "https://example.com/materials/semester4/os_notes.pdf"
+        },
+        {
+          title: "Database Systems",
+          type: "pdf",
+          src: "https://example.com/materials/semester4/dbms.pdf"
+        }
+      ],
+      "Practice Sets": [
+        {
+          title: "SQL Practice Problems",
+          type: "pdf",
+          src: "https://example.com/materials/semester4/sql_practice.pdf"
+        }
+      ],
+      "Previous Year Papers": [
+        {
+          title: "Semester 4 Exam 2022",
+          type: "pdf",
+          src: "https://example.com/materials/semester4/previous_paper_2022.pdf"
+        }
+      ],
+      "Tutorials": [
+        {
+          title: "ER Diagram Examples",
+          type: "image",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/ER_Diagram_MMORPG.png/800px-ER_Diagram_MMORPG.png"
+        }
+      ]
+    },
+    "Semester 5": {
+      "Notes": [
+        {
+          title: "Computer Networks",
+          type: "pdf",
+          src: "https://example.com/materials/semester5/networks.pdf"
+        },
+        {
+          title: "Software Engineering",
+          type: "pdf",
+          src: "https://example.com/materials/semester5/se.pdf"
+        }
+      ],
+      "Practice Sets": [
+        {
+          title: "Networking Problems",
+          type: "pdf",
+          src: "https://example.com/materials/semester5/networking_problems.pdf"
+        }
+      ],
+      "Previous Year Papers": [
+        {
+          title: "Semester 5 Exam 2021",
+          type: "pdf",
+          src: "https://example.com/materials/semester5/previous_paper_2021.pdf"
+        }
+      ],
+      "Tutorials": [
+        {
+          title: "TCP/IP Explained",
+          type: "video",
+          src: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+        }
+      ]
+    },
+    "Semester 6": {
+      "Notes": [
+        {
+          title: "Artificial Intelligence",
+          type: "pdf",
+          src: "j.pdf"
+        },
+        {
+          title: "Machine Learning Basics",
+          type: "pdf",
+          src: "https://example.com/materials/semester6/ml.pdf"
+        }
+      ],
+      "Practice Sets": [
+        {
+          title: "AI Problem Set",
+          type: "pdf",
+          src: "https://example.com/materials/semester6/ai_problems.pdf"
+        }
+      ],
+      "Previous Year Papers": [
+        {
+          title: "Semester 6 Exam 2021",
+          type: "pdf",
+          src: "2.png"
+        }
+      ],
+      "Tutorials": [
+        {
+          title: "Neural Networks Explained",
+          type: "video",
+          src: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+        }
+      ]
+    },
+    "Semester 7": {
+      "Notes": [
+        {
+          title: "Cloud Computing",
+          type: "pdf",
+          src: "https://example.com/materials/semester7/cloud.pdf"
+        },
+        {
+          title: "Big Data Analytics",
+          type: "pdf",
+          src: "https://example.com/materials/semester7/bigdata.pdf"
+        }
+      ],
+      "Practice Sets": [
+        {
+          title: "Cloud Computing Scenarios",
+          type: "pdf",
+          src: "https://example.com/materials/semester7/cloud_scenarios.pdf"
+        }
+      ],
+      "Previous Year Papers": [
+        {
+          title: "Semester 7 Exam 2020",
+          type: "pdf",
+          src: "https://example.com/materials/semester7/previous_paper_2020.pdf"
+        }
+      ],
+      "Tutorials": [
+        {
+          title: "Hadoop Tutorial",
+          type: "video",
+          src: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+        }
+      ],
+      "Projects": [
+        {
+          title: "Sample Project Guidelines",
+          type: "pdf",
+          src: "https://example.com/materials/semester7/project_guidelines.pdf"
+        }
+      ]
+    },
+    "Semester 8": {
+      "Notes": [
+        {
+          title: "Information Security",
+          type: "pdf",
+          src: "https://example.com/materials/semester8/security.pdf"
+        },
+        {
+          title: "Blockchain Technology",
+          type: "pdf",
+          src: "https://example.com/materials/semester8/blockchain.pdf"
+        }
+      ],
+      "Practice Sets": [
+        {
+          title: "Security Case Studies",
+          type: "pdf",
+          src: "https://example.com/materials/semester8/security_cases.pdf"
+        }
+      ],
+      "Previous Year Papers": [
+        {
+          title: "Semester 8 Exam 2020",
+          type: "pdf",
+          src: "https://example.com/materials/semester8/previous_paper_2020.pdf"
+        }
+      ],
+      "Tutorials": [
+        {
+          title: "Cryptography Basics",
+          type: "video",
+          src: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+        }
+      ],
+      "Projects": [
+        {
+          title: "Final Year Project Template",
+          type: "docx",
+          src: "https://example.com/materials/semester8/project_template.docx"
+        }
+      ],
+      "Placement": [
+        {
+          title: "Interview Preparation Guide",
+          type: "pdf",
+          src: "https://example.com/materials/semester8/interview_prep.pdf"
+        },
+        {
+          title: "Resume Template",
+          type: "docx",
+          src: "https://example.com/materials/semester8/resume_template.docx"
+        }
+      ]
+    }
+  };
+
+  // ==========================
+  // Variables for tracking current view
+  // ==========================
+  let currentSemester = null;
+  let currentCategory = null;
+
+  // ==========================
+  // Select main app container
+  // ==========================
+  const app = document.getElementById('app');
+
+  // ==========================
+  // Utility Functions
+  // ==========================
+
+  // Create breadcrumb navigation
+  function createBreadcrumbs() {
+    const nav = document.createElement('nav');
+    nav.className = 'breadcrumbs';
+    nav.setAttribute('aria-label', 'Breadcrumb');
+
+    const crumbs = [];
+
+    // Home breadcrumb
+    const homeSpan = document.createElement('span');
+    const homeLink = document.createElement('a');
+    homeLink.textContent = 'Home';
+    homeLink.href = '#';
+    homeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      showHome();
+    });
+    homeSpan.appendChild(homeLink);
+    crumbs.push(homeSpan);
+
+    if (currentSemester) {
+      const semSpan = document.createElement('span');
+      const semLink = document.createElement('a');
+      semLink.textContent = currentSemester;
+      semLink.href = '#';
+      semLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSemester(currentSemester);
+      });
+      semSpan.appendChild(semLink);
+      crumbs.push(semSpan);
+    }
+
+    if (currentCategory) {
+      const catSpan = document.createElement('span');
+      const catLink = document.createElement('a');
+      catLink.textContent = currentCategory;
+      catLink.href = '#';
+      catLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showCategory(currentSemester, currentCategory);
+      });
+      catSpan.appendChild(catLink);
+      crumbs.push(catSpan);
+    }
+
+    crumbs.forEach(c => nav.appendChild(c));
+    return nav;
+  }
+
+  // Clear the main app container
+  function clearApp() {
+    app.innerHTML = '';
+  }
+
+  // Detect file extension from src (if needed)
+  function getFileExtension(url) {
+    return url.split('.').pop().toLowerCase().split('?')[0].split('#')[0];
+  }
+
+  // Build Google Docs Viewer URL for office docs
+  function getGoogleDocsViewerUrl(fileUrl) {
+    return `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+  }
+
+  // Remove viewer if exists
+  function removeViewer() {
+    const existingViewer = document.getElementById('viewer');
+    if (existingViewer) {
+      existingViewer.remove();
+    }
+  }
+
+  // ==========================
+  // View Functions
+  // ==========================
+
+  // Show homepage with list of semesters
+  function showHome() {
+    currentSemester = null;
+    currentCategory = null;
+    clearApp();
+
+    const heading = document.createElement('h2');
+    heading.textContent = 'Select Semester';
+    app.appendChild(heading);
+
+    const ul = document.createElement('ul');
+    ul.className = 'list';
+
+    Object.keys(data).forEach(semester => {
+      const li = document.createElement('li');
+      const btn = document.createElement('button');
+      btn.textContent = semester;
+      btn.setAttribute('aria-label', `Go to ${semester}`);
+      btn.addEventListener('click', () => {
+        showSemester(semester);
+      });
+      li.appendChild(btn);
+      ul.appendChild(li);
+    });
+
+    app.appendChild(ul);
+
+    // Remove viewer if any
+    removeViewer();
+  }
+
+  // Show categories of a semester
+  function showSemester(semester) {
+    currentSemester = semester;
+    currentCategory = null;
+    clearApp();
+
+    app.appendChild(createBreadcrumbs());
+
+    const heading = document.createElement('h2');
+    heading.textContent = semester;
+    app.appendChild(heading);
+
+    const semesterData = data[semester];
+    const categories = Object.keys(semesterData);
+
+    const ul = document.createElement('ul');
+    ul.className = 'list';
+
+    categories.forEach(category => {
+      const li = document.createElement('li');
+      const btn = document.createElement('button');
+      btn.textContent = category;
+      btn.setAttribute('aria-label', `View category ${category} in ${semester}`);
+      btn.addEventListener('click', () => {
+        showCategory(semester, category);
+      });
+      li.appendChild(btn);
+      ul.appendChild(li);
+    });
+
+    app.appendChild(ul);
+
+    removeViewer();
+  }
+
+  // Show materials inside a category
+  function showCategory(semester, category) {
+    currentSemester = semester;
+    currentCategory = category;
+    clearApp();
+
+    app.appendChild(createBreadcrumbs());
+
+    const heading = document.createElement('h2');
+    heading.textContent = `${category} - ${semester}`;
+    app.appendChild(heading);
+
+    const materials = data[semester][category];
+
+    if (!materials || materials.length === 0) {
+      const p = document.createElement('p');
+      p.textContent = 'No materials available.';
+      app.appendChild(p);
+      removeViewer();
+      return;
+    }
+
+    const ul = document.createElement('ul');
+    ul.className = 'list';
+
+    materials.forEach((mat, i) => {
+      const li = document.createElement('li');
+
+      // Left side: title and type
+      const infoDiv = document.createElement('div');
+      infoDiv.style.flex = '1';
+
+      const titleEl = document.createElement('strong');
+      titleEl.textContent = mat.title;
+      titleEl.style.display = 'block';
+
+      const typeEl = document.createElement('small');
+      typeEl.textContent = mat.type.toUpperCase();
+
+      infoDiv.appendChild(titleEl);
+      infoDiv.appendChild(typeEl);
+
+      // Right side: View button
+      const btn = document.createElement('button');
+      btn.textContent = 'View';
+      btn.className = 'view-btn';
+      btn.setAttribute('aria-label', `View material ${mat.title}`);
+      btn.addEventListener('click', () => {
+        showMaterialViewer(mat);
+      });
+
+      li.appendChild(infoDiv);
+      li.appendChild(btn);
+      ul.appendChild(li);
+    });
+
+    app.appendChild(ul);
+
+    removeViewer();
+  }
+
+  // Show material in embedded viewer
+  function showMaterialViewer(material) {
+    removeViewer();
+
+    // Create viewer container
+    const viewer = document.createElement('section');
+    viewer.id = 'viewer';
+    viewer.setAttribute('aria-label', 'Material Viewer');
+    viewer.style.display = 'flex';
+
+    // Header with title & download link
+    const header = document.createElement('div');
+    header.className = 'viewer-header';
+
+    const title = document.createElement('h3');
+    title.textContent = material.title;
+
+    const downloadLink = document.createElement('a');
+    downloadLink.href = material.src;
+    downloadLink.target = '_blank';
+    downloadLink.rel = 'noopener noreferrer';
+    downloadLink.download = ''; // suggest browser to download
+    downloadLink.className = 'download-link';
+    downloadLink.textContent = 'Download';
+
+    header.appendChild(title);
+    header.appendChild(downloadLink);
+
+    viewer.appendChild(header);
+
+    // Determine viewer content based on type
+    const ext = material.type.toLowerCase();
+
+    if (ext === 'pdf') {
+      // PDF embedded using <iframe>
+      const iframe = document.createElement('iframe');
+      iframe.src = material.src;
+      iframe.width = '100%';
+      iframe.height = '600';
+      iframe.title = material.title + ' PDF viewer';
+      iframe.setAttribute('aria-label', material.title + ' PDF viewer');
+      iframe.style.border = 'none';
+      viewer.appendChild(iframe);
+    } else if (ext === 'image' || ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(getFileExtension(material.src))) {
+      // Image
+      const img = document.createElement('img');
+      img.src = material.src;
+      img.alt = material.title;
+      viewer.appendChild(img);
+    } else if (ext === 'video' || ['mp4', 'webm', 'ogg'].includes(getFileExtension(material.src))) {
+      // Video
+      const video = document.createElement('video');
+      video.controls = true;
+      video.src = material.src;
+      video.title = material.title;
+      video.setAttribute('aria-label', material.title + ' video player');
+      viewer.appendChild(video);
+    } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(ext) || ['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(getFileExtension(material.src))) {
+      // Office docs embedded via Google Docs Viewer iframe
+      const iframe = document.createElement('iframe');
+      iframe.src = getGoogleDocsViewerUrl(material.src);
+      iframe.width = '100%';
+      iframe.height = '600';
+      iframe.title = material.title + ' Document viewer';
+      iframe.setAttribute('aria-label', material.title + ' Document viewer');
+      iframe.style.border = 'none';
+      viewer.appendChild(iframe);
+    } else {
+      // Unknown type fallback
+      const p = document.createElement('p');
+      p.textContent = 'Preview not available for this file type.';
+      viewer.appendChild(p);
+    }
+
+    // Close button
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = 'Close Viewer';
+    closeBtn.className = 'close-btn';
+    closeBtn.setAttribute('aria-label', 'Close material viewer');
+    closeBtn.addEventListener('click', removeViewer);
+
+    viewer.appendChild(closeBtn);
+    app.appendChild(viewer);
+
+    // Scroll to viewer
+    viewer.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ==========================
+  // Initialize the app
+  // ==========================
+  showHome();
+</script>
+</body>
+</html>
