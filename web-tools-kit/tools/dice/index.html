@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!--<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -48,5 +48,339 @@
   </div>
 
   <script src="dice.js"></script>
+  <script>
+    function rollDice() {
+  // 🎲 Unicode dice emojis 1 to 6
+  const diceFaces = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+  
+  // Random index 0 to 5
+  const randomIndex = Math.floor(Math.random() * 6);
+  
+  // Set emoji
+  document.getElementById("dice").textContent = diceFaces[randomIndex];
+}
+
+  </script>
+</body>
+</html>
+
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🎲 Ultimate Dice Roller</title>
+  <style>
+    :root {
+      --primary-color: #4facfe;
+      --secondary-color: #00f2fe;
+      --dark-color: #222;
+      --light-color: #fff;
+      --shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    body {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: var(--light-color);
+      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .dice-box {
+      margin: 30px 0;
+    }
+
+    .dice {
+      font-size: 120px;
+      margin: 20px;
+      transition: var(--transition);
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .dice:hover {
+      transform: scale(1.1);
+    }
+
+    .dice.rolling {
+      animation: roll 0.8s ease-out;
+    }
+
+    @keyframes roll {
+      0% { transform: rotate(0deg) scale(1); }
+      25% { transform: rotate(90deg) scale(0.8); }
+      50% { transform: rotate(180deg) scale(1.1); }
+      75% { transform: rotate(270deg) scale(0.9); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    button {
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      color: var(--light-color);
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+      font-weight: bold;
+      margin: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 7px 20px rgba(0, 242, 254, 0.4);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      border-radius: 100%;
+      transform: scale(1, 1) translate(-50%);
+      transform-origin: 50% 50%;
+    }
+
+    button:focus:not(:active)::after {
+      animation: ripple 1s ease-out;
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(20, 20);
+        opacity: 0;
+      }
+    }
+
+    .history {
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 100%;
+    }
+
+    .history-item {
+      font-size: 24px;
+      cursor: pointer;
+      transition: var(--transition);
+      opacity: 0.7;
+    }
+
+    .history-item:hover {
+      transform: scale(1.2);
+      opacity: 1;
+    }
+
+    .stats {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px 20px;
+      border-radius: 10px;
+      min-width: 100px;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--secondary-color);
+    }
+
+    .double-six {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: var(--secondary-color);
+      font-weight: bold;
+      height: 24px;
+    }
+
+    @media (max-width: 500px) {
+      .dice {
+        font-size: 80px;
+      }
+      
+      button {
+        padding: 10px 25px;
+        font-size: 1rem;
+      }
+      
+      .history-item {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Ultimate Dice Roller</h1>
+    
+    <div class="dice-box">
+      <div class="dice" id="dice" onclick="rollDice()">🎲</div>
+      <button onclick="rollDice()">Roll Dice</button>
+    </div>
+    
+    <div class="stats">
+      <div class="stat-box">
+        <div>Rolls</div>
+        <div class="stat-value" id="rollCount">0</div>
+      </div>
+      <div class="stat-box">
+        <div>Current</div>
+        <div class="stat-value" id="currentValue">-</div>
+      </div>
+    </div>
+    
+    <div class="double-six" id="doubleSix"></div>
+    
+    <h3>Roll History</h3>
+    <div class="history" id="history"></div>
+  </div>
+
+  <script>
+    // Dice faces
+    const diceFaces = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+    const diceValues = [1, 2, 3, 4, 5, 6];
+    
+    // Game state
+    let rollCount = 0;
+    let lastRoll = null;
+    let history = [];
+    let consecutiveSixes = 0;
+    
+    // DOM elements
+    const diceElement = document.getElementById('dice');
+    const rollCountElement = document.getElementById('rollCount');
+    const currentValueElement = document.getElementById('currentValue');
+    const historyElement = document.getElementById('history');
+    const doubleSixElement = document.getElementById('doubleSix');
+    
+    // Roll the dice
+    function rollDice() {
+      // Add rolling animation
+      diceElement.classList.add('rolling');
+      
+      // Disable button during animation
+      document.querySelector('button').disabled = true;
+      diceElement.style.pointerEvents = 'none';
+      
+      // After a short delay (for animation), show the result
+      setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * 6);
+        const face = diceFaces[randomIndex];
+        const value = diceValues[randomIndex];
+        
+        // Update display
+        diceElement.textContent = face;
+        currentValueElement.textContent = value;
+        
+        // Update stats
+        rollCount++;
+        rollCountElement.textContent = rollCount;
+        
+        // Check for consecutive sixes
+        if (value === 6) {
+          consecutiveSixes++;
+          if (consecutiveSixes >= 2) {
+            doubleSixElement.textContent = `🎉 ${consecutiveSixes} sixes in a row!`;
+          }
+        } else {
+          consecutiveSixes = 0;
+          doubleSixElement.textContent = '';
+        }
+        
+        // Add to history (most recent first)
+        history.unshift({face, value});
+        if (history.length > 10) history.pop();
+        updateHistory();
+        
+        // Remove rolling class and re-enable button
+        setTimeout(() => {
+          diceElement.classList.remove('rolling');
+          document.querySelector('button').disabled = false;
+          diceElement.style.pointerEvents = 'auto';
+        }, 100);
+        
+        lastRoll = value;
+      }, 800);
+    }
+    
+    // Update history display
+    function updateHistory() {
+      historyElement.innerHTML = '';
+      history.forEach((roll, index) => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.textContent = roll.face;
+        item.title = `Roll ${history.length - index}: ${roll.value}`;
+        item.onclick = () => {
+          diceElement.textContent = roll.face;
+          currentValueElement.textContent = roll.value;
+        };
+        historyElement.appendChild(item);
+      });
+    }
+    
+    // Keyboard support
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault();
+        rollDice();
+      }
+    });
+  </script>
 </body>
 </html>
