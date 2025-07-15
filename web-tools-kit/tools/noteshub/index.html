@@ -1,0 +1,2260 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Resource Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base Styles */
+:root {
+    --primary-color: #4a6bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --white: #ffffff;
+    --black: #000000;
+    --gray: #6c757d;
+    --light-gray: #e9ecef;
+    --dark-gray: #495057;
+    --body-bg: #f5f7fa;
+    --text-color: #212529;
+    --card-bg: #ffffff;
+    --nav-bg: #ffffff;
+    --footer-bg: #343a40;
+    --footer-text: #f8f9fa;
+    --modal-bg: rgba(0, 0, 0, 0.5);
+    --modal-content-bg: #ffffff;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"] {
+    --body-bg: #121212;
+    --text-color: #e0e0e0;
+    --card-bg: #1e1e1e;
+    --nav-bg: #1e1e1e;
+    --footer-bg: #121212;
+    --footer-text: #e0e0e0;
+    --modal-content-bg: #1e1e1e;
+    --light-gray: #2d2d2d;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--body-bg);
+    transition: var(--transition);
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.75rem;
+}
+
+h4 {
+    font-size: 1.5rem;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+/* Buttons */
+button, .button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 1rem;
+    text-align: center;
+}
+
+button:hover, .button:hover {
+    background-color: #3a56d4;
+    transform: translateY(-2px);
+}
+
+.submit-btn {
+    background-color: var(--success-color);
+}
+
+.submit-btn:hover {
+    background-color: #218838;
+}
+
+.dark-mode-toggle {
+    background: transparent;
+    color: var(--text-color);
+    padding: 8px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--secondary-color);
+}
+
+.dark-mode-toggle:hover {
+    background-color: var(--light-gray);
+}
+
+.admin-login-btn {
+    background-color: var(--danger-color);
+    margin-left: 10px;
+}
+
+.admin-login-btn:hover {
+    background-color: #c82333;
+}
+
+/* Navigation */
+.navbar {
+    background-color: var(--nav-bg);
+    box-shadow: var(--box-shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: var(--transition);
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.logo span {
+    color: var(--primary-color);
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    color: var(--text-color);
+    padding: 5px 0;
+    position: relative;
+}
+
+.nav-links a.active {
+    font-weight: bold;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after, .nav-links a.active::after {
+    width: 100%;
+}
+
+.nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.semester-selector select {
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--secondary-color);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.hamburger {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    background-color: var(--nav-bg);
+    box-shadow: var(--box-shadow);
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    z-index: 999;
+}
+
+.mobile-menu.active {
+    display: flex;
+}
+
+.mobile-menu a {
+    color: var(--text-color);
+    padding: 10px;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.mobile-menu .semester-selector {
+    width: 100%;
+}
+
+.mobile-menu .semester-selector select {
+    width: 100%;
+}
+
+/* Hero Section */
+.hero {
+    padding: 80px 0;
+    background: linear-gradient(135deg, rgba(74, 107, 255, 0.1) 0%, rgba(108, 117, 125, 0.1) 100%);
+}
+
+.hero .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.hero-content {
+    flex: 1;
+}
+
+.hero-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-image img {
+    max-width: 100%;
+    height: auto;
+}
+
+.search-bar {
+    display: flex;
+    margin-top: 20px;
+    max-width: 500px;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid var(--secondary-color);
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+    font-size: 1rem;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+.search-bar button {
+    padding: 0 20px;
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    border: none;
+    background-color: var(--primary-color);
+    color: var(--white);
+    cursor: pointer;
+}
+
+/* Materials Section */
+.materials-section {
+    padding: 60px 0;
+}
+
+.filters {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-group label {
+    font-weight: 500;
+}
+
+.filter-group select {
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--secondary-color);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.materials-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+/* Material Card */
+.material-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+}
+
+.material-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.material-header {
+    padding: 15px;
+    background-color: rgba(74, 107, 255, 0.1);
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.material-header h3 {
+    margin-bottom: 5px;
+    color: var(--primary-color);
+}
+
+.material-semester {
+    display: inline-block;
+    padding: 3px 8px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+}
+
+.material-subject {
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+}
+
+.material-body {
+    padding: 15px;
+    flex-grow: 1;
+}
+
+.material-type {
+    display: inline-block;
+    padding: 3px 8px;
+    background-color: var(--info-color);
+    color: var(--white);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+}
+
+.material-description {
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.material-footer {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--light-gray);
+}
+
+.preview-btn, .download-btn {
+    padding: 8px 15px;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.preview-btn {
+    background-color: var(--info-color);
+    color: var(--white);
+}
+
+.download-btn {
+    background-color: var(--success-color);
+    color: var(--white);
+}
+
+.bookmark-btn {
+    background: none;
+    border: none;
+    color: var(--secondary-color);
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.bookmark-btn.bookmarked {
+    color: var(--warning-color);
+}
+
+/* Upload Section */
+.upload-section {
+    padding: 60px 0;
+    background-color: var(--light-gray);
+}
+
+.upload-form {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid var(--secondary-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.upload-status {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: var(--border-radius);
+    background-color: rgba(40, 167, 69, 0.1);
+    color: var(--success-color);
+    display: none;
+}
+
+/* Admin Panel */
+.admin-panel {
+    display: none;
+    padding: 60px 0;
+    background-color: var(--light-gray);
+}
+
+.admin-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--secondary-color);
+    margin-bottom: 30px;
+}
+
+.admin-tab {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.admin-tab.active {
+    border-bottom-color: var(--primary-color);
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.admin-tab-content {
+    display: none;
+}
+
+.admin-tab-content.active {
+    display: block;
+}
+
+.pending-uploads-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.pending-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+    position: relative;
+}
+
+.pending-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.approve-btn {
+    background-color: var(--success-color);
+}
+
+.reject-btn {
+    background-color: var(--danger-color);
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+    text-align: center;
+}
+
+.stat-card h4 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: var(--secondary-color);
+}
+
+.stat-card p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.chart-container {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+    margin-top: 30px;
+}
+
+/* Resources Management */
+.resources-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.resource-item {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+    position: relative;
+}
+
+.delete-resource-btn {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* Admin Controls */
+.admin-controls {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.admin-logout-btn {
+    background-color: var(--danger-color);
+    color: var(--white);
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.admin-logout-btn:hover {
+    background-color: #c82333;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--modal-bg);
+    z-index: 1001;
+    overflow-y: auto;
+}
+
+.modal-content {
+    background-color: var(--modal-content-bg);
+    margin: 50px auto;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    cursor: pointer;
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid var(--light-gray);
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* File Preview */
+.file-preview {
+    width: 100%;
+    height: 500px;
+    border: 1px solid var(--light-gray);
+    border-radius: var(--border-radius);
+}
+
+.file-preview iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.image-preview {
+    max-width: 100%;
+    max-height: 500px;
+    display: block;
+    margin: 0 auto;
+}
+
+.text-preview {
+    white-space: pre-wrap;
+    font-family: monospace;
+    background-color: var(--light-gray);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.unsupported-preview {
+    padding: 30px;
+    text-align: center;
+    color: var(--secondary-color);
+}
+
+/* Footer */
+footer {
+    background-color: var(--footer-bg);
+    color: var(--footer-text);
+    padding: 60px 0 20px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-section h3 {
+    margin-bottom: 20px;
+    color: var(--white);
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+    color: var(--footer-text);
+    transition: var(--transition);
+}
+
+.footer-section ul li a:hover {
+    color: var(--primary-color);
+    padding-left: 5px;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-bottom p {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.disclaimer {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .hero .container {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .hero-image {
+        margin-top: 30px;
+    }
+    
+    .search-bar {
+        margin: 20px auto;
+    }
+    
+    .materials-container {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-links, .nav-controls {
+        display: none;
+    }
+    
+    .hamburger {
+        display: block;
+    }
+    
+    .filters {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .filter-group {
+        width: 100%;
+    }
+    
+    .filter-group select {
+        width: 100%;
+    }
+    
+    .pending-uploads-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-container {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .resources-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    h1 {
+        font-size: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.75rem;
+    }
+    
+    .hero {
+        padding: 60px 0;
+    }
+    
+    .material-card {
+        width: 100%;
+    }
+    
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 20px auto;
+    }
+    
+    .admin-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .admin-tab {
+        flex: 1 0 auto;
+        text-align: center;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="logo">Student<span>Hub</span></a>
+            <div class="nav-links">
+                <a href="#home" class="active">Home</a>
+                <a href="#materials">Resources</a>
+                <a href="#upload">Upload</a>
+            </div>
+            <div class="nav-controls">
+                <div class="semester-selector">
+                    <select id="semesterFilter">
+                        <option value="">All Semesters</option>
+                        <option value="1">1st Semester</option>
+                        <option value="2">2nd Semester</option>
+                        <option value="3">3rd Semester</option>
+                        <option value="4">4th Semester</option>
+                        <option value="5">5th Semester</option>
+                        <option value="6">6th Semester</option>
+                        <option value="7">7th Semester</option>
+                        <option value="8">8th Semester</option>
+                    </select>
+                </div>
+                <button id="darkModeToggle" class="dark-mode-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="admin-login-btn" id="adminLoginBtn">Admin</button>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#home" class="active">Home</a>
+        <a href="#materials">Resources</a>
+        <a href="#upload">Upload</a>
+        <div class="semester-selector mobile">
+            <select id="semesterFilterMobile">
+                <option value="">All Semesters</option>
+                <option value="1">1st Semester</option>
+                <option value="2">2nd Semester</option>
+                <option value="3">3rd Semester</option>
+                <option value="4">4th Semester</option>
+                <option value="5">5th Semester</option>
+                <option value="6">6th Semester</option>
+                <option value="7">7th Semester</option>
+                <option value="8">8th Semester</option>
+            </select>
+        </div>
+        <button id="darkModeToggleMobile" class="dark-mode-toggle">
+            <i class="fas fa-moon"></i> Toggle Dark Mode
+        </button>
+        <button class="admin-login-btn" id="adminLoginBtnMobile">Admin Login</button>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Your Semester Resources in One Place</h1>
+                <p>Access study materials, question papers, lab manuals and more for all semesters.</p>
+                <div class="search-bar">
+                    <input type="text" id="globalSearch" placeholder="Search resources...">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="assets/study.svg" alt="Students studying together">
+            </div>
+        </div>
+    </section>
+
+    <!-- Materials Section -->
+    <section class="materials-section" id="materials">
+        <div class="container">
+            <h2>Available Resources</h2>
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="subjectFilter">Subject:</label>
+                    <select id="subjectFilter">
+                        <option value="">All Subjects</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="typeFilter">Type:</label>
+                    <select id="typeFilter">
+                        <option value="">All Types</option>
+                        <option value="question-paper">Question Papers</option>
+                        <option value="study-notes">Study Notes</option>
+                        <option value="mcq">MCQs & Quizzes</option>
+                        <option value="lab-manual">Lab Manuals</option>
+                        <option value="assignment">Assignments</option>
+                        <option value="syllabus">Syllabus</option>
+                        <option value="reference-book">Reference Books</option>
+                    </select>
+                </div>
+            </div>
+            <div class="materials-container" id="materialsContainer">
+                <!-- Materials will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section class="upload-section" id="upload">
+        <div class="container">
+            <h2>Upload Resources</h2>
+            <div class="upload-form">
+                <h3>User Upload</h3>
+                <form id="userUploadForm">
+                    <div class="form-group">
+                        <label for="semester">Semester</label>
+                        <select id="semester" required>
+                            <option value="">Select Semester</option>
+                            <option value="1">1st Semester</option>
+                            <option value="2">2nd Semester</option>
+                            <option value="3">3rd Semester</option>
+                            <option value="4">4th Semester</option>
+                            <option value="5">5th Semester</option>
+                            <option value="6">6th Semester</option>
+                            <option value="7">7th Semester</option>
+                            <option value="8">8th Semester</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" placeholder="Enter subject name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Resource Type</label>
+                        <select id="type" required>
+                            <option value="">Select Type</option>
+                            <option value="question-paper">Question Paper</option>
+                            <option value="study-notes">Study Notes</option>
+                            <option value="mcq">MCQs & Quizzes</option>
+                            <option value="lab-manual">Lab Manual</option>
+                            <option value="assignment">Assignment</option>
+                            <option value="syllabus">Syllabus</option>
+                            <option value="reference-book">Reference Book</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" placeholder="Enter resource title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fileLink">File Link</label>
+                        <input type="text" id="fileLink" placeholder="Paste Google Drive/Dropbox link or URL" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Upload Resource</button>
+                </form>
+                <div class="upload-status" id="uploadStatus"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Panel (Hidden by default) -->
+    <div class="admin-panel" id="adminPanel" style="display: none;">
+        <div class="container">
+            <h2>Admin Panel</h2>
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="adminUpload">Admin Upload</button>
+                <button class="admin-tab" data-tab="pendingUploads">Pending Approvals</button>
+                <button class="admin-tab" data-tab="manageResources">Manage Resources</button>
+                <button class="admin-tab" data-tab="stats">Statistics</button>
+            </div>
+            
+            <div class="admin-controls">
+                <button id="adminLogoutBtn" class="admin-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+            
+            <div class="admin-tab-content active" id="adminUpload">
+                <form id="adminUploadForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="adminSemester">Semester</label>
+                        <select id="adminSemester" required>
+                            <option value="">Select Semester</option>
+                            <option value="1">1st Semester</option>
+                            <option value="2">2nd Semester</option>
+                            <option value="3">3rd Semester</option>
+                            <option value="4">4th Semester</option>
+                            <option value="5">5th Semester</option>
+                            <option value="6">6th Semester</option>
+                            <option value="7">7th Semester</option>
+                            <option value="8">8th Semester</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminSubject">Subject</label>
+                        <input type="text" id="adminSubject" placeholder="Enter subject name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminType">Resource Type</label>
+                        <select id="adminType" required>
+                            <option value="">Select Type</option>
+                            <option value="question-paper">Question Paper</option>
+                            <option value="study-notes">Study Notes</option>
+                            <option value="mcq">MCQs & Quizzes</option>
+                            <option value="lab-manual">Lab Manual</option>
+                            <option value="assignment">Assignment</option>
+                            <option value="syllabus">Syllabus</option>
+                            <option value="reference-book">Reference Book</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminTitle">Title</label>
+                        <input type="text" id="adminTitle" placeholder="Enter resource title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminFile">Upload File</label>
+                        <input type="file" id="adminFile" accept=".pdf,.png,.jpg,.jpeg,.txt,.docx,.pptx" required>
+                        <small>Accepted formats: PDF, PNG, JPG, TXT, DOCX, PPTX</small>
+                    </div>
+                    <div id="filePreviewContainer" style="display: none; margin-bottom: 20px;">
+                        <h4>File Preview</h4>
+                        <div id="filePreview"></div>
+                    </div>
+                    <button type="submit" class="submit-btn">Upload Resource</button>
+                </form>
+            </div>
+            
+            <div class="admin-tab-content" id="pendingUploads">
+                <h3>Pending User Uploads</h3>
+                <div class="pending-uploads-container" id="pendingUploadsContainer">
+                    <!-- Pending uploads will be inserted here -->
+                </div>
+            </div>
+            
+            <div class="admin-tab-content" id="manageResources">
+                <h3>Manage All Resources</h3>
+                <div class="resources-list" id="allResourcesContainer">
+                    <!-- All resources will be inserted here -->
+                </div>
+            </div>
+            
+            <div class="admin-tab-content" id="stats">
+                <h3>Statistics</h3>
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <h4>Total Resources</h4>
+                        <p id="totalResources">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Pending Approvals</h4>
+                        <p id="pendingApprovals">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Most Popular Semester</h4>
+                        <p id="popularSemester">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Most Common Resource Type</h4>
+                        <p id="commonResourceType">-</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="resourcesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Preview Modal -->
+    <div class="modal" id="previewModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <h3 id="modalTitle">Resource Preview</h3>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Preview content will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="download-btn" id="modalDownloadBtn" download>
+                    <i class="fas fa-download"></i> Download
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal" id="adminLoginModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <h3>Admin Login</h3>
+            </div>
+            <div class="modal-body">
+                <form id="adminLoginForm">
+                    <div class="form-group">
+                        <label for="adminPassword">Password</label>
+                        <input type="password" id="adminPassword" placeholder="Enter admin password" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About StudentHub</h3>
+                    <p>A student-led initiative to share educational resources and help fellow students succeed in their academic journey.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#materials">Resources</a></li>
+                        <li><a href="#upload">Upload</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>Email: contact@studenthub.example</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="disclaimer">
+                    This is an unofficial, student-led educational resource platform. We are not affiliated with any university. 
+                    All content is user-submitted and meant only for educational use. If you are a copyright owner and wish to have 
+                    content removed, please contact us.
+                </p>
+                <p>&copy; 2023 StudentHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Main Application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the app
+            initApp();
+        });
+
+        function initApp() {
+            // Check for saved theme preference
+            checkThemePreference();
+            
+            // Initialize event listeners
+            setupEventListeners();
+            
+            // Load initial data
+            loadInitialData();
+            
+            // Render initial materials
+            renderMaterials();
+            
+            // Update subject filter options
+            updateSubjectFilter();
+            
+            // Check admin status (this will show panel only if already logged in)
+            checkAdminStatus();
+        }
+
+        // Data Storage
+        let materials = [
+            {
+                id: 1,
+                semester: '1',
+                subject: 'Mathematics',
+                type: 'question-paper',
+                title: 'First Semester Mathematics Final Exam 2022',
+                fileLink: 'https://example.com/math-final-2022.pdf',
+                fileType: 'pdf',
+                uploadDate: '2023-01-15',
+                downloads: 124,
+                isAdminUpload: true
+            },
+            {
+                id: 2,
+                semester: '1',
+                subject: 'Physics',
+                type: 'study-notes',
+                title: 'Physics Complete Notes',
+                fileLink: 'https://example.com/physics-notes.pdf',
+                fileType: 'pdf',
+                uploadDate: '2023-02-20',
+                downloads: 89,
+                isAdminUpload: true
+            },
+            {
+                id: 3,
+                semester: '2',
+                subject: 'Chemistry',
+                type: 'lab-manual',
+                title: 'Chemistry Lab Experiments',
+                fileLink: 'https://example.com/chem-lab.pdf',
+                fileType: 'pdf',
+                uploadDate: '2023-03-10',
+                downloads: 76,
+                isAdminUpload: true
+            },
+            {
+                id: 4,
+                semester: '3',
+                subject: 'Programming',
+                type: 'assignment',
+                title: 'Data Structures Assignment',
+                fileLink: 'https://example.com/ds-assignment.pdf',
+                fileType: 'pdf',
+                uploadDate: '2023-04-05',
+                downloads: 112,
+                isAdminUpload: true
+            },
+            {
+                id: 5,
+                semester: '4',
+                subject: 'Database Systems',
+                type: 'mcq',
+                title: 'DBMS MCQ Collection',
+                fileLink: 'https://example.com/dbms-mcq.pdf',
+                fileType: 'pdf',
+                uploadDate: '2023-05-12',
+                downloads: 98,
+                isAdminUpload: true
+            },
+            {
+                id: 6,
+                semester: '5',
+                subject: 'Operating Systems',
+                type: 'reference-book',
+                title: 'Operating System Concepts (10th Edition)',
+                fileLink: 'https://example.com/os-book.pdf',
+                fileType: 'pdf',
+                uploadDate: '2023-06-18',
+                downloads: 145,
+                isAdminUpload: true,
+                author: 'Abraham Silberschatz',
+                edition: '10th'
+            },
+            {
+                id: 7,
+                semester: '6',
+                subject: 'Computer Networks',
+                type: 'syllabus',
+                title: 'CN Syllabus 2023',
+                fileLink: 'https://example.com/cn-syllabus.pdf',
+                fileType: 'pdf',
+                uploadDate: '2023-07-22',
+                downloads: 67,
+                isAdminUpload: true
+            },
+            {
+                id: 8,
+                semester: '7',
+                subject: 'Artificial Intelligence',
+                type: 'question-paper',
+                title: 'AI Midterm Exam 2023',
+                fileLink: 'https://example.com/ai-midterm.pdf',
+                fileType: 'pdf',
+                uploadDate: '2023-08-30',
+                downloads: 83,
+                isAdminUpload: true
+            }
+        ];
+
+        let pendingUploads = [];
+        let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+        let isAdmin = false;
+
+        // Theme Management
+        function checkThemePreference() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                updateDarkModeToggle(true);
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                updateDarkModeToggle(false);
+            }
+        }
+
+        function toggleDarkMode() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                updateDarkModeToggle(false);
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                updateDarkModeToggle(true);
+            }
+        }
+
+        function updateDarkModeToggle(isDark) {
+            const toggles = document.querySelectorAll('.dark-mode-toggle');
+            toggles.forEach(toggle => {
+                if (isDark) {
+                    toggle.innerHTML = '<i class="fas fa-sun"></i>';
+                    if (toggle.id === 'darkModeToggleMobile') {
+                        toggle.innerHTML = '<i class="fas fa-sun"></i> Toggle Light Mode';
+                    }
+                } else {
+                    toggle.innerHTML = '<i class="fas fa-moon"></i>';
+                    if (toggle.id === 'darkModeToggleMobile') {
+                        toggle.innerHTML = '<i class="fas fa-moon"></i> Toggle Dark Mode';
+                    }
+                }
+            });
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Dark mode toggle
+            document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
+            document.getElementById('darkModeToggleMobile').addEventListener('click', toggleDarkMode);
+            
+            // Semester filter
+            document.getElementById('semesterFilter').addEventListener('change', function() {
+                document.getElementById('semesterFilterMobile').value = this.value;
+                renderMaterials();
+            });
+            
+            document.getElementById('semesterFilterMobile').addEventListener('change', function() {
+                document.getElementById('semesterFilter').value = this.value;
+                renderMaterials();
+            });
+            
+            // Subject and type filters
+            document.getElementById('subjectFilter').addEventListener('change', renderMaterials);
+            document.getElementById('typeFilter').addEventListener('change', renderMaterials);
+            
+            // Search functionality
+            document.getElementById('searchBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                renderMaterials();
+            });
+            
+            document.getElementById('globalSearch').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    renderMaterials();
+                }
+            });
+            
+            // User upload form
+            document.getElementById('userUploadForm').addEventListener('submit', handleUserUpload);
+            
+            // Admin upload form
+            document.getElementById('adminUploadForm').addEventListener('submit', handleAdminUpload);
+            
+            // Admin login
+            document.getElementById('adminLoginBtn').addEventListener('click', showAdminLoginModal);
+            document.getElementById('adminLoginBtnMobile').addEventListener('click', showAdminLoginModal);
+            document.getElementById('adminLoginForm').addEventListener('submit', handleAdminLogin);
+            
+            // Admin logout
+            document.getElementById('adminLogoutBtn').addEventListener('click', handleAdminLogout);
+            
+            // Admin tabs
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    switchAdminTab(tabId);
+                });
+            });
+
+            
+            // Modal close buttons
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modal = this.closest('.modal');
+                    modal.style.display = 'none';
+                });
+            });
+            
+            // Click outside modal to close
+            window.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = 'none';
+                }
+            });
+            
+            // Mobile menu toggle
+            document.getElementById('hamburger').addEventListener('click', function() {
+                const mobileMenu = document.getElementById('mobileMenu');
+                mobileMenu.classList.toggle('active');
+            });
+            
+            // Close mobile menu when clicking a link
+            document.querySelectorAll('.mobile-menu a').forEach(link => {
+                link.addEventListener('click', function() {
+                    document.getElementById('mobileMenu').classList.remove('active');
+                });
+            });
+
+            // File preview when selecting a file
+            document.getElementById('adminFile').addEventListener('change', function(e) {
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+                    const fileType = file.name.split('.').pop().toLowerCase();
+                    const previewContainer = document.getElementById('filePreviewContainer');
+                    const preview = document.getElementById('filePreview');
+                    
+                    preview.innerHTML = '';
+                    
+                    if (fileType === 'pdf') {
+                        preview.innerHTML = `
+                            <iframe src="${URL.createObjectURL(file)}" 
+                                    style="width:100%; height:300px; border:1px solid #ddd;"></iframe>
+                            <p>${file.name}</p>
+                        `;
+                    } else if (fileType === 'jpg' || fileType === 'jpeg' || fileType === 'png') {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.style.maxWidth = '100%';
+                        img.style.maxHeight = '300px';
+                        preview.appendChild(img);
+                        preview.innerHTML += `<p>${file.name}</p>`;
+                    } else {
+                        preview.innerHTML = `
+                            <div class="file-info">
+                                <i class="fas fa-file fa-3x"></i>
+                                <p>${file.name}</p>
+                            </div>
+                        `;
+                    }
+                    
+                    previewContainer.style.display = 'block';
+                }
+            });
+        }
+
+        // Material Rendering
+        function renderMaterials() {
+            const container = document.getElementById('materialsContainer');
+            container.innerHTML = '';
+            
+            const semesterFilter = document.getElementById('semesterFilter').value;
+            const subjectFilter = document.getElementById('subjectFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+            const searchQuery = document.getElementById('globalSearch').value.toLowerCase();
+            
+            let filteredMaterials = [...materials];
+            
+            // Apply filters
+            if (semesterFilter) {
+                filteredMaterials = filteredMaterials.filter(material => material.semester === semesterFilter);
+            }
+            
+            if (subjectFilter) {
+                filteredMaterials = filteredMaterials.filter(material => material.subject.toLowerCase() === subjectFilter.toLowerCase());
+            }
+            
+            if (typeFilter) {
+                filteredMaterials = filteredMaterials.filter(material => material.type === typeFilter);
+            }
+            
+            if (searchQuery) {
+                filteredMaterials = filteredMaterials.filter(material => 
+                    material.title.toLowerCase().includes(searchQuery) || 
+                    material.subject.toLowerCase().includes(searchQuery) ||
+                    material.type.toLowerCase().includes(searchQuery)
+                );
+            }
+            
+            // Sort by most downloads
+            filteredMaterials.sort((a, b) => b.downloads - a.downloads);
+            
+            if (filteredMaterials.length === 0) {
+                container.innerHTML = '<div class="no-results">No resources found matching your criteria.</div>';
+                return;
+            }
+            
+            filteredMaterials.forEach(material => {
+                const card = createMaterialCard(material);
+                container.appendChild(card);
+            });
+        }
+
+        function createMaterialCard(material) {
+            const card = document.createElement('div');
+            card.className = 'material-card';
+            
+            // Determine icon based on file type
+            let icon = 'fa-file';
+            if (material.fileType === 'pdf') icon = 'fa-file-pdf';
+            else if (material.fileType === 'image') icon = 'fa-file-image';
+            else if (material.fileType === 'docx') icon = 'fa-file-word';
+            else if (material.fileType === 'pptx') icon = 'fa-file-powerpoint';
+            else if (material.fileType === 'txt') icon = 'fa-file-alt';
+            
+            // Format upload date
+            const uploadDate = new Date(material.uploadDate);
+            const formattedDate = uploadDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            
+            // Check if bookmarked
+            const isBookmarked = bookmarks.includes(material.id);
+            
+            // Get type display name
+            const typeDisplayNames = {
+                'question-paper': 'Question Paper',
+                'study-notes': 'Study Notes',
+                'mcq': 'MCQs & Quizzes',
+                'lab-manual': 'Lab Manual',
+                'assignment': 'Assignment',
+                'syllabus': 'Syllabus',
+                'reference-book': 'Reference Book'
+            };
+            
+            const typeDisplayName = typeDisplayNames[material.type] || material.type;
+            
+            // Card HTML
+            card.innerHTML = `
+                <div class="material-header">
+                    <span class="material-semester">Semester ${material.semester}</span>
+                    <h3>${material.title}</h3>
+                    <p class="material-subject">${material.subject}</p>
+                </div>
+                <div class="material-body">
+                    <span class="material-type">${typeDisplayName}</span>
+                    <p class="material-description">
+                        <i class="fas ${icon}"></i> ${material.fileType.toUpperCase()} • ${formattedDate} • ${material.downloads} downloads
+                    </p>
+                    ${material.type === 'reference-book' ? `<p><strong>Author:</strong> ${material.author || 'Unknown'}</p>` : ''}
+                    ${material.type === 'reference-book' ? `<p><strong>Edition:</strong> ${material.edition || 'N/A'}</p>` : ''}
+                </div>
+                <div class="material-footer">
+                    <button class="preview-btn" data-id="${material.id}">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                    <a href="${material.fileLink}" class="download-btn" download="${material.title}.${material.fileType}" target="_blank" data-id="${material.id}">
+                        <i class="fas fa-download"></i> Download
+                    </a>
+                    <button class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" data-id="${material.id}">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Add event listeners to the buttons
+            card.querySelector('.preview-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                showFilePreview(material);
+            });
+            
+            card.querySelector('.download-btn').addEventListener('click', function() {
+                // Increment download count
+                material.downloads++;
+                // Update in the materials array
+                const index = materials.findIndex(m => m.id === material.id);
+                if (index !== -1) {
+                    materials[index] = material;
+                }
+                // Save to localStorage (simulating backend)
+                saveMaterials();
+            });
+            
+            card.querySelector('.bookmark-btn').addEventListener('click', function() {
+                toggleBookmark(material.id);
+                this.classList.toggle('bookmarked');
+            });
+            
+            return card;
+        }
+
+        // File Preview
+        function showFilePreview(material) {
+            const modal = document.getElementById('previewModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const downloadBtn = document.getElementById('modalDownloadBtn');
+            
+            modalTitle.textContent = material.title;
+            downloadBtn.href = material.fileLink;
+            downloadBtn.setAttribute('download', `${material.title}.${material.fileType}`);
+            
+            // Clear previous content
+            modalBody.innerHTML = '';
+            
+            // Create appropriate preview based on file type
+            if (material.fileType === 'pdf') {
+                modalBody.innerHTML = `
+                    <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(material.fileLink)}&embedded=true" 
+                            class="file-preview" frameborder="0"></iframe>
+                `;
+            } else if (material.fileType === 'jpg' || material.fileType === 'jpeg' || material.fileType === 'png') {
+                modalBody.innerHTML = `
+                    <img src="${material.fileLink}" alt="${material.title}" class="image-preview">
+                `;
+            } else if (material.fileType === 'txt') {
+                // Note: For security reasons, we can't actually load external text files in frontend
+                // This is just a simulation
+                modalBody.innerHTML = `
+                    <div class="text-preview">
+                        This is a simulation of a text file preview. In a real application, 
+                        the content of the text file would be displayed here.
+                        
+                        File: ${material.title}.${material.fileType}
+                        Size: ~1.2MB
+                        Uploaded: ${new Date(material.uploadDate).toLocaleDateString()}
+                    </div>
+                `;
+            } else if (material.fileType === 'docx' || material.fileType === 'pptx') {
+                // For office files, we can use Google Docs viewer
+                modalBody.innerHTML = `
+                    <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(material.fileLink)}&embedded=true" 
+                            class="file-preview" frameborder="0"></iframe>
+                `;
+            } else {
+                modalBody.innerHTML = `
+                    <div class="unsupported-preview">
+                        <i class="fas fa-exclamation-triangle fa-3x"></i>
+                        <p>Preview not available for this file type.</p>
+                        <p>Please download the file to view it.</p>
+                    </div>
+                `;
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        // Upload Handling
+        function handleUserUpload(e) {
+            e.preventDefault();
+            
+            const semester = document.getElementById('semester').value;
+            const subject = document.getElementById('subject').value;
+            const type = document.getElementById('type').value;
+            const title = document.getElementById('title').value;
+            const fileLink = document.getElementById('fileLink').value;
+            
+            // Determine file type from link
+            let fileType = 'pdf'; // default
+            if (fileLink.includes('.jpg') || fileLink.includes('.jpeg')) fileType = 'jpg';
+            else if (fileLink.includes('.png')) fileType = 'png';
+            else if (fileLink.includes('.txt')) fileType = 'txt';
+            else if (fileLink.includes('.docx')) fileType = 'docx';
+            else if (fileLink.includes('.pptx')) fileType = 'pptx';
+            
+            // Create new upload object
+            const newUpload = {
+                id: Date.now(), // Simple unique ID
+                semester,
+                subject,
+                type,
+                title,
+                fileLink,
+                fileType,
+                uploadDate: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+                downloads: 0,
+                isAdminUpload: false
+            };
+            
+            // Add to pending uploads
+            pendingUploads.push(newUpload);
+            savePendingUploads();
+            
+            // Show success message
+            const uploadStatus = document.getElementById('uploadStatus');
+            uploadStatus.style.display = 'block';
+            uploadStatus.textContent = 'Your upload has been submitted for admin approval.';
+            uploadStatus.style.backgroundColor = 'rgba(23, 162, 184, 0.1)';
+            uploadStatus.style.color = 'var(--info-color)';
+            
+            // Reset form
+            e.target.reset();
+            
+            // Hide message after 5 seconds
+            setTimeout(() => {
+                uploadStatus.style.display = 'none';
+            }, 5000);
+            
+            // If admin is logged in, update pending approvals view
+            if (isAdmin) {
+                renderPendingUploads();
+                updateStats();
+            }
+        }
+
+        function handleAdminUpload(e) {
+            e.preventDefault();
+            
+            const semester = document.getElementById('adminSemester').value;
+            const subject = document.getElementById('adminSubject').value;
+            const type = document.getElementById('adminType').value;
+            const title = document.getElementById('adminTitle').value;
+            const fileInput = document.getElementById('adminFile');
+            
+            // Validate file input
+            if (fileInput.files.length === 0) {
+                alert('Please select a file to upload.');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const fileName = file.name;
+            const fileSize = (file.size / (1024 * 1024)).toFixed(2); // in MB
+            const fileType = fileName.split('.').pop().toLowerCase();
+            
+            // Validate file size (max 10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                alert('File size exceeds 10MB limit. Please choose a smaller file.');
+                return;
+            }
+            
+            // Validate file type
+            const allowedTypes = ['pdf', 'png', 'jpg', 'jpeg', 'txt', 'docx', 'pptx'];
+            if (!allowedTypes.includes(fileType)) {
+                alert('Invalid file type. Please upload a PDF, PNG, JPG, TXT, DOCX, or PPTX file.');
+                return;
+            }
+            
+            // In a real application, here you would upload the file to a server
+            // For this demo, we'll simulate the upload by creating a local object URL
+            
+            // Create a preview of the uploaded file
+            const filePreviewContainer = document.getElementById('filePreviewContainer');
+            const filePreview = document.getElementById('filePreview');
+            filePreview.innerHTML = '';
+            
+            if (fileType === 'pdf') {
+                filePreview.innerHTML = `
+                    <iframe src="${URL.createObjectURL(file)}" 
+                            style="width:100%; height:300px; border:1px solid #ddd;"></iframe>
+                    <p>${fileName} (${fileSize} MB)</p>
+                `;
+            } else if (fileType === 'png' || fileType === 'jpg' || fileType === 'jpeg') {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.style.maxWidth = '100%';
+                img.style.maxHeight = '300px';
+                filePreview.appendChild(img);
+                filePreview.innerHTML += `<p>${fileName} (${fileSize} MB)</p>`;
+            } else {
+                filePreview.innerHTML = `
+                    <div class="file-info">
+                        <i class="fas fa-file fa-3x"></i>
+                        <p>${fileName}</p>
+                        <p>${fileSize} MB</p>
+                    </div>
+                `;
+            }
+            
+            filePreviewContainer.style.display = 'block';
+            
+            // Create new material object with the simulated file URL
+            const newMaterial = {
+                id: Date.now(),
+                semester,
+                subject,
+                type,
+                title,
+                fileLink: URL.createObjectURL(file), // In real app, this would be server URL
+                fileType,
+                uploadDate: new Date().toISOString().split('T')[0],
+                downloads: 0,
+                isAdminUpload: true,
+                fileName: fileName,
+                fileSize: fileSize + ' MB'
+            };
+            
+            // For reference books, add additional fields
+            if (type === 'reference-book') {
+                newMaterial.author = prompt('Enter the author name:') || 'Unknown';
+                newMaterial.edition = prompt('Enter the edition:') || 'N/A';
+            }
+            
+            // Add to materials
+            materials.push(newMaterial);
+            saveMaterials();
+            
+            // Show success message
+            alert(`File "${fileName}" uploaded successfully!`);
+            
+            // Reset form
+            e.target.reset();
+            filePreviewContainer.style.display = 'none';
+            
+            // Update materials view
+            renderMaterials();
+            renderAllResources();
+            updateSubjectFilter();
+            updateStats();
+        }
+
+        // Admin Functions
+        function showAdminLoginModal() {
+            document.getElementById('adminLoginModal').style.display = 'block';
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            
+            // Simple password check (in real app, this would be server-side)
+            if (password === 'admin123') { // Demo password
+                isAdmin = true;
+                localStorage.setItem('isAdmin', 'true');
+                document.getElementById('adminLoginModal').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                renderPendingUploads();
+                renderAllResources();
+                updateStats();
+                alert('Admin login successful!');
+            } else {
+                alert('Incorrect password. Please try again.');
+            }
+            
+            e.target.reset();
+        }
+
+        function handleAdminLogout() {
+            if (!confirm('Are you sure you want to logout?')) return;
+            
+            isAdmin = false;
+            localStorage.removeItem('isAdmin');
+            document.getElementById('adminPanel').style.display = 'none';
+            alert('You have been logged out successfully.');
+        }
+
+        function checkAdminStatus() {
+            const storedAdminStatus = localStorage.getItem('isAdmin') === 'true';
+            if (storedAdminStatus) {
+                isAdmin = true;
+                document.getElementById('adminPanel').style.display = 'block';
+                renderPendingUploads();
+                renderAllResources();
+                updateStats();
+            } else {
+                isAdmin = false;
+                document.getElementById('adminPanel').style.display = 'none';
+            }
+        }
+
+        function renderPendingUploads() {
+            const container = document.getElementById('pendingUploadsContainer');
+            container.innerHTML = '';
+            
+            if (pendingUploads.length === 0) {
+                container.innerHTML = '<p>No pending uploads to review.</p>';
+                return;
+            }
+            
+            pendingUploads.forEach(upload => {
+                const card = document.createElement('div');
+                card.className = 'pending-card';
+                
+                // Get type display name
+                const typeDisplayNames = {
+                    'question-paper': 'Question Paper',
+                    'study-notes': 'Study Notes',
+                    'mcq': 'MCQs & Quizzes',
+                    'lab-manual': 'Lab Manual',
+                    'assignment': 'Assignment',
+                    'syllabus': 'Syllabus',
+                    'reference-book': 'Reference Book'
+                };
+                
+                const typeDisplayName = typeDisplayNames[upload.type] || upload.type;
+                
+                card.innerHTML = `
+                    <h4>${upload.title}</h4>
+                    <p><strong>Semester:</strong> ${upload.semester}</p>
+                    <p><strong>Subject:</strong> ${upload.subject}</p>
+                    <p><strong>Type:</strong> ${typeDisplayName}</p>
+                    <p><strong>File:</strong> ${upload.fileType.toUpperCase()}</p>
+                    <p><strong>Submitted:</strong> ${new Date(upload.uploadDate).toLocaleDateString()}</p>
+                    <div class="pending-actions">
+                        <button class="approve-btn" data-id="${upload.id}">Approve</button>
+                        <button class="reject-btn" data-id="${upload.id}">Reject</button>
+                    </div>
+                `;
+                
+                card.querySelector('.approve-btn').addEventListener('click', function() {
+                    approveUpload(upload.id);
+                });
+                
+                card.querySelector('.reject-btn').addEventListener('click', function() {
+                    rejectUpload(upload.id);
+                });
+                
+                container.appendChild(card);
+            });
+        }
+
+        function renderAllResources() {
+            const container = document.getElementById('allResourcesContainer');
+            container.innerHTML = '';
+            
+            if (materials.length === 0) {
+                container.innerHTML = '<p>No resources found.</p>';
+                return;
+            }
+            
+            materials.forEach(material => {
+                const item = document.createElement('div');
+                item.className = 'resource-item';
+                
+                // Get type display name
+                const typeDisplayNames = {
+                    'question-paper': 'Question Paper',
+                    'study-notes': 'Study Notes',
+                    'mcq': 'MCQs & Quizzes',
+                    'lab-manual': 'Lab Manual',
+                    'assignment': 'Assignment',
+                    'syllabus': 'Syllabus',
+                    'reference-book': 'Reference Book'
+                };
+                
+                const typeDisplayName = typeDisplayNames[material.type] || material.type;
+                
+                item.innerHTML = `
+                    <h4>${material.title}</h4>
+                    <p><strong>Semester:</strong> ${material.semester}</p>
+                    <p><strong>Subject:</strong> ${material.subject}</p>
+                    <p><strong>Type:</strong> ${typeDisplayName}</p>
+                    <p><strong>Upload Date:</strong> ${new Date(material.uploadDate).toLocaleDateString()}</p>
+                    <p><strong>Downloads:</strong> ${material.downloads}</p>
+                    <button class="delete-resource-btn" data-id="${material.id}">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                `;
+                
+                item.querySelector('.delete-resource-btn').addEventListener('click', function() {
+                    deleteResource(material.id);
+                });
+                
+                container.appendChild(item);
+            });
+        }
+
+        function deleteResource(resourceId) {
+            if (!confirm('Are you sure you want to delete this resource? This action cannot be undone.')) {
+                return;
+            }
+            
+            const index = materials.findIndex(m => m.id === resourceId);
+            if (index !== -1) {
+                materials.splice(index, 1);
+                saveMaterials();
+                
+                // Update views
+                renderMaterials();
+                renderAllResources();
+                updateSubjectFilter();
+                updateStats();
+                
+                alert('Resource deleted successfully!');
+            }
+        }
+
+        function approveUpload(uploadId) {
+            const uploadIndex = pendingUploads.findIndex(upload => upload.id === uploadId);
+            if (uploadIndex === -1) return;
+            
+            const approvedUpload = pendingUploads[uploadIndex];
+            approvedUpload.isAdminUpload = true;
+            
+            // Add to materials
+            materials.push(approvedUpload);
+            saveMaterials();
+            
+            // Remove from pending uploads
+            pendingUploads.splice(uploadIndex, 1);
+            savePendingUploads();
+            
+            // Update views
+            renderPendingUploads();
+            renderMaterials();
+            renderAllResources();
+            updateSubjectFilter();
+            updateStats();
+            
+            alert('Upload approved and published!');
+        }
+
+        function rejectUpload(uploadId) {
+            if (!confirm('Are you sure you want to reject this upload?')) return;
+            
+            const uploadIndex = pendingUploads.findIndex(upload => upload.id === uploadId);
+            if (uploadIndex === -1) return;
+            
+            // Remove from pending uploads
+            pendingUploads.splice(uploadIndex, 1);
+            savePendingUploads();
+            
+            // Update views
+            renderPendingUploads();
+            updateStats();
+            
+            alert('Upload rejected and removed.');
+        }
+
+        function switchAdminTab(tabId) {
+            // Update tab buttons
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('data-tab') === tabId) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Update tab content
+            document.querySelectorAll('.admin-tab-content').forEach(content => {
+                content.classList.remove('active');
+                if (content.id === tabId) {
+                    content.classList.add('active');
+                    
+                    // If switching to manage resources tab, load resources
+                    if (tabId === 'manageResources') {
+                        renderAllResources();
+                    }
+                }
+            });
+            
+            // If switching to stats tab, update stats
+            if (tabId === 'stats') {
+                updateStats();
+            }
+        }
+
+        // Stats and Analytics
+        function updateStats() {
+            document.getElementById('totalResources').textContent = materials.length;
+            document.getElementById('pendingApprovals').textContent = pendingUploads.length;
+            
+            // Find most popular semester
+            const semesterCounts = {};
+            materials.forEach(material => {
+                semesterCounts[material.semester] = (semesterCounts[material.semester] || 0) + 1;
+            });
+            
+            let popularSemester = '-';
+            let maxCount = 0;
+            for (const [semester, count] of Object.entries(semesterCounts)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    popularSemester = `${semester} (${count} resources)`;
+                }
+            }
+            document.getElementById('popularSemester').textContent = popularSemester;
+            
+            // Find most common resource type
+            const typeCounts = {};
+            materials.forEach(material => {
+                typeCounts[material.type] = (typeCounts[material.type] || 0) + 1;
+            });
+            
+            let commonType = '-';
+            let maxTypeCount = 0;
+            for (const [type, count] of Object.entries(typeCounts)) {
+                if (count > maxTypeCount) {
+                    maxTypeCount = count;
+                    commonType = `${type.replace('-', ' ')} (${count})`;
+                }
+            }
+            document.getElementById('commonResourceType').textContent = commonType;
+            
+            // Update chart
+            updateChart();
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('resourcesChart').getContext('2d');
+            
+            // Group by semester
+            const semesterLabels = ['1', '2', '3', '4', '5', '6', '7', '8'];
+            const semesterData = semesterLabels.map(sem => 
+                materials.filter(m => m.semester === sem).length
+            );
+            
+            // Destroy previous chart if it exists
+            if (window.resourcesChart) {
+                window.resourcesChart.destroy();
+            }
+            
+            window.resourcesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: semesterLabels.map(sem => `Semester ${sem}`),
+                    datasets: [{
+                        label: 'Resources by Semester',
+                        data: semesterData,
+                        backgroundColor: 'rgba(74, 107, 255, 0.7)',
+                        borderColor: 'rgba(74, 107, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Subject Filter Management
+        function updateSubjectFilter() {
+            const subjectFilter = document.getElementById('subjectFilter');
+            
+            // Get unique subjects from materials
+            const subjects = [...new Set(materials.map(material => material.subject))];
+            
+            // Clear existing options except the first one
+            while (subjectFilter.options.length > 1) {
+                subjectFilter.remove(1);
+            }
+            
+            // Add new options
+            subjects.sort().forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject;
+                option.textContent = subject;
+                subjectFilter.appendChild(option);
+            });
+        }
+
+        // Bookmark Management
+        function toggleBookmark(materialId) {
+            const index = bookmarks.indexOf(materialId);
+            if (index === -1) {
+                // Add bookmark
+                bookmarks.push(materialId);
+            } else {
+                // Remove bookmark
+                bookmarks.splice(index, 1);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+        }
+
+        // Data Persistence (simulating backend with localStorage)
+        function saveMaterials() {
+            localStorage.setItem('materials', JSON.stringify(materials));
+        }
+
+        function savePendingUploads() {
+            localStorage.setItem('pendingUploads', JSON.stringify(pendingUploads));
+        }
+
+        function loadInitialData() {
+            const savedMaterials = localStorage.getItem('materials');
+            if (savedMaterials) {
+                materials = JSON.parse(savedMaterials);
+            }
+            
+            const savedPendingUploads = localStorage.getItem('pendingUploads');
+            if (savedPendingUploads) {
+                pendingUploads = JSON.parse(savedPendingUploads);
+            }
+        }
+    </script>
+</body>
+</html>
