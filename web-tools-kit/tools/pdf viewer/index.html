@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>High Quality PDF Viewer with Zoom & Scroll</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #111;
+      color: white;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    .top-buttons, .controls {
+      padding: 1rem;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+    #canvas-wrapper {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background: #222;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto;
+      background: #222;
+    }
+    button, input[type="number"] {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+    }
+    #toggle-dark {
+      background: #444;
+      color: white;
+    }
+    .dark-mode {
+      background-color: #111;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-buttons">
+    <input type="file" id="pdf-upload" accept="application/pdf" />
+    <input type="number" id="time-input" placeholder="Time per page (sec)" />
+    <button id="start-btn">Start</button>
+    <button id="zoom-in">+</button>
+    <button id="zoom-out">−</button>
+    <button id="toggle-dark">Dark Mode</button>
+  </div>
+  <div class="controls">
+    <span id="status">Upload a PDF to start</span>
+  </div>
+  <div id="canvas-wrapper">
+    <canvas id="pdf-render"></canvas>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <script>
+    const fileInput = document.getElementById("pdf-upload");
+    const timeInput = document.getElementById("time-input");
+    const startBtn = document.getElementById("start-btn");
+    const zoomInBtn = document.getElementById("zoom-in");
+    const zoomOutBtn = document.getElementById("zoom-out");
+    const canvas = document.getElementById("pdf-render");
+    const ctx = canvas.getContext("2d");
+    const statusText = document.getElementById("status");
+    const toggleDark = document.getElementById("toggle-dark");
+    const wrapper = document.getElementById("canvas-wrapper");
+
+    let pdfDoc = null, pageNum = 1, intervalId = null;
+    let currentScale = 2.5; // Default zoom level (2-4 best for high quality)
+
+    toggleDark.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+
+    zoomInBtn.addEventListener("click", () => {
+      currentScale += 0.5;
+      renderPage(pageNum);
+    });
+
+    zoomOutBtn.addEventListener("click", () => {
+      if (currentScale > 0.5) {
+        currentScale -= 0.5;
+        renderPage(pageNum);
+      }
+    });
+
+    wrapper.addEventListener("wheel", e => {
+      if (e.ctrlKey) {
+        e.preventDefault();
+        currentScale += e.deltaY < 0 ? 0.2 : -0.2;
+        currentScale = Math.max(0.5, Math.min(currentScale, 5));
+        renderPage(pageNum);
+      }
+    }, { passive: false });
+
+    function renderPage(num) {
+      pdfDoc.getPage(num).then(page => {
+        const viewport = page.getViewport({ scale: currentScale });
+        const outputScale = window.devicePixelRatio || 1;
+
+        canvas.width = Math.floor(viewport.width * outputScale);
+        canvas.height = Math.floor(viewport.height * outputScale);
+        canvas.style.width = `${viewport.width}px`;
+        canvas.style.height = `${viewport.height}px`;
+
+        const renderContext = {
+          canvasContext: ctx,
+          transform: outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null,
+          viewport: viewport
+        };
+
+        page.render(renderContext);
+      });
+    }
+
+    function startAutoView() {
+      renderPage(pageNum);
+      intervalId = setInterval(() => {
+        pageNum++;
+        if (pageNum > pdfDoc.numPages) {
+          clearInterval(intervalId);
+          document.exitFullscreen();
+          statusText.innerText = "PDF completed.";
+          return;
+        }
+        renderPage(pageNum);
+      }, parseInt(timeInput.value) * 1000);
+    }
+
+    startBtn.addEventListener("click", async () => {
+      const file = fileInput.files[0];
+      const timer = parseInt(timeInput.value);
+      if (!file || !timer) return alert("Upload a PDF and set valid time.");
+
+      document.querySelector(".top-buttons").style.display = "none";
+      document.querySelector(".controls").style.display = "none";
+
+      if (!document.fullscreenElement) {
+        await wrapper.requestFullscreen();
+      }
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        const typedArray = new Uint8Array(this.result);
+        pdfjsLib.getDocument(typedArray).promise.then(pdf => {
+          pdfDoc = pdf;
+          statusText.innerText = `PDF loaded: ${pdfDoc.numPages} pages.`;
+          renderPage(pageNum);
+          startAutoView();
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement) {
+        document.querySelector(".top-buttons").style.display = "flex";
+        document.querySelector(".controls").style.display = "flex";
+        clearInterval(intervalId);
+        pageNum = 1;
+      }
+    });
+  </script>
+</body>
+</html>
