@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cosmic Vision - Immersive Video Experience</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ====== VARIABLES ====== */
+    :root {
+      --primary: #6c5ce7;
+      --primary-dark: #5649c0;
+      --secondary: #00cec9;
+      --text: #f5f6fa;
+      --text-secondary: #dcdde1;
+      --bg-dark: #0f0f1a;
+      --bg-darker: #0a0a12;
+      --glass: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    /* ====== BASE STYLES ====== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* ====== COSMIC BACKGROUND ====== */
+    .cosmic-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+      overflow: hidden;
+    }
+
+    /* ====== NAVIGATION ====== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 3rem;
+      background: rgba(15, 15, 26, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      color: var(--primary);
+      font-size: 1.8rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: var(--transition);
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      outline: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+      backdrop-filter: blur(5px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ====== MAIN CONTENT ====== */
+    .main-content {
+      padding-top: 6rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding-bottom: 4rem;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      position: relative;
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #6c5ce7, #00cec9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+
+    /* ====== VIDEO PLAYER ====== */
+    .player-container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      transition: var(--transition);
+    }
+
+    .player-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    }
+
+    #video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+
+    /* Custom Controls */
+    .custom-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .video-wrapper:hover .custom-controls {
+      opacity: 1;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    #progress {
+      width: 0%;
+      height: 100%;
+      background: var(--primary);
+      border-radius: 3px;
+      position: relative;
+    }
+
+    #progress::after {
+      content: '';
+      position: absolute;
+      right: -5px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .progress-container:hover #progress::after {
+      opacity: 1;
+    }
+
+    .time-display {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .control-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .left-controls, .right-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .control-btn {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: var(--transition);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.1);
+    }
+
+    .volume-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    #volume {
+      width: 80px;
+      -webkit-appearance: none;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 2px;
+      outline: none;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .volume-container:hover #volume {
+      opacity: 1;
+    }
+
+    #volume::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      background: var(--text);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    /* Settings Menu */
+    .settings-menu {
+      position: relative;
+    }
+
+    .settings-content {
+      position: absolute;
+      bottom: 50px;
+      right: 0;
+      background: rgba(30, 30, 50, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 1rem;
+      width: 200px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+      z-index: 10;
+    }
+
+    .settings-menu.active .settings-content {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .settings-item {
+      padding: 0.5rem;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .settings-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ====== SECTIONS ====== */
+    .section {
+      padding: 5rem 2rem;
+      position: relative;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 4px;
+      background: var(--primary);
+      margin: 1rem auto;
+      border-radius: 2px;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 3rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      background: rgba(30, 30, 50, 0.3);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 2rem;
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      border-color: rgba(108, 92, 231, 0.3);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .feature-desc {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* About Section */
+    .about-content {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .about-text {
+      flex: 1;
+    }
+
+    .about-image {
+      flex: 1;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    .about-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ====== SPOTLIGHT MODE ====== */
+    .spotlight {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .spotlight.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .spotlight-video {
+      width: 80%;
+      max-width: 1200px;
+      border-radius: 10px;
+      box-shadow: 0 0 50px rgba(108, 92, 231, 0.3);
+    }
+
+    .close-spotlight {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      font-size: 2rem;
+      color: white;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.1);
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .close-spotlight:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: rotate(90deg);
+    }
+
+    /* ====== FOOTER ====== */
+    .footer {
+      background: var(--bg-darker);
+      padding: 3rem 2rem;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .footer-link:hover {
+      color: var(--primary);
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .social-link {
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      transition: var(--transition);
+    }
+
+    .social-link:hover {
+      color: var(--primary);
+      transform: translateY(-3px);
+    }
+
+    .copyright {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* ====== ANIMATIONS ====== */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .floating {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    /* ====== UPLOAD MODAL ====== */
+    .upload-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 1001;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .upload-modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .upload-content {
+      background: var(--bg-dark);
+      border-radius: 15px;
+      width: 90%;
+      max-width: 600px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .upload-header {
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .upload-header h3 {
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .close-upload {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .close-upload:hover {
+      color: var(--primary);
+    }
+
+    .upload-body {
+      padding: 2rem;
+    }
+
+    .upload-area {
+      border: 2px dashed var(--glass-border);
+      border-radius: 10px;
+      padding: 2rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      transition: var(--transition);
+    }
+
+    .upload-area.active {
+      border-color: var(--primary);
+      background: rgba(108, 92, 231, 0.1);
+    }
+
+    .upload-icon {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .upload-area p {
+      margin-bottom: 0.5rem;
+    }
+
+    .small {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .file-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    .file-icon {
+      margin-right: 1rem;
+      color: var(--primary);
+    }
+
+    .file-info {
+      flex: 1;
+    }
+
+    .file-name {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .file-size {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .remove-file {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .remove-file:hover {
+      color: #ff4757;
+    }
+
+    .upload-footer {
+      padding: 1.5rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Scrollbar styling */
+    .file-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .file-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+
+    .file-list::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 10px;
+    }
+
+    .file-list::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 50px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    
+    .toast.show {
+      opacity: 1;
+      bottom: 30px;
+    }
+
+    /* ====== RESPONSIVE DESIGN ====== */
+    @media (max-width: 992px) {
+      .hero-title {
+        font-size: 2.8rem;
+      }
+      
+      .about-content {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem 1.5rem;
+      }
+      
+      .hero-title {
+        font-size: 2.2rem;
+      }
+      
+      .nav-links {
+        display: none;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .hero-title {
+        font-size: 1.8rem;
+      }
+      
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+
+      .upload-content {
+        width: 95%;
+      }
+
+      .upload-body {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 🌌 Cosmic Background -->
+  <div class="cosmic-background" id="cosmic-bg"></div>
+
+  <!-- 🚀 Navigation -->
+  <nav class="navbar">
+    <a href="#" class="logo">
+      <i class="fas fa-rocket logo-icon"></i>
+      <span>Cosmic Vision</span>
+    </a>
+    
+    <ul class="nav-links">
+      <li><a href="#home" class="nav-link">Home</a></li>
+      <li><a href="#features" class="nav-link">Features</a></li>
+      <li><a href="#about" class="nav-link">About</a></li>
+      <li><a href="#" class="nav-link">Contact</a></li>
+    </ul>
+    
+    <div class="nav-actions">
+      <button class="btn btn-secondary" id="upload-btn">
+        <i class="fas fa-upload"></i> Upload
+      </button>
+      <button class="btn btn-secondary">
+        <i class="fas fa-user"></i> Sign In
+      </button>
+      <button class="btn btn-primary">
+        <i class="fas fa-play"></i> Try Now
+      </button>
+    </div>
+  </nav>
+
+  <!-- 🌟 Main Content -->
+  <main class="main-content">
+    <!-- 🏠 Hero Section -->
+    <section class="hero" id="home">
+      <h1 class="hero-title">The Ultimate Cosmic Video Experience</h1>
+      <p class="hero-subtitle">Immerse yourself in a universe of high-quality video playback with cutting-edge features and stunning visual design.</p>
+      
+      <!-- 🎥 Video Player -->
+      <div class="player-container glass">
+        <div class="video-wrapper">
+          <video id="video" poster="https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80">
+            <source src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" type="video/mp4">
+            <track label="English" kind="subtitles" srclang="en" src="subs.vtt" default>
+            Your browser does not support the video tag.
+          </video>
+          
+          <!-- Custom Controls -->
+          <div class="custom-controls">
+            <div class="progress-container">
+              <div id="progress"></div>
+            </div>
+            
+            <div class="time-display">
+              <span id="current-time">00:00</span>
+              <span id="duration">00:00</span>
+            </div>
+            
+            <div class="control-buttons">
+              <div class="left-controls">
+                <button class="control-btn" id="play-pause">
+                  <i class="fas fa-play"></i>
+                </button>
+                
+                <button class="control-btn" id="mute">
+                  <i class="fas fa-volume-up"></i>
+                </button>
+                
+                <div class="volume-container">
+                  <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+                </div>
+                
+                <span class="time-display" id="time-display">00:00 / 00:00</span>
+              </div>
+              
+              <div class="right-controls">
+                <button class="control-btn" id="speed-btn">
+                  <span>1x</span>
+                </button>
+                
+                <button class="control-btn" id="subtitle-btn">
+                  <i class="fas fa-closed-captioning"></i>
+                </button>
+                
+                <div class="settings-menu" id="settings-menu">
+                  <button class="control-btn">
+                    <i class="fas fa-cog"></i>
+                  </button>
+                  
+                  <div class="settings-content">
+                    <div class="settings-item" data-speed="0.5">
+                      <i class="fas fa-tachometer-alt"></i>
+                      <span>0.5x Speed</span>
+                    </div>
+                    <div class="settings-item" data-speed="1">
+                      <i class="fas fa-tachometer-alt"></i>
+                      <span>Normal Speed</span>
+                    </div>
+                    <div class="settings-item" data-speed="1.5">
+                      <i class="fas fa-tachometer-alt"></i>
+                      <span>1.5x Speed</span>
+                    </div>
+                    <div class="settings-item" data-speed="2">
+                      <i class="fas fa-tachometer-alt"></i>
+                      <span>2x Speed</span>
+                    </div>
+                    <div class="settings-item" id="pip-btn">
+                      <i class="fas fa-compress"></i>
+                      <span>Picture-in-Picture</span>
+                    </div>
+                    <div class="settings-item" id="theater-btn">
+                      <i class="fas fa-theater-masks"></i>
+                      <span>Theater Mode</span>
+                    </div>
+                    <div class="settings-item" id="fullscreen-btn">
+                      <i class="fas fa-expand"></i>
+                      <span>Fullscreen</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🚀 Features Section -->
+    <section class="section" id="features">
+      <h2 class="section-title">Universe of Features</h2>
+      <p class="section-subtitle">Explore the cosmic array of features designed to elevate your video experience</p>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-magic"></i>
+          </div>
+          <h3 class="feature-title">Immersive Design</h3>
+          <p class="feature-desc">Experience a visually stunning interface with cosmic animations and glassmorphism effects that make watching videos a delight.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-tachometer-alt"></i>
+          </div>
+          <h3 class="feature-title">Smart Playback</h3>
+          <p class="feature-desc">Adjust playback speed from 0.5x to 2x, with smooth transitions and pitch correction for natural sounding audio.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-space-shuttle"></i>
+          </div>
+          <h3 class="feature-title">Theater Mode</h3>
+          <p class="feature-desc">Focus on your content with our spotlight theater mode that dims everything except the video for a truly immersive experience.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-bookmark"></i>
+          </div>
+          <h3 class="feature-title">Smart Bookmarks</h3>
+          <p class="feature-desc">Save important moments with timestamps and notes, then jump back to them anytime with our intuitive bookmark system.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-moon"></i>
+          </div>
+          <h3 class="feature-title">Dark & Light</h3>
+          <p class="feature-desc">Switch between dark cosmic theme and light mode based on your preference or time of day for comfortable viewing.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-keyboard"></i>
+          </div>
+          <h3 class="feature-title">Keyboard Shortcuts</h3>
+          <p class="feature-desc">Control playback with keyboard shortcuts for play/pause, volume, seeking, and more for a seamless experience.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 📖 About Section -->
+    <section class="section" id="about">
+      <h2 class="section-title">About Cosmic Vision</h2>
+      <p class="section-subtitle">The next generation video player built for the modern web</p>
+      
+      <div class="about-content">
+        <div class="about-text">
+          <p style="margin-bottom: 1.5rem; line-height: 1.7;">Cosmic Vision was born from a simple idea: video playback should be as beautiful and immersive as the content itself. We've combined cutting-edge web technologies with thoughtful design to create a player that disappears when you need it to, and empowers you when you don't.</p>
+          
+          <p style="margin-bottom: 1.5rem; line-height: 1.7;">Our team of designers and developers have worked tirelessly to craft an experience that feels cosmic in scale but intuitive in use. Every animation, every transition, and every interaction has been meticulously designed to create a seamless flow.</p>
+          
+          <p style="line-height: 1.7;">Whether you're watching educational content, movies, or your own creations, Cosmic Vision adapts to your needs with customizable features and a responsive design that works across all devices.</p>
+        </div>
+        
+        <div class="about-image floating">
+          <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Cosmic Vision About">
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 🌠 Spotlight Mode -->
+  <div class="spotlight" id="spotlight">
+    <video class="spotlight-video" controls></video>
+    <div class="close-spotlight" id="close-spotlight">
+      <i class="fas fa-times"></i>
+    </div>
+  </div>
+
+  <!-- 📤 Upload Modal -->
+  <div class="upload-modal" id="upload-modal">
+    <div class="upload-content">
+      <div class="upload-header">
+        <h3>Upload Media</h3>
+        <button class="close-upload" id="close-upload">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="upload-body">
+        <div class="upload-area" id="upload-area">
+          <i class="fas fa-cloud-upload-alt upload-icon"></i>
+          <p>Drag & drop your media files here</p>
+          <p class="small">or</p>
+          <button class="btn btn-primary" id="select-files">
+            <i class="fas fa-folder-open"></i> Browse Files
+          </button>
+          <input type="file" id="file-input" accept="audio/*,video/*" multiple style="display: none;">
+        </div>
+        <div class="file-list" id="file-list">
+          <!-- Uploaded files will appear here -->
+        </div>
+      </div>
+      <div class="upload-footer">
+        <button class="btn btn-secondary" id="cancel-upload">
+          Cancel
+        </button>
+        <button class="btn btn-primary" id="start-upload" disabled>
+          <i class="fas fa-upload"></i> Upload Selected
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🪐 Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <a href="#" class="footer-logo">
+        <i class="fas fa-rocket"></i>
+        <span>Cosmic Vision</span>
+      </a>
+      
+      <div class="footer-links">
+        <a href="#" class="footer-link">Home</a>
+        <a href="#features" class="footer-link">Features</a>
+        <a href="#about" class="footer-link">About</a>
+        <a href="#" class="footer-link">Pricing</a>
+        <a href="#" class="footer-link">Contact</a>
+        <a href="#" class="footer-link">Privacy</a>
+        <a href="#" class="footer-link">Terms</a>
+      </div>
+      
+      <div class="social-links">
+        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+      </div>
+      
+      <p class="copyright">© 2023 Cosmic Vision. All rights reserved. Made with <i class="fas fa-heart" style="color: #ff4757;"></i> for the universe.</p>
+    </div>
+  </footer>
+
+  <script>
+    // 🌌 Cosmic Background Animation
+    const cosmicBg = document.getElementById('cosmic-bg');
+    const stars = 200;
+    
+    // Create stars
+    for (let i = 0; i < stars; i++) {
+      const star = document.createElement('div');
+      star.style.position = 'absolute';
+      star.style.width = `${Math.random() * 3}px`;
+      star.style.height = star.style.width;
+      star.style.backgroundColor = 'white';
+      star.style.borderRadius = '50%';
+      star.style.top = `${Math.random() * 100}%`;
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.opacity = Math.random();
+      star.style.boxShadow = `0 0 ${Math.random() * 10}px white`;
+      
+      // Animation
+      star.style.animation = `twinkle ${Math.random() * 5 + 3}s infinite alternate`;
+      
+      cosmicBg.appendChild(star);
+    }
+    
+    // Add animation keyframes
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes twinkle {
+        0% { opacity: 0.2; }
+        100% { opacity: ${Math.random() + 0.5}; }
+      }
+      
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // 🎬 Video Player Functionality
+    const video = document.getElementById('video');
+    const playPauseBtn = document.getElementById('play-pause');
+    const muteBtn = document.getElementById('mute');
+    const volumeSlider = document.getElementById('volume');
+    const progress = document.getElementById('progress');
+    const currentTimeEl = document.getElementById('current-time');
+    const durationEl = document.getElementById('duration');
+    const timeDisplay = document.getElementById('time-display');
+    const speedBtn = document.getElementById('speed-btn');
+    const subtitleBtn = document.getElementById('subtitle-btn');
+    const settingsMenu = document.getElementById('settings-menu');
+    const settingsItems = document.querySelectorAll('.settings-item');
+    const pipBtn = document.getElementById('pip-btn');
+    const theaterBtn = document.getElementById('theater-btn');
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    const spotlight = document.getElementById('spotlight');
+    const spotlightVideo = document.querySelector('.spotlight-video');
+    const closeSpotlight = document.getElementById('close-spotlight');
+    
+    // Play/Pause
+    playPauseBtn.addEventListener('click', togglePlay);
+    video.addEventListener('click', togglePlay);
+    
+    function togglePlay() {
+      if (video.paused) {
+        video.play();
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+      } else {
+        video.pause();
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+      }
+    }
+    
+    video.addEventListener('play', () => {
+      playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+    });
+    
+    video.addEventListener('pause', () => {
+      playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+    });
+    
+    // Mute/Volume
+    muteBtn.addEventListener('click', toggleMute);
+    volumeSlider.addEventListener('input', setVolume);
+    
+    function toggleMute() {
+      video.muted = !video.muted;
+      muteBtn.innerHTML = video.muted ? 
+        '<i class="fas fa-volume-mute"></i>' : 
+        '<i class="fas fa-volume-up"></i>';
+    }
+    
+    function setVolume() {
+      video.volume = volumeSlider.value;
+      video.muted = volumeSlider.value == 0;
+      muteBtn.innerHTML = video.muted ? 
+        '<i class="fas fa-volume-mute"></i>' : 
+        '<i class="fas fa-volume-up"></i>';
+    }
+    
+    // Progress Bar
+    video.addEventListener('timeupdate', updateProgress);
+    
+    function updateProgress() {
+      const percent = (video.currentTime / video.duration) * 100;
+      progress.style.width = `${percent}%`;
+      
+      currentTimeEl.textContent = formatTime(video.currentTime);
+      durationEl.textContent = formatTime(video.duration);
+      timeDisplay.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+    }
+    
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    // Click on progress bar to seek
+    const progressContainer = document.querySelector('.progress-container');
+    progressContainer.addEventListener('click', seek);
+    
+    function seek(e) {
+      const pos = (e.pageX - progressContainer.getBoundingClientRect().left) / progressContainer.offsetWidth;
+      video.currentTime = pos * video.duration;
+    }
+    
+    // Playback Speed
+    speedBtn.addEventListener('click', () => {
+      const speeds = [0.5, 0.75, 1, 1.25, 1.5, 2];
+      let currentIndex = speeds.indexOf(video.playbackRate);
+      currentIndex = (currentIndex + 1) % speeds.length;
+      video.playbackRate = speeds[currentIndex];
+      speedBtn.querySelector('span').textContent = `${speeds[currentIndex]}x`;
+    });
+    
+    // Settings Menu
+    settingsMenu.addEventListener('click', (e) => {
+      e.stopPropagation();
+      settingsMenu.classList.toggle('active');
+    });
+    
+    document.addEventListener('click', () => {
+      settingsMenu.classList.remove('active');
+    });
+    
+    // Settings Items
+    settingsItems.forEach(item => {
+      if (item.dataset.speed) {
+        item.addEventListener('click', () => {
+          video.playbackRate = parseFloat(item.dataset.speed);
+          speedBtn.querySelector('span').textContent = `${item.dataset.speed}x`;
+          settingsMenu.classList.remove('active');
+        });
+      }
+    });
+    
+    // Picture-in-Picture
+    pipBtn.addEventListener('click', () => {
+      if (document.pictureInPictureElement) {
+        document.exitPictureInPicture();
+      } else {
+        video.requestPictureInPicture();
+      }
+      settingsMenu.classList.remove('active');
+    });
+    
+    // Theater Mode
+    theaterBtn.addEventListener('click', () => {
+      spotlight.classList.add('active');
+      spotlightVideo.src = video.src;
+      spotlightVideo.currentTime = video.currentTime;
+      spotlightVideo.play();
+      settingsMenu.classList.remove('active');
+    });
+    
+    // Close Spotlight
+    closeSpotlight.addEventListener('click', () => {
+      spotlight.classList.remove('active');
+      video.currentTime = spotlightVideo.currentTime;
+      spotlightVideo.pause();
+      spotlightVideo.src = '';
+    });
+    
+    // Fullscreen
+    fullscreenBtn.addEventListener('click', () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        video.requestFullscreen();
+      }
+      settingsMenu.classList.remove('active');
+    });
+    
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlay();
+      }
+      
+      if (e.code === 'ArrowRight') {
+        video.currentTime += 5;
+      }
+      
+      if (e.code === 'ArrowLeft') {
+        video.currentTime -= 5;
+      }
+      
+      if (e.code === 'KeyM') {
+        toggleMute();
+      }
+      
+      if (e.code === 'KeyF') {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          video.requestFullscreen();
+        }
+      }
+      
+      if (e.code === 'KeyT') {
+        spotlight.classList.add('active');
+        spotlightVideo.src = video.src;
+        spotlightVideo.currentTime = video.currentTime;
+        spotlightVideo.play();
+      }
+    });
+    
+    // Load saved playback position
+    window.addEventListener('load', () => {
+      const savedTime = localStorage.getItem('videoTime');
+      if (savedTime) {
+        video.currentTime = parseFloat(savedTime);
+      }
+    });
+    
+    // Save playback position
+    window.addEventListener('beforeunload', () => {
+      localStorage.setItem('videoTime', video.currentTime);
+    });
+
+    // 📤 Upload Functionality
+    const uploadBtn = document.getElementById('upload-btn');
+    const uploadModal = document.getElementById('upload-modal');
+    const closeUpload = document.getElementById('close-upload');
+    const cancelUpload = document.getElementById('cancel-upload');
+    const uploadArea = document.getElementById('upload-area');
+    const fileInput = document.getElementById('file-input');
+    const selectFiles = document.getElementById('select-files');
+    const fileList = document.getElementById('file-list');
+    const startUpload = document.getElementById('start-upload');
+    let filesToUpload = [];
+
+    // Open upload modal
+    uploadBtn.addEventListener('click', () => {
+      uploadModal.classList.add('active');
+    });
+
+    // Close upload modal
+    closeUpload.addEventListener('click', closeUploadModal);
+    cancelUpload.addEventListener('click', closeUploadModal);
+
+    function closeUploadModal() {
+      uploadModal.classList.remove('active');
+      filesToUpload = [];
+      fileList.innerHTML = '';
+      startUpload.disabled = true;
+    }
+
+    // Click on browse files
+    selectFiles.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    // Handle file selection
+    fileInput.addEventListener('change', (e) => {
+      handleFiles(e.target.files);
+    });
+
+    // Drag and drop functionality
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('active');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('active');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('active');
+      if (e.dataTransfer.files.length) {
+        handleFiles(e.dataTransfer.files);
+      }
+    });
+
+    // Handle selected files
+    function handleFiles(files) {
+      filesToUpload = Array.from(files);
+      fileList.innerHTML = '';
+      
+      filesToUpload.forEach((file, index) => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        
+        const fileType = file.type.split('/')[0];
+        const fileIcon = fileType === 'audio' ? 'fa-music' : 'fa-video';
+        
+        fileItem.innerHTML = `
+          <i class="fas ${fileIcon} file-icon"></i>
+          <div class="file-info">
+            <div class="file-name">${file.name}</div>
+            <div class="file-size">${formatFileSize(file.size)}</div>
+          </div>
+          <button class="remove-file" data-index="${index}">
+            <i class="fas fa-times"></i>
+          </button>
+        `;
+        
+        fileList.appendChild(fileItem);
+      });
+      
+      if (filesToUpload.length > 0) {
+        startUpload.disabled = false;
+      }
+      
+      // Add event listeners to remove buttons
+      document.querySelectorAll('.remove-file').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(e.currentTarget.dataset.index);
+          filesToUpload.splice(index, 1);
+          handleFiles(filesToUpload); // Re-render the list
+        });
+      });
+    }
+
+    // Format file size
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i]);
+    }
+
+    // Start upload
+    startUpload.addEventListener('click', () => {
+      if (filesToUpload.length === 0) return;
+      
+      // For demo purposes, we'll just use the first video/audio file
+      const mediaFile = filesToUpload.find(file => 
+        file.type.startsWith('video/') || file.type.startsWith('audio/')
+      );
+      
+      if (mediaFile) {
+        const fileURL = URL.createObjectURL(mediaFile);
+        
+        if (mediaFile.type.startsWith('video/')) {
+          // For video files
+          video.src = fileURL;
+          video.poster = ''; // Remove poster for uploaded videos
+        } else {
+          // For audio files - we'll create a video element with audio visualization
+          video.src = fileURL;
+          video.poster = 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80';
+        }
+        
+        // Close the modal after selection
+        closeUploadModal();
+        
+        // Show success message
+        showToast(`${mediaFile.name} loaded successfully!`);
+      } else {
+        showToast('Please select a valid audio or video file');
+      }
+    });
+
+    // Show toast notification
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('show');
+      }, 10);
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
