@@ -1,0 +1,2073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advanced Secure Examination System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary-color: #3f37c9;
+      --success-color: #4cc9f0;
+      --danger-color: #f72585;
+      --warning-color: #f8961e;
+      --info-color: #4895ef;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --gray-color: #6c757d;
+      --border-radius: 12px;
+      --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    /* Dark mode variables */
+    [data-theme="dark"] {
+      --primary-color: #4895ef;
+      --primary-dark: #3f7fd5;
+      --secondary-color: #4361ee;
+      --success-color: #4cc9f0;
+      --danger-color: #f72585;
+      --warning-color: #f8961e;
+      --info-color: #4361ee;
+      --light-color: #1e1e1e;
+      --dark-color: #f8f9fa;
+      --gray-color: #adb5bd;
+      --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-color);
+      color: var(--dark-color);
+      line-height: 1.6;
+      transition: var(--transition);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 30px;
+      background: var(--light-color);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: var(--box-shadow);
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+    }
+
+    h1, h2, h3, h4 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      transition: var(--transition);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: var(--primary-color);
+      border-radius: 3px;
+    }
+
+    .form-section {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: var(--border-radius);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      transition: var(--transition);
+    }
+
+    [data-theme="dark"] .form-section {
+      background: rgba(30, 30, 30, 0.8);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .form-section h3 {
+      margin-top: 0;
+      color: var(--primary-color);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      padding-bottom: 10px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    [data-theme="dark"] .form-section h3 {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    textarea, input, select {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 16px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: var(--border-radius);
+      background-color: rgba(255, 255, 255, 0.8);
+      transition: var(--transition);
+      margin-bottom: 1rem;
+    }
+
+    [data-theme="dark"] textarea,
+    [data-theme="dark"] input,
+    [data-theme="dark"] select {
+      background-color: rgba(40, 40, 40, 0.8);
+      border-color: rgba(255, 255, 255, 0.1);
+      color: var(--dark-color);
+    }
+
+    textarea:focus, input:focus, select:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+
+    [data-theme="dark"] textarea:focus,
+    [data-theme="dark"] input:focus,
+    [data-theme="dark"] select:focus {
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+    }
+
+    textarea {
+      min-height: 200px;
+      resize: vertical;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--primary-color);
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 1rem 0;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #3ab5d9;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(76, 201, 240, 0.3);
+    }
+
+    .btn-danger {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #e5177b;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(247, 37, 133, 0.3);
+    }
+
+    .btn-warning {
+      background-color: var(--warning-color);
+      color: white;
+    }
+
+    .btn-warning:hover {
+      background-color: #e0871b;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(248, 150, 30, 0.3);
+    }
+
+    .btn-secondary {
+      background-color: var(--gray-color);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-sm {
+      padding: 8px 15px;
+      font-size: 14px;
+    }
+
+    .btn-icon {
+      padding: 10px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    #testWindow {
+      display: none;
+      background-color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-top: 2rem;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+      transition: var(--transition);
+    }
+
+    [data-theme="dark"] #testWindow {
+      background-color: rgba(30, 30, 30, 0.9);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    #timer {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--danger-color);
+      padding: 1rem;
+      background: rgba(247, 37, 133, 0.1);
+      border: 2px dashed rgba(247, 37, 133, 0.3);
+      border-radius: var(--border-radius);
+      text-align: center;
+      margin-bottom: 1.5rem;
+      transition: var(--transition);
+    }
+
+    #instruction {
+      color: var(--primary-color);
+      background: rgba(67, 97, 238, 0.1);
+      padding: 1rem;
+      border-left: 4px solid var(--primary-color);
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+      line-height: 1.6;
+      transition: var(--transition);
+    }
+
+    #testContent {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      padding: 1.5rem;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: var(--border-radius);
+      overflow-wrap: break-word;
+      transition: var(--transition);
+    }
+
+    [data-theme="dark"] #testContent {
+      background: rgba(40, 40, 40, 0.5);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .statusBar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .fullscreen-warning {
+      color: var(--danger-color);
+      font-size: 0.9rem;
+      text-align: center;
+      margin-top: 1rem;
+      padding: 0.8rem;
+      background: rgba(247, 37, 133, 0.1);
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+    }
+
+    .warning-box {
+      background: rgba(248, 150, 30, 0.1);
+      border-left: 4px solid var(--warning-color);
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+      transition: var(--transition);
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 10px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      margin: 1.5rem 0;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    [data-theme="dark"] .progress-container {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+      width: 100%;
+      transition: width 1s linear;
+    }
+
+    .test-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 1.5rem;
+      gap: 15px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .admin-panel, .student-view {
+      display: none;
+    }
+
+    .switch-view {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .student-list {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: var(--border-radius);
+      padding: 0.5rem;
+      margin-bottom: 1.5rem;
+      transition: var(--transition);
+    }
+
+    [data-theme="dark"] .student-list {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .student-item {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: var(--transition);
+    }
+
+    [data-theme="dark"] .student-item {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .student-item:last-child {
+      border-bottom: none;
+    }
+
+    .test-status {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-left: 0.5rem;
+    }
+
+    .status-scheduled {
+      background: rgba(248, 150, 30, 0.2);
+      color: var(--warning-color);
+    }
+
+    .status-active {
+      background: rgba(76, 201, 240, 0.2);
+      color: var(--success-color);
+    }
+
+    .status-completed {
+      background: rgba(247, 37, 133, 0.2);
+      color: var(--danger-color);
+    }
+
+    .status-expired {
+      background: rgba(108, 117, 125, 0.2);
+      color: var(--gray-color);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      transition: var(--transition);
+    }
+
+    .modal-content {
+      background: var(--light-color);
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      max-width: 700px;
+      box-shadow: var(--box-shadow);
+      position: relative;
+      transition: var(--transition);
+      animation: modalFadeIn 0.3s ease-out;
+    }
+
+    [data-theme="dark"] .modal-content {
+      background: rgba(40, 40, 40, 0.95);
+    }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: var(--gray-color);
+      transition: var(--transition);
+    }
+
+    .close-modal:hover {
+      color: var(--danger-color);
+      transform: rotate(90deg);
+    }
+
+    .test-details {
+      margin-top: 1.5rem;
+    }
+
+    .test-details p {
+      margin: 0.8rem 0;
+      display: flex;
+    }
+
+    .test-details strong {
+      min-width: 150px;
+      display: inline-block;
+      color: var(--primary-color);
+    }
+
+    /* Dark mode toggle button */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1) rotate(30deg);
+    }
+
+    /* Fixed test controls */
+    .test-controls {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--primary-color);
+      color: white;
+      padding: 0.8rem 2rem;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 999;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+      transition: var(--transition);
+    }
+
+    .test-info {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .test-timer {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Test schedule info */
+    .test-schedule-info {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(67, 97, 238, 0.1);
+      border-radius: var(--border-radius);
+      text-align: center;
+      display: none;
+      transition: var(--transition);
+    }
+
+    /* Toast notifications */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 1rem 1.5rem;
+      background: var(--dark-color);
+      color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      z-index: 1100;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateX(150%);
+      transition: transform 0.3s ease;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.success {
+      background: var(--success-color);
+    }
+
+    .toast.error {
+      background: var(--danger-color);
+    }
+
+    .toast.warning {
+      background: var(--warning-color);
+    }
+
+    .toast.info {
+      background: var(--info-color);
+    }
+
+    /* Floating action button */
+    .fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: var(--primary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--box-shadow);
+      z-index: 1000;
+      transition: var(--transition);
+    }
+
+    .fab:hover {
+      transform: scale(1.1);
+    }
+
+    /* Test questions numbering */
+    .question-number {
+      display: inline-block;
+      width: 25px;
+      height: 25px;
+      background: var(--primary-color);
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 25px;
+      margin-right: 10px;
+      font-size: 0.8rem;
+    }
+
+    /* Test statistics */
+    .stats-card {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+    }
+
+    [data-theme="dark"] .stats-card {
+      background: rgba(40, 40, 40, 0.8);
+    }
+
+    .stats-card h4 {
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(67, 97, 238, 0.1);
+      border-radius: var(--border-radius);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--gray-color);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal-content {
+        width: 90%;
+        margin: 10% auto;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1.5rem;
+        margin: 10px;
+      }
+      
+      .button-group, .test-actions {
+        flex-direction: column;
+      }
+      
+      button {
+        width: 100%;
+      }
+
+      .test-info {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+        width: 100%;
+      }
+
+      .test-controls {
+        padding: 0.8rem 1rem;
+      }
+
+      .student-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .student-item > div:last-child {
+        align-self: flex-end;
+      }
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    .shake {
+      animation: shake 0.5s;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="theme-toggle" id="themeToggle">
+    <i class="fas fa-moon"></i>
+  </button>
+
+  <div class="container">
+    <div class="switch-view" id="viewSwitcher">
+      <button class="btn-secondary" id="adminViewBtn" onclick="showAdminView()">
+        <i class="fas fa-user-shield"></i> Admin Panel
+      </button>
+      <button class="btn-secondary" id="studentViewBtn" onclick="showStudentView()">
+        <i class="fas fa-user-graduate"></i> Student View
+      </button>
+    </div>
+    
+    <!-- Admin Panel Section -->
+    <div id="adminPanel" class="admin-panel">
+      <h2><i class="fas fa-user-shield"></i> Admin Dashboard</h2>
+      
+      <div class="stats-card">
+        <h4><i class="fas fa-chart-bar"></i> Exam Statistics</h4>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value" id="totalTests">0</div>
+            <div class="stat-label">Total Tests</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="activeTests">0</div>
+            <div class="stat-label">Active Tests</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="scheduledTests">0</div>
+            <div class="stat-label">Scheduled</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="completedTests">0</div>
+            <div class="stat-label">Completed</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-section">
+        <h3><i class="fas fa-lock"></i> Admin Authentication</h3>
+        <div id="adminLoginForm">
+          <label for="adminPassword"><i class="fas fa-key"></i> Admin Password:</label>
+          <div class="input-group">
+            <input type="password" id="adminPassword" placeholder="Enter admin password">
+            <button class="btn-primary" onclick="authenticateAdmin()">
+              <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+          </div>
+        </div>
+        <div id="adminControls" style="display: none;">
+          <div class="admin-actions">
+            <button class="btn-success" onclick="showAddTestForm()">
+              <i class="fas fa-plus"></i> Add New Test
+            </button>
+            <button class="btn-danger logout-btn" onclick="adminLogout()">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div id="adminMainControls" style="display: none;">
+        <div class="form-section" id="addTestForm">
+          <h3><i class="fas fa-edit"></i> Create Student Test</h3>
+          <div class="grid-2">
+            <div>
+              <label for="adminStudentName"><i class="fas fa-user"></i> Full Name:</label>
+              <input type="text" id="adminStudentName" placeholder="Enter student full name">
+            </div>
+            <div>
+              <label for="adminRollNumber"><i class="fas fa-id-card"></i> Roll Number:</label>
+              <input type="text" id="adminRollNumber" placeholder="Enter roll number">
+            </div>
+            <div>
+              <label for="adminClassName"><i class="fas fa-users"></i> Class/Group:</label>
+              <input type="text" id="adminClassName" placeholder="Enter class">
+            </div>
+            <div>
+              <label for="adminStudentEmail"><i class="fas fa-envelope"></i> Email:</label>
+              <input type="text" id="adminStudentEmail" placeholder="Enter email">
+            </div>
+          </div>
+          
+          <div class="grid-2">
+            <div>
+              <label for="adminTestStartTime"><i class="fas fa-clock"></i> Start Time:</label>
+              <input type="datetime-local" id="adminTestStartTime">
+            </div>
+            <div>
+              <label for="adminTestEndTime"><i class="fas fa-clock"></i> End Time:</label>
+              <input type="datetime-local" id="adminTestEndTime">
+            </div>
+          </div>
+          
+          <div>
+            <label for="adminTestPassword"><i class="fas fa-lock"></i> Test Password:</label>
+            <div class="input-group">
+              <input type="password" id="adminTestPassword" placeholder="Set test password">
+              <button class="btn-icon" onclick="togglePasswordVisibility('adminTestPassword')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <small style="color: var(--gray-color);">(Students will need this to access their test)</small>
+          </div>
+          
+          <div>
+            <label for="adminDuration"><i class="fas fa-hourglass-half"></i> Test Duration (minutes):</label>
+            <input type="number" id="adminDuration" min="1" max="180" value="30">
+          </div>
+          
+          <div>
+            <label for="adminPaperInput"><i class="fas fa-question-circle"></i> Test Content:</label>
+            <textarea id="adminPaperInput" placeholder="Enter test questions here..."></textarea>
+          </div>
+          
+          <div class="button-group">
+            <button class="btn-success" onclick="addStudentTest()">
+              <i class="fas fa-save"></i> Save Test
+            </button>
+            <button class="btn-secondary" id="resetBtn" onclick="resetTestForm()">
+              <i class="fas fa-redo"></i> Reset Form
+            </button>
+          </div>
+        </div>
+        
+        <div class="form-section">
+          <h3><i class="fas fa-list"></i> Student Tests List</h3>
+          <div class="input-group">
+            <input type="text" id="searchTests" placeholder="Search by name, roll number or class..." 
+                   oninput="filterTests()">
+            <button class="btn-primary" onclick="filterTests()">
+              <i class="fas fa-search"></i> Search
+            </button>
+            <button class="btn-outline" onclick="exportTests()">
+              <i class="fas fa-file-export"></i> Export
+            </button>
+          </div>
+          <div class="student-list" id="studentList">
+            <!-- Student items will be added here dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Student View Section -->
+    <div id="studentView" class="student-view">
+      <h2><i class="fas fa-user-graduate"></i> Examination Window</h2>
+      
+      <div class="form-section">
+        <h3><i class="fas fa-lock"></i> Test Authentication</h3>
+        <div>
+          <label for="studentTestPassword"><i class="fas fa-key"></i> Test Password:</label>
+          <div class="input-group">
+            <input type="password" id="studentTestPassword" placeholder="Enter your test password">
+            <button class="btn-icon" onclick="togglePasswordVisibility('studentTestPassword')">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <small style="color: var(--gray-color);">(Provided by your instructor)</small>
+        </div>
+        
+        <div class="test-schedule-info" id="testScheduleInfo">
+          <!-- Test schedule information will be shown here -->
+        </div>
+        
+        <div class="button-group">
+          <button class="btn-success" id="studentStartBtn" onclick="startStudentTest()">
+            <i class="fas fa-play"></i> Start Test
+          </button>
+          <button class="btn-secondary" id="resetBtn" onclick="resetStudentView()">
+            <i class="fas fa-redo"></i> Reset
+          </button>
+        </div>
+      </div>
+      
+      <div id="testWindow">
+        <div id="instruction">
+          <i class="fas fa-exclamation-triangle"></i> Examination in Progress - Strictly follow these rules:<br><br>
+          1. Do not exit full screen or switch tabs/windows<br>
+          2. Do not use any other applications<br>
+          3. The test will be automatically submitted if rules are violated<br>
+          4. All actions are being monitored and recorded
+        </div>
+        <div id="testContent"></div>
+        <div class="fullscreen-warning" id="fsWarning"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fixed test controls (shown during test) -->
+  <div class="test-controls" id="testControls">
+    <div class="test-info">
+      <div id="testStudentInfo"></div>
+      <div class="test-timer">
+        <i class="fas fa-clock"></i>
+        <span id="testTimerDisplay">Time Left: 30:00</span>
+      </div>
+      <div class="test-countdown" id="testCountdown"></div>
+    </div>
+    <button class="btn-danger test-submit-btn" onclick="submitTest()">
+      <i class="fas fa-paper-plane"></i> Submit Test
+    </button>
+  </div>
+
+  <!-- Test Details Modal -->
+  <div id="testDetailsModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <h3><i class="fas fa-info-circle"></i> Test Details</h3>
+      <div class="test-details" id="modalTestDetails">
+        <!-- Details will be populated here -->
+      </div>
+      <button class="btn-primary" onclick="closeModal()" style="margin-top: 20px;">
+        <i class="fas fa-times"></i> Close
+      </button>
+    </div>
+  </div>
+
+  <!-- Export Modal -->
+  <div id="exportModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <h3><i class="fas fa-file-export"></i> Export Tests</h3>
+      <div class="test-details">
+        <p>Select export format:</p>
+        <div class="button-group">
+          <button class="btn-success" onclick="exportAsJSON()">
+            <i class="fas fa-file-code"></i> JSON
+          </button>
+          <button class="btn-primary" onclick="exportAsCSV()">
+            <i class="fas fa-file-csv"></i> CSV
+          </button>
+          <button class="btn-secondary" onclick="closeModal()">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating action button for help -->
+  <div class="fab" id="helpFab" onclick="showHelp()">
+    <i class="fas fa-question"></i>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toastNotification"></div>
+
+  <!-- Audio elements -->
+  <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" preload="auto"></audio>
+  <audio id="warningSound" src="https://assets.mixkit.co/sfx/preview/mixkit-warning-alarm-buzzer-991.mp3" preload="auto"></audio>
+  <audio id="successSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" preload="auto"></audio>
+
+  <script>
+    // Global variables
+    let countdown;
+    let testActive = false;
+    let timeLeft;
+    let totalTime;
+    let startTime;
+    let tabSwitchCount = 0;
+    const MAX_TAB_SWITCHES = 3;
+    let testStartTime, testEndTime;
+    let scheduleCheckInterval;
+    const ADMIN_PASSWORD = "admin123"; // In production, use proper authentication
+    let isAdminLoggedIn = false;
+    let autoStartCheckInterval;
+    let currentTest = null;
+    let activityLog = [];
+    
+    // Student test database
+    let studentTests = JSON.parse(localStorage.getItem('studentTests')) || [];
+    
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+      showAdminView();
+      updateStudentList();
+      updateStats();
+      
+      // Set default test time to current time + 1 hour
+      const now = new Date();
+      const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+      
+      document.getElementById('adminTestStartTime').value = now.toISOString().slice(0, 16);
+      document.getElementById('adminTestEndTime').value = oneHourLater.toISOString().slice(0, 16);
+      
+      updateCurrentTime();
+      setInterval(updateCurrentTime, 1000);
+      
+      // Check for tests that should auto-start
+      checkAutoStartTests();
+      autoStartCheckInterval = setInterval(checkAutoStartTests, 60000); // Check every minute
+      
+      // Setup theme toggle
+      setupThemeToggle();
+      
+      // Check if there's a password in URL (for direct access)
+      checkUrlPassword();
+      
+      // Check for scheduled test info when password field changes
+      document.getElementById('studentTestPassword').addEventListener('input', checkScheduledTestInfo);
+      
+      // Log initial activity
+      logActivity('System initialized', 'info');
+    });
+    
+    // Theme toggle functionality
+    function setupThemeToggle() {
+      const themeToggle = document.getElementById('themeToggle');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      // Initialize theme based on preference or localStorage
+      if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && prefersDark)) {
+        enableDarkMode();
+      }
+      
+      themeToggle.addEventListener('click', () => {
+        if (document.body.getAttribute('data-theme') === 'dark') {
+          disableDarkMode();
+        } else {
+          enableDarkMode();
+        }
+      });
+    }
+    
+    function enableDarkMode() {
+      document.body.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+      document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
+      logActivity('Dark mode enabled', 'system');
+    }
+    
+    function disableDarkMode() {
+      document.body.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+      document.getElementById('themeToggle').innerHTML = '<i class="fas fa-moon"></i>';
+      logActivity('Dark mode disabled', 'system');
+    }
+    
+    // View management
+    function showAdminView() {
+      document.getElementById('adminPanel').style.display = 'block';
+      document.getElementById('studentView').style.display = 'none';
+      document.getElementById('adminViewBtn').classList.add('btn-primary');
+      document.getElementById('adminViewBtn').classList.remove('btn-secondary');
+      document.getElementById('studentViewBtn').classList.add('btn-secondary');
+      document.getElementById('studentViewBtn').classList.remove('btn-primary');
+      logActivity('Admin view displayed', 'navigation');
+    }
+    
+    function showStudentView() {
+      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('studentView').style.display = 'block';
+      document.getElementById('studentViewBtn').classList.add('btn-primary');
+      document.getElementById('studentViewBtn').classList.remove('btn-secondary');
+      document.getElementById('adminViewBtn').classList.add('btn-secondary');
+      document.getElementById('adminViewBtn').classList.remove('btn-primary');
+      logActivity('Student view displayed', 'navigation');
+    }
+    
+    // Admin functions
+    function authenticateAdmin() {
+      const password = document.getElementById('adminPassword').value;
+      if (password === ADMIN_PASSWORD) {
+        isAdminLoggedIn = true;
+        document.getElementById('adminControls').style.display = 'block';
+        document.getElementById('adminLoginForm').style.display = 'none';
+        document.getElementById('adminMainControls').style.display = 'block';
+        document.getElementById('adminPassword').style.borderColor = 'var(--success-color)';
+        document.getElementById('adminPassword').value = '';
+        showToast('Admin login successful', 'success');
+        logActivity('Admin logged in', 'authentication');
+      } else {
+        showToast('Incorrect admin password!', 'error');
+        document.getElementById('adminPassword').style.borderColor = 'var(--danger-color)';
+        document.getElementById('adminPassword').classList.add('shake');
+        setTimeout(() => {
+          document.getElementById('adminPassword').classList.remove('shake');
+        }, 500);
+        logActivity('Failed admin login attempt', 'authentication');
+      }
+    }
+    
+    function adminLogout() {
+      isAdminLoggedIn = false;
+      document.getElementById('adminControls').style.display = 'none';
+      document.getElementById('adminLoginForm').style.display = 'block';
+      document.getElementById('adminMainControls').style.display = 'none';
+      document.getElementById('adminPassword').style.borderColor = 'rgba(0, 0, 0, 0.1)';
+      showToast('Admin logged out', 'info');
+      logActivity('Admin logged out', 'authentication');
+    }
+    
+    function showAddTestForm() {
+      document.getElementById('addTestForm').style.display = 'block';
+      resetTestForm();
+      logActivity('Add test form displayed', 'navigation');
+    }
+    
+    function resetTestForm() {
+      document.getElementById('adminStudentName').value = '';
+      document.getElementById('adminRollNumber').value = '';
+      document.getElementById('adminClassName').value = '';
+      document.getElementById('adminStudentEmail').value = '';
+      document.getElementById('adminTestPassword').value = '';
+      document.getElementById('adminDuration').value = '30';
+      document.getElementById('adminPaperInput').value = '';
+      
+      const now = new Date();
+      const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+      document.getElementById('adminTestStartTime').value = now.toISOString().slice(0, 16);
+      document.getElementById('adminTestEndTime').value = oneHourLater.toISOString().slice(0, 16);
+      logActivity('Test form reset', 'action');
+    }
+    
+    function addStudentTest() {
+      const studentName = document.getElementById('adminStudentName').value.trim();
+      const rollNumber = document.getElementById('adminRollNumber').value.trim();
+      const className = document.getElementById('adminClassName').value.trim();
+      const email = document.getElementById('adminStudentEmail').value.trim();
+      const password = document.getElementById('adminTestPassword').value;
+      const duration = parseInt(document.getElementById('adminDuration').value);
+      const testContent = document.getElementById('adminPaperInput').value.trim();
+      const startTime = document.getElementById('adminTestStartTime').value;
+      const endTime = document.getElementById('adminTestEndTime').value;
+      
+      if (!studentName || !rollNumber || !password || !testContent) {
+        showToast('Please fill all required fields!', 'error');
+        return;
+      }
+      
+      if (duration < 1 || duration > 180 || isNaN(duration)) {
+        showToast('Please enter a valid duration between 1 and 180 minutes', 'error');
+        return;
+      }
+      
+      // Check if roll number already exists
+      const existingTestIndex = studentTests.findIndex(test => test.rollNumber === rollNumber);
+      if (existingTestIndex !== -1) {
+        if (!confirm("A test already exists for this roll number. Do you want to overwrite it?")) {
+          return;
+        }
+        // Remove existing test
+        studentTests.splice(existingTestIndex, 1);
+      }
+      
+      const studentTest = {
+        id: Date.now(),
+        studentName,
+        rollNumber,
+        className,
+        email,
+        password,
+        duration,
+        testContent,
+        startTime,
+        endTime,
+        createdAt: new Date().toISOString(),
+        status: startTime ? getTestStatus(new Date(startTime), new Date(endTime)) : 'active',
+        lastUpdated: new Date().toISOString()
+      };
+      
+      studentTests.push(studentTest);
+      saveStudentTests();
+      updateStudentList();
+      updateStats();
+      resetTestForm();
+      
+      showToast("Student test added successfully!", "success");
+      logActivity(`Test created for ${studentName} (${rollNumber})`, 'test_management');
+    }
+    
+    function getTestStatus(startTime, endTime) {
+      const now = new Date();
+      if (now < startTime) return 'scheduled';
+      if (now > endTime) return 'completed';
+      return 'active';
+    }
+    
+    function updateStudentList() {
+      const studentList = document.getElementById('studentList');
+      studentList.innerHTML = '';
+      
+      if (studentTests.length === 0) {
+        studentList.innerHTML = '<p style="text-align: center; padding: 1rem;">No student tests added yet.</p>';
+        return;
+      }
+      
+      // Sort tests by status (active first, then scheduled, then completed)
+      const sortedTests = [...studentTests].sort((a, b) => {
+        const statusOrder = {active: 1, scheduled: 2, completed: 3, expired: 4};
+        return statusOrder[a.status] - statusOrder[b.status];
+      });
+      
+      sortedTests.forEach(test => {
+        // Update test status based on current time
+        if (test.startTime && test.endTime) {
+          test.status = getTestStatus(new Date(test.startTime), new Date(test.endTime));
+        }
+        
+        const studentItem = document.createElement('div');
+        studentItem.className = 'student-item';
+        
+        studentItem.innerHTML = `
+          <div>
+            <strong>${test.studentName}</strong> (${test.rollNumber})<br>
+            <small>Class: ${test.className || 'N/A'} | Duration: ${test.duration} mins</small>
+            <span class="test-status status-${test.status}">${test.status}</span>
+          </div>
+          <div>
+            <button class="btn-primary btn-sm" onclick="viewTestDetails(${test.id})">
+              <i class="fas fa-eye"></i> View
+            </button>
+            <button class="btn-warning btn-sm" onclick="editStudentTest(${test.id})">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn-danger btn-sm" onclick="deleteStudentTest(${test.id})">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        `;
+        studentList.appendChild(studentItem);
+      });
+    }
+    
+    function updateStats() {
+      document.getElementById('totalTests').textContent = studentTests.length;
+      document.getElementById('activeTests').textContent = studentTests.filter(t => t.status === 'active').length;
+      document.getElementById('scheduledTests').textContent = studentTests.filter(t => t.status === 'scheduled').length;
+      document.getElementById('completedTests').textContent = studentTests.filter(t => t.status === 'completed').length;
+    }
+    
+    function viewTestDetails(id) {
+      const test = studentTests.find(t => t.id === id);
+      if (!test) return;
+      
+      const modal = document.getElementById('testDetailsModal');
+      const detailsDiv = document.getElementById('modalTestDetails');
+      
+      // Format dates
+      const startDate = test.startTime ? new Date(test.startTime).toLocaleString() : 'Not scheduled';
+      const endDate = test.endTime ? new Date(test.endTime).toLocaleString() : 'Not scheduled';
+      const createdDate = new Date(test.createdAt).toLocaleString();
+      const updatedDate = new Date(test.lastUpdated).toLocaleString();
+      
+      detailsDiv.innerHTML = `
+        <p><strong><i class="fas fa-user"></i> Student Name:</strong> ${test.studentName}</p>
+        <p><strong><i class="fas fa-id-card"></i> Roll Number:</strong> ${test.rollNumber}</p>
+        <p><strong><i class="fas fa-users"></i> Class:</strong> ${test.className || 'N/A'}</p>
+        <p><strong><i class="fas fa-envelope"></i> Email:</strong> ${test.email || 'N/A'}</p>
+        <p><strong><i class="fas fa-hourglass-half"></i> Test Duration:</strong> ${test.duration} minutes</p>
+        <p><strong><i class="fas fa-clock"></i> Start Time:</strong> ${startDate}</p>
+        <p><strong><i class="fas fa-clock"></i> End Time:</strong> ${endDate}</p>
+        <p><strong><i class="fas fa-info-circle"></i> Status:</strong> <span class="test-status status-${test.status}">${test.status}</span></p>
+        <p><strong><i class="fas fa-calendar-plus"></i> Created At:</strong> ${createdDate}</p>
+        <p><strong><i class="fas fa-calendar-check"></i> Last Updated:</strong> ${updatedDate}</p>
+        <p><strong><i class="fas fa-key"></i> Test Password:</strong> ${'•'.repeat(test.password.length)}</p>
+        <p><strong><i class="fas fa-link"></i> Direct Access Link:</strong> 
+          <small>${window.location.href.split('?')[0]}?password=${encodeURIComponent(test.password)}</small></p>
+        <p><strong><i class="fas fa-question-circle"></i> Questions:</strong> ${countQuestions(test.testContent)}</p>
+      `;
+      
+      modal.style.display = 'block';
+      logActivity(`Viewed details for test ${id}`, 'test_management');
+    }
+    
+    function countQuestions(content) {
+      if (!content) return 0;
+      // Simple question count based on numbered questions
+      return (content.match(/\d+\./g) || []).length;
+    }
+    
+    function closeModal() {
+      document.getElementById('testDetailsModal').style.display = 'none';
+      document.getElementById('exportModal').style.display = 'none';
+    }
+    
+    function editStudentTest(id) {
+      const test = studentTests.find(t => t.id === id);
+      if (!test) return;
+      
+      document.getElementById('adminStudentName').value = test.studentName;
+      document.getElementById('adminRollNumber').value = test.rollNumber;
+      document.getElementById('adminClassName').value = test.className;
+      document.getElementById('adminStudentEmail').value = test.email;
+      document.getElementById('adminTestPassword').value = test.password;
+      document.getElementById('adminDuration').value = test.duration;
+      document.getElementById('adminPaperInput').value = test.testContent;
+      document.getElementById('adminTestStartTime').value = test.startTime;
+      document.getElementById('adminTestEndTime').value = test.endTime;
+      
+      // Scroll to form
+      document.getElementById('addTestForm').scrollIntoView({ behavior: 'smooth' });
+      
+      // Remove the old test
+      studentTests = studentTests.filter(t => t.id !== id);
+      saveStudentTests();
+      updateStudentList();
+      updateStats();
+      
+      showToast("Test loaded for editing", "info");
+      logActivity(`Editing test for ${test.studentName}`, 'test_management');
+    }
+    
+    function deleteStudentTest(id) {
+      const test = studentTests.find(t => t.id === id);
+      if (!test) return;
+      
+      if (confirm(`Are you sure you want to delete the test for ${test.studentName} (${test.rollNumber})?`)) {
+        studentTests = studentTests.filter(t => t.id !== id);
+        saveStudentTests();
+        updateStudentList();
+        updateStats();
+        showToast("Test deleted successfully!", "success");
+        logActivity(`Deleted test for ${test.studentName}`, 'test_management');
+      }
+    }
+    
+    function filterTests() {
+      const searchTerm = document.getElementById('searchTests').value.toLowerCase();
+      const studentItems = document.querySelectorAll('.student-item');
+      
+      studentItems.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+    
+    function saveStudentTests() {
+      localStorage.setItem('studentTests', JSON.stringify(studentTests));
+    }
+    
+    // Export functions
+    function exportTests() {
+      document.getElementById('exportModal').style.display = 'block';
+      logActivity('Export modal opened', 'navigation');
+    }
+    
+    function exportAsJSON() {
+      const dataStr = JSON.stringify(studentTests, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = `student-tests-${new Date().toISOString().slice(0,10)}.json`;
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      showToast("Tests exported as JSON", "success");
+      logActivity('Tests exported as JSON', 'export');
+      closeModal();
+    }
+    
+    function exportAsCSV() {
+      if (studentTests.length === 0) {
+        showToast("No tests to export", "error");
+        return;
+      }
+      
+      // Extract headers
+      const headers = Object.keys(studentTests[0]);
+      // Remove testContent from CSV as it might be too large
+      const contentIndex = headers.indexOf('testContent');
+      if (contentIndex > -1) {
+        headers.splice(contentIndex, 1);
+      }
+      
+      // Build CSV content
+      let csvContent = headers.join(',') + '\n';
+      
+      studentTests.forEach(test => {
+        const row = headers.map(header => {
+          // Handle nested objects if any
+          let value = test[header];
+          if (typeof value === 'object' && value !== null) {
+            value = JSON.stringify(value);
+          }
+          // Escape quotes and wrap in quotes if contains comma
+          if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+            value = `"${value.replace(/"/g, '""')}"`;
+          }
+          return value || '';
+        });
+        csvContent += row.join(',') + '\n';
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `student-tests-${new Date().toISOString().slice(0,10)}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      showToast("Tests exported as CSV", "success");
+      logActivity('Tests exported as CSV', 'export');
+      closeModal();
+    }
+    
+    // Student test functions
+    function checkUrlPassword() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const password = urlParams.get('password');
+      if (password) {
+        document.getElementById('studentTestPassword').value = password;
+        startStudentTest();
+      }
+    }
+    
+    function checkScheduledTestInfo() {
+      const password = document.getElementById('studentTestPassword').value;
+      const test = studentTests.find(t => t.password === password);
+      const scheduleInfo = document.getElementById('testScheduleInfo');
+      
+      if (!test || !test.startTime) {
+        scheduleInfo.style.display = 'none';
+        return;
+      }
+      
+      const now = new Date();
+      const startTime = new Date(test.startTime);
+      const endTime = new Date(test.endTime);
+      
+      if (now < startTime) {
+        const timeUntilStart = Math.floor((startTime - now) / 1000);
+        const hours = Math.floor(timeUntilStart / 3600);
+        const minutes = Math.floor((timeUntilStart % 3600) / 60);
+        
+        scheduleInfo.innerHTML = `
+          <strong><i class="fas fa-clock"></i> Scheduled Test:</strong> 
+          Starts at ${startTime.toLocaleString()} (in ${hours > 0 ? `${hours}h ` : ''}${minutes}m)
+        `;
+        scheduleInfo.style.display = 'block';
+      } else if (now > endTime) {
+        scheduleInfo.innerHTML = `
+          <strong><i class="fas fa-clock"></i> Test Time Ended:</strong> 
+          This test was scheduled to end at ${endTime.toLocaleString()}
+        `;
+        scheduleInfo.style.display = 'block';
+      } else {
+        scheduleInfo.style.display = 'none';
+      }
+    }
+    
+    function checkAutoStartTests() {
+      const now = new Date();
+      const passwordInput = document.getElementById('studentTestPassword');
+      
+      // Check if we're already in the student view with a test running
+      if (document.getElementById('studentView').style.display === 'block' && testActive) {
+        return;
+      }
+      
+      // Find tests that should be active now
+      const activeTests = studentTests.filter(test => {
+        if (!test.startTime || !test.endTime) return false;
+        
+        const start = new Date(test.startTime);
+        const end = new Date(test.endTime);
+        
+        // Test should be active if current time is between start and end
+        return now >= start && now <= end;
+      });
+      
+      // If there's exactly one active test, auto-fill and start it
+      if (activeTests.length === 1) {
+        const test = activeTests[0];
+        passwordInput.value = test.password;
+        startStudentTest();
+      }
+    }
+    
+    function startStudentTest() {
+      const password = document.getElementById('studentTestPassword').value;
+      const test = studentTests.find(t => t.password === password);
+      
+      if (!test) {
+        showToast("Invalid test password!", "error");
+        document.getElementById('studentTestPassword').classList.add('shake');
+        setTimeout(() => {
+          document.getElementById('studentTestPassword').classList.remove('shake');
+        }, 500);
+        logActivity('Failed test attempt with invalid password', 'authentication');
+        return;
+      }
+      
+      currentTest = test;
+      
+      // Check test schedule if set
+      if (test.startTime && test.endTime) {
+        const now = new Date();
+        testStartTime = new Date(test.startTime);
+        testEndTime = new Date(test.endTime);
+        
+        if (now < testStartTime) {
+          showToast(`Test cannot be started before ${testStartTime.toLocaleString()}`, "error");
+          logActivity(`Attempt to start test ${test.id} before scheduled time`, 'test_attempt');
+          return;
+        }
+        
+        if (now > testEndTime) {
+          showToast(`Test time has ended at ${testEndTime.toLocaleString()}`, "error");
+          logActivity(`Attempt to start test ${test.id} after end time`, 'test_attempt');
+          return;
+        }
+      }
+      
+      // Format questions with numbers if not already numbered
+      let formattedContent = test.testContent;
+      if (!formattedContent.match(/^\d+\./m)) {
+        formattedContent = formattedContent.split('\n')
+          .map((line, index) => line.trim() ? `${index + 1}. ${line}` : line)
+          .join('\n');
+      }
+      
+      document.getElementById('testContent').innerHTML = formattedContent
+        .replace(/\n/g, '<br>')
+        .replace(/\d+\./g, match => `<span class="question-number">${match.replace('.', '')}</span>`);
+      
+      document.getElementById('testWindow').style.display = 'block';
+      document.querySelector('#studentView .form-section').style.display = 'none';
+      
+      // Hide the view switcher during test
+      document.getElementById('viewSwitcher').style.display = 'none';
+      
+      // Show fixed test controls
+      document.getElementById('testControls').style.display = 'flex';
+      document.getElementById('testStudentInfo').innerHTML = `
+        <strong><i class="fas fa-user"></i> ${test.studentName}</strong> | 
+        <strong><i class="fas fa-id-card"></i> ${test.rollNumber}</strong> | 
+        <strong><i class="fas fa-users"></i> ${test.className || 'N/A'}</strong>
+      `;
+      
+      // Enter fullscreen
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(err => {
+          showToast(`Fullscreen error: ${err.message}`, "error");
+        });
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      }
+      
+      testActive = true;
+      startTime = new Date();
+      totalTime = test.duration * 60;
+      timeLeft = totalTime;
+      updateTimerDisplay(timeLeft);
+      updateCurrentTime();
+      
+      // Log test start
+      logActivity(`Test started for ${test.studentName} (${test.rollNumber})`, 'test_start');
+      
+      countdown = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay(timeLeft);
+        updateCurrentTime();
+        
+        if (timeLeft <= 0) {
+          endTest("⏰ Time's Up! Test has been automatically submitted.", true);
+        } else if (timeLeft <= 60) {
+          // Last minute warning
+          document.getElementById('testTimerDisplay').classList.add('pulse');
+          if (timeLeft === 60) {
+            showWarning("Last minute remaining!");
+            playWarningSound();
+          }
+        }
+      }, 1000);
+      
+      // Set up visibility change detection
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      window.addEventListener('blur', handleWindowBlur);
+      document.addEventListener('fullscreenchange', checkFullscreenExit);
+      document.addEventListener('webkitfullscreenchange', checkFullscreenExit);
+      document.addEventListener('mozfullscreenchange', checkFullscreenExit);
+      document.addEventListener('MSFullscreenChange', checkFullscreenExit);
+      
+      // Check test schedule if set
+      if (testStartTime && testEndTime) {
+        scheduleCheckInterval = setInterval(() => {
+          const now = new Date();
+          if (now > testEndTime) {
+            endTest("⏰ Scheduled test time has ended. Test auto-submitted.", true);
+          }
+        }, 60000); // Check every minute
+      }
+      
+      // Disable right-click to prevent copy-paste
+      document.addEventListener('contextmenu', preventRightClick);
+      
+      // Disable keyboard shortcuts
+      document.addEventListener('keydown', preventShortcuts);
+      
+      // Start activity monitoring
+      startActivityMonitoring();
+    }
+    
+    function startActivityMonitoring() {
+      // Log periodic activity
+      activityLog.push({
+        timestamp: new Date().toISOString(),
+        action: 'test_started',
+        details: `Test started for ${currentTest.studentName}`
+      });
+      
+      // Periodic logging (every 30 seconds)
+      const activityInterval = setInterval(() => {
+        activityLog.push({
+          timestamp: new Date().toISOString(),
+          action: 'activity_check',
+          details: `Test in progress - ${timeLeft} seconds remaining`
+        });
+      }, 30000);
+      
+      // Store the interval ID to clear it later
+      activityLog.activityInterval = activityInterval;
+    }
+    
+    function preventRightClick(e) {
+      if (testActive) {
+        e.preventDefault();
+        showWarning("Right-click is disabled during the test.");
+        logActivity('Right-click attempted', 'violation');
+      }
+    }
+    
+    function preventShortcuts(e) {
+      if (testActive) {
+        // Disable F5, F11, F12, Ctrl+R, Ctrl+Shift+R, Ctrl+W, Alt+Tab, etc.
+        const forbiddenKeys = [116, 122, 123]; // F5, F11, F12
+        const forbiddenCombos = [
+          e.ctrlKey && e.keyCode === 82,  // Ctrl+R
+          e.ctrlKey && e.keyCode === 87,  // Ctrl+W
+          e.altKey && e.keyCode === 9,    // Alt+Tab
+          e.ctrlKey && e.shiftKey && e.keyCode === 82 // Ctrl+Shift+R
+        ];
+        
+        if (forbiddenKeys.includes(e.keyCode) || forbiddenCombos.some(combo => combo)) {
+          e.preventDefault();
+          showWarning("This keyboard shortcut is disabled during the test.");
+          logActivity('Keyboard shortcut attempted', 'violation');
+        }
+      }
+    }
+    
+    function submitTest() {
+      if (confirm("Are you sure you want to submit the test now?")) {
+        endTest("✅ Test submitted successfully!", true);
+        logActivity('Test submitted manually', 'test_completion');
+      }
+    }
+    
+    function handleVisibilityChange() {
+      if (document.hidden && testActive) {
+        tabSwitchCount++;
+        if (tabSwitchCount >= MAX_TAB_SWITCHES) {
+          endTest(`🚫 Test auto-submitted. You switched tabs/windows ${MAX_TAB_SWITCHES} times.`, true);
+          logActivity(`Test auto-submitted due to ${MAX_TAB_SWITCHES} tab switches`, 'violation');
+        } else {
+          const remainingSwitches = MAX_TAB_SWITCHES - tabSwitchCount;
+          const warningMsg = 
+            `Warning: You switched tabs/windows (${tabSwitchCount}/${MAX_TAB_SWITCHES}). ${remainingSwitches} more attempts allowed.`;
+          document.getElementById('fsWarning').innerText = warningMsg;
+          showWarning(warningMsg);
+          playWarningSound();
+          logActivity(`Tab switch detected (${tabSwitchCount}/${MAX_TAB_SWITCHES})`, 'violation');
+        }
+      }
+    }
+    
+    function handleWindowBlur() {
+      if (testActive) {
+        document.getElementById('fsWarning').innerText = 
+          "Warning: The test window lost focus. Don't switch applications!";
+        logActivity('Window lost focus', 'activity');
+      }
+    }
+    
+    function updateTimerDisplay(seconds) {
+      const min = Math.floor(seconds / 60);
+      const sec = seconds % 60;
+      const timerText = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+      document.getElementById('testTimerDisplay').innerHTML = 
+        `<span>⏱ Time Left:</span> <span style="font-size:1.2em">${timerText}</span>`;
+      
+      // Update countdown in title
+      document.title = `${timerText} - ${currentTest?.studentName || 'Exam'} - Secure Exam System`;
+      
+      // Update countdown in fixed controls
+      document.getElementById('testCountdown').textContent = timerText;
+      
+      // Update progress bar if exists
+      const progressBar = document.getElementById('progressBar');
+      if (progressBar) {
+        const percentage = (seconds / totalTime) * 100;
+        progressBar.style.width = `${percentage}%`;
+        
+        // Change color based on remaining time
+        if (percentage < 20) {
+          progressBar.style.background = 'var(--danger-color)';
+        } else if (percentage < 50) {
+          progressBar.style.background = 'var(--warning-color)';
+        }
+      }
+    }
+    
+    function updateCurrentTime() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString();
+    }
+    
+    function checkFullscreenExit() {
+      if (!isFullscreen() && testActive) {
+        endTest("🚫 Test auto-submitted because you exited full screen mode.", true);
+        logActivity('Test auto-submitted due to fullscreen exit', 'violation');
+      }
+    }
+    
+    function isFullscreen() {
+      return !!(document.fullscreenElement || 
+               document.webkitFullscreenElement || 
+               document.mozFullScreenElement || 
+               document.msFullscreenElement);
+    }
+    
+    function endTest(message, playSound = false) {
+      clearInterval(countdown);
+      clearInterval(scheduleCheckInterval);
+      clearInterval(activityLog.activityInterval);
+      testActive = false;
+      
+      if (playSound) {
+        playAlertSound();
+      }
+      
+      // Calculate time taken
+      const endTime = new Date();
+      const timeTaken = Math.round((endTime - startTime) / 1000);
+      const minutesTaken = Math.floor(timeTaken / 60);
+      const secondsTaken = timeTaken % 60;
+      
+      // Add final log entry
+      activityLog.push({
+        timestamp: endTime.toISOString(),
+        action: 'test_completed',
+        details: message,
+        metrics: {
+          timeTaken: timeTaken,
+          tabSwitches: tabSwitchCount,
+          completion: ((totalTime - timeLeft) / totalTime) * 100
+        }
+      });
+      
+      // Save activity log to test
+      if (currentTest) {
+        currentTest.activityLog = activityLog;
+        currentTest.lastUpdated = endTime.toISOString();
+        currentTest.status = 'completed';
+        saveStudentTests();
+        updateStudentList();
+        updateStats();
+      }
+      
+      document.getElementById('testWindow').innerHTML = `
+        <div style="text-align: center;">
+          <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">
+            <i class="fas fa-check-circle"></i> ${message}
+          </h2>
+          <div style="background: rgba(67, 97, 238, 0.1); padding: 1.5rem; border-radius: var(--border-radius); max-width: 500px; margin: 0 auto;">
+            <p><strong><i class="fas fa-clock"></i> Time taken:</strong> ${minutesTaken}m ${secondsTaken}s</p>
+            <p><strong><i class="fas fa-exchange-alt"></i> Tab/window switches:</strong> ${tabSwitchCount}</p>
+            <p><strong><i class="fas fa-percentage"></i> Completion:</strong> ${Math.round(((totalTime - timeLeft) / totalTime) * 100)}%</p>
+          </div>
+          <button class="btn-primary" onclick="resetStudentView()" style="margin-top: 2rem;">
+            <i class="fas fa-redo"></i> Return to Test Login
+          </button>
+        </div>
+      `;
+      
+      // Hide fixed test controls
+      document.getElementById('testControls').style.display = 'none';
+      
+      exitFullscreen();
+      cleanupEventListeners();
+      
+      // Reset document title
+      document.title = "Advanced Secure Examination System";
+    }
+    
+    function resetStudentView() {
+      // Clear any existing intervals
+      clearInterval(countdown);
+      clearInterval(scheduleCheckInterval);
+      if (activityLog.activityInterval) {
+        clearInterval(activityLog.activityInterval);
+      }
+      
+      // Reset variables
+      testActive = false;
+      timeLeft = 0;
+      tabSwitchCount = 0;
+      testStartTime = null;
+      testEndTime = null;
+      currentTest = null;
+      activityLog = [];
+      
+      // Reset form
+      document.getElementById('studentTestPassword').value = '';
+      
+      // Show login form and hide test window
+      document.querySelector('#studentView .form-section').style.display = 'block';
+      document.getElementById('testWindow').style.display = 'none';
+      
+      // Show the view switcher again
+      document.getElementById('viewSwitcher').style.display = 'flex';
+      
+      // Hide fixed test controls
+      document.getElementById('testControls').style.display = 'none';
+      
+      // Exit fullscreen if still in it
+      exitFullscreen();
+      cleanupEventListeners();
+      
+      // Reset document title
+      document.title = "Advanced Secure Examination System";
+      
+      logActivity('Test view reset', 'navigation');
+    }
+    
+    function exitFullscreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+    
+    function cleanupEventListeners() {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+      document.removeEventListener('fullscreenchange', checkFullscreenExit);
+      document.removeEventListener('webkitfullscreenchange', checkFullscreenExit);
+      document.removeEventListener('mozfullscreenchange', checkFullscreenExit);
+      document.removeEventListener('MSFullscreenChange', checkFullscreenExit);
+      document.removeEventListener('contextmenu', preventRightClick);
+      document.removeEventListener('keydown', preventShortcuts);
+    }
+    
+    // Helper functions
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toastNotification');
+      toast.textContent = message;
+      toast.className = `toast ${type} show`;
+      
+      // Add icon based on type
+      let icon;
+      switch(type) {
+        case 'success': icon = '<i class="fas fa-check-circle"></i>'; break;
+        case 'error': icon = '<i class="fas fa-exclamation-circle"></i>'; break;
+        case 'warning': icon = '<i class="fas fa-exclamation-triangle"></i>'; break;
+        default: icon = '<i class="fas fa-info-circle"></i>';
+      }
+      toast.innerHTML = `${icon} ${message}`;
+      
+      // Play sound based on type
+      switch(type) {
+        case 'success': playSuccessSound(); break;
+        case 'error': playWarningSound(); break;
+        case 'warning': playWarningSound(); break;
+        default: playAlertSound();
+      }
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 5000);
+    }
+    
+    function showWarning(message) {
+      const warningBox = document.createElement('div');
+      warningBox.className = 'warning-box';
+      warningBox.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+      
+      // Insert at the top of the test window
+      const testWindow = document.getElementById('testWindow');
+      if (testWindow) {
+        testWindow.insertBefore(warningBox, testWindow.firstChild);
+        
+        // Remove after 5 seconds
+        setTimeout(() => {
+          warningBox.remove();
+        }, 5000);
+      }
+    }
+    
+    function playAlertSound() {
+      const sound = document.getElementById('alertSound');
+      sound.currentTime = 0;
+      sound.play().catch(e => console.log("Audio play failed:", e));
+    }
+    
+    function playWarningSound() {
+      const sound = document.getElementById('warningSound');
+      sound.currentTime = 0;
+      sound.play().catch(e => console.log("Audio play failed:", e));
+    }
+    
+    function playSuccessSound() {
+      const sound = document.getElementById('successSound');
+      sound.currentTime = 0;
+      sound.play().catch(e => console.log("Audio play failed:", e));
+    }
+    
+    function togglePasswordVisibility(inputId) {
+      const input = document.getElementById(inputId);
+      const button = input.nextElementSibling;
+      
+      if (input.type === 'password') {
+        input.type = 'text';
+        button.innerHTML = '<i class="fas fa-eye-slash"></i>';
+      } else {
+        input.type = 'password';
+        button.innerHTML = '<i class="fas fa-eye"></i>';
+      }
+    }
+    
+    function logActivity(message, category = 'info') {
+      const timestamp = new Date().toISOString();
+      console.log(`[${timestamp}] [${category}] ${message}`);
+      // In a real application, you would send this to a logging service
+    }
+    
+    function showHelp() {
+      alert("Help Information:\n\n" +
+            "Admin Panel:\n" +
+            "- Create tests for students with custom durations\n" +
+            "- Schedule tests for specific time windows\n" +
+            "- Monitor and manage all student tests\n\n" +
+            "Student View:\n" +
+            "- Enter the test password provided by your instructor\n" +
+            "- The test will automatically start in fullscreen mode\n" +
+            "- Follow all on-screen instructions during the test");
+    }
+    
+    // Close modal when clicking outside of it
+    window.onclick = function(event) {
+      const modals = document.querySelectorAll('.modal');
+      modals.forEach(modal => {
+        if (event.target == modal) {
+          closeModal();
+        }
+      });
+    }
+  </script>
+</body>
+</html>
