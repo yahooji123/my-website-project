@@ -506,6 +506,105 @@
       background-color: rgba(220, 53, 69, 0.1);
     }
 
+    /* Enhanced styles for test questions */
+    .question-container {
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: rgba(67, 97, 238, 0.05);
+      border-radius: 8px;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .question-text {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .answer-option {
+      margin: 5px 0;
+      padding: 8px 12px;
+      background-color: var(--light-color);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .answer-option:hover {
+      background-color: rgba(67, 97, 238, 0.1);
+    }
+
+    .answer-option.selected {
+      background-color: rgba(67, 97, 238, 0.2);
+      border-left: 3px solid var(--primary-color);
+    }
+
+    /* Enhanced security warning */
+    .security-warning {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--danger-color);
+      color: white;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      z-index: 1000;
+      display: none;
+    }
+
+    /* Enhanced test results */
+    .test-results {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: var(--light-color);
+      border-radius: 10px;
+    }
+
+    .result-item {
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    /* Enhanced admin controls */
+    .admin-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .admin-control-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      background-color: var(--light-color);
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .admin-control-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px var(--shadow-color);
+    }
+
+    .admin-control-btn i {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    /* Enhanced responsive design */
     @media (max-width: 768px) {
       .container {
         padding: 20px;
@@ -563,6 +662,30 @@
         width: 100%;
         justify-content: space-between;
       }
+
+      .admin-controls {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 15px;
+      }
+
+      .student-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .student-item div:last-child {
+        align-self: flex-end;
+      }
+
+      .admin-controls {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -602,11 +725,11 @@
           <div class="student-info">
             <div>
               <label for="adminStudentName">Full Name:</label>
-              <input type="text" id="adminStudentName" placeholder="Enter student full name">
+              <input type="text" id="adminStudentName" placeholder="Enter student full name" required>
             </div>
             <div>
               <label for="adminRollNumber">Roll Number:</label>
-              <input type="text" id="adminRollNumber" placeholder="Enter roll number">
+              <input type="text" id="adminRollNumber" placeholder="Enter roll number" required>
             </div>
             <div>
               <label for="adminClassName">Class/Group:</label>
@@ -631,18 +754,18 @@
           
           <div>
             <label for="adminTestPassword">Test Password:</label>
-            <input type="password" id="adminTestPassword" placeholder="Set test password">
+            <input type="password" id="adminTestPassword" placeholder="Set test password" required>
             <small style="color: var(--text-color); opacity: 0.7;">(Students will need this to access their test)</small>
           </div>
           
           <div>
             <label for="adminDuration">Test Duration (minutes):</label>
-            <input type="number" id="adminDuration" min="1" max="180" value="30">
+            <input type="number" id="adminDuration" min="1" max="180" value="30" required>
           </div>
           
           <div>
             <label for="adminPaperInput">Test Content:</label>
-            <textarea id="adminPaperInput" placeholder="Enter test questions here..."></textarea>
+            <textarea id="adminPaperInput" placeholder="Enter test questions here..." required></textarea>
           </div>
           
           <div class="button-group">
@@ -656,9 +779,28 @@
           <div class="input-group">
             <input type="text" id="searchTests" placeholder="Search by name, roll number or class..." oninput="filterTests()">
             <button onclick="filterTests()">🔍 Search</button>
+            <button onclick="exportAllTests()">📤 Export All</button>
           </div>
           <div class="student-list" id="studentList">
             <!-- Student items will be added here dynamically -->
+          </div>
+        </div>
+
+        <div class="form-section" id="bulkActions" style="display: none;">
+          <h3>⚡ Bulk Actions</h3>
+          <div class="admin-controls">
+            <div class="admin-control-btn" onclick="exportAllTests()">
+              <span>📤 Export All Tests</span>
+            </div>
+            <div class="admin-control-btn" onclick="importTests()">
+              <span>📥 Import Tests</span>
+            </div>
+            <div class="admin-control-btn" onclick="clearAllTests()">
+              <span>🗑️ Clear All Tests</span>
+            </div>
+            <div class="admin-control-btn" onclick="generateSampleData()">
+              <span>🎲 Generate Sample Data</span>
+            </div>
           </div>
         </div>
       </div>
@@ -701,7 +843,9 @@
           ⚠️ Examination in Progress - Strictly follow these rules:<br>
           1. Do not exit full screen or switch tabs/windows<br>
           2. Do not use any other applications<br>
-          3. The test will be automatically submitted if rules are violated
+          3. The test will be automatically submitted if rules are violated<br>
+          4. Right-click and keyboard shortcuts are disabled<br>
+          5. All actions are logged for security purposes
         </div>
         <div id="testContent"></div>
         <div class="test-actions">
@@ -727,6 +871,27 @@
     </div>
   </div>
 
+  <!-- Import Tests Modal -->
+  <div id="importModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeImportModal()">&times;</span>
+      <h3>Import Tests</h3>
+      <div class="form-section">
+        <label for="importFile">Select JSON file to import:</label>
+        <input type="file" id="importFile" accept=".json">
+        <div class="button-group" style="margin-top: 20px;">
+          <button onclick="processImport()">Import</button>
+          <button onclick="closeImportModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security Warning Banner -->
+  <div class="security-warning" id="securityWarning">
+    SECURITY ALERT: Unauthorized actions are being logged. Any attempt to bypass security measures will result in automatic test submission.
+  </div>
+
   <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" preload="auto"></audio>
   <audio id="warningSound" src="https://assets.mixkit.co/sfx/preview/mixkit-warning-alarm-buzzer-991.mp3" preload="auto"></audio>
 
@@ -740,11 +905,12 @@
     const MAX_TAB_SWITCHES = 3;
     let testStartTime, testEndTime;
     let scheduleCheckInterval;
-    const ADMIN_PASSWORD = "admin123";
+    const ADMIN_PASSWORD = "admin123"; // In production, use proper authentication
     let isAdminLoggedIn = false;
     let autoStartCheckInterval;
     let currentTest = null;
     let testScheduleInterval;
+    let activityLog = [];
     
     // Student test database
     let studentTests = JSON.parse(localStorage.getItem('studentTests')) || [];
@@ -777,6 +943,9 @@
       // Check for scheduled tests
       updateTestScheduleInfo();
       testScheduleInterval = setInterval(updateTestScheduleInfo, 1000);
+
+      // Initialize activity log
+      logActivity('System initialized', 'system');
     });
     
     function toggleDarkMode() {
@@ -786,6 +955,7 @@
       const isDarkMode = body.classList.contains('dark-mode');
       localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
       document.getElementById('darkModeToggle').textContent = isDarkMode ? '🌞' : '🌓';
+      logActivity('Dark mode toggled', 'system');
     }
     
     function showAdminView() {
@@ -793,6 +963,7 @@
       document.getElementById('studentView').style.display = 'none';
       document.getElementById('adminViewBtn').style.backgroundColor = '#495057';
       document.getElementById('studentViewBtn').style.backgroundColor = '#6c757d';
+      logActivity('Switched to admin view', 'navigation');
     }
     
     function showStudentView() {
@@ -807,6 +978,7 @@
       } else {
         document.getElementById('adminViewBtn').style.display = 'flex';
       }
+      logActivity('Switched to student view', 'navigation');
     }
     
     function authenticateAdmin() {
@@ -816,11 +988,14 @@
         document.getElementById('adminControls').style.display = 'block';
         document.getElementById('adminLoginForm').style.display = 'none';
         document.getElementById('adminMainControls').style.display = 'block';
+        document.getElementById('bulkActions').style.display = 'block';
         document.getElementById('adminPassword').style.borderColor = '#28a745';
         document.getElementById('adminPassword').value = '';
+        logActivity('Admin logged in successfully', 'authentication');
       } else {
         showAlert("Incorrect admin password!");
         document.getElementById('adminPassword').style.borderColor = '#dc3545';
+        logActivity('Failed admin login attempt', 'authentication', { attemptedPassword: password });
       }
     }
     
@@ -829,12 +1004,15 @@
       document.getElementById('adminControls').style.display = 'none';
       document.getElementById('adminLoginForm').style.display = 'block';
       document.getElementById('adminMainControls').style.display = 'none';
+      document.getElementById('bulkActions').style.display = 'none';
       document.getElementById('adminPassword').style.borderColor = 'var(--border-color)';
+      logActivity('Admin logged out', 'authentication');
     }
     
     function showAddTestForm() {
       document.getElementById('addTestForm').style.display = 'block';
       resetTestForm();
+      logActivity('Add test form displayed', 'admin-action');
     }
     
     function resetTestForm() {
@@ -850,6 +1028,7 @@
       const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
       document.getElementById('adminTestStartTime').value = now.toISOString().slice(0, 16);
       document.getElementById('adminTestEndTime').value = oneHourLater.toISOString().slice(0, 16);
+      logActivity('Test form reset', 'admin-action');
     }
     
     function addStudentTest() {
@@ -865,21 +1044,25 @@
       
       if (!studentName || !rollNumber || !password || !testContent) {
         showAlert("Please fill all required fields!");
+        logActivity('Failed to add test - missing required fields', 'admin-action');
         return;
       }
       
       if (duration < 1 || duration > 180 || isNaN(duration)) {
         showAlert("Please enter a valid duration between 1 and 180 minutes");
+        logActivity('Failed to add test - invalid duration', 'admin-action', { duration });
         return;
       }
       
       // Check if roll number already exists
       if (studentTests.some(test => test.rollNumber === rollNumber)) {
         if (!confirm("A test already exists for this roll number. Do you want to overwrite it?")) {
+          logActivity('Test addition canceled - duplicate roll number', 'admin-action', { rollNumber });
           return;
         }
         // Remove existing test
         studentTests = studentTests.filter(test => test.rollNumber !== rollNumber);
+        logActivity('Removed existing test for duplicate roll number', 'admin-action', { rollNumber });
       }
       
       const studentTest = {
@@ -894,7 +1077,8 @@
         startTime,
         endTime,
         createdAt: new Date().toISOString(),
-        status: startTime ? getTestStatus(new Date(startTime), new Date(endTime)) : 'active'
+        status: startTime ? getTestStatus(new Date(startTime), new Date(endTime)) : 'active',
+        lastUpdated: new Date().toISOString()
       };
       
       studentTests.push(studentTest);
@@ -903,6 +1087,11 @@
       resetTestForm();
       
       showAlert("Student test added successfully!", "success");
+      logActivity('Test added successfully', 'admin-action', { 
+        studentName, 
+        rollNumber,
+        duration 
+      });
     }
     
     function getTestStatus(startTime, endTime) {
@@ -968,6 +1157,7 @@
       const startDate = test.startTime ? new Date(test.startTime).toLocaleString() : 'Not scheduled';
       const endDate = test.endTime ? new Date(test.endTime).toLocaleString() : 'Not scheduled';
       const createdDate = new Date(test.createdAt).toLocaleString();
+      const updatedDate = new Date(test.lastUpdated).toLocaleString();
       
       detailsDiv.innerHTML = `
         <p><strong>Student Name:</strong> ${test.studentName}</p>
@@ -979,10 +1169,12 @@
         <p><strong>End Time:</strong> ${endDate}</p>
         <p><strong>Status:</strong> <span class="test-status status-${test.status}">${test.status}</span></p>
         <p><strong>Created At:</strong> ${createdDate}</p>
+        <p><strong>Last Updated:</strong> ${updatedDate}</p>
         <p><strong>Test Password:</strong> ${'•'.repeat(test.password.length)}</p>
       `;
       
       modal.style.display = 'block';
+      logActivity('Viewed test details', 'admin-action', { testId: id });
     }
     
     function closeModal() {
@@ -1010,6 +1202,8 @@
       studentTests = studentTests.filter(t => t.id !== id);
       saveStudentTests();
       updateStudentList();
+
+      logActivity('Editing test', 'admin-action', { testId: id });
     }
     
     function deleteStudentTest(id) {
@@ -1018,6 +1212,7 @@
         saveStudentTests();
         updateStudentList();
         showAlert("Test deleted successfully!", "success");
+        logActivity('Test deleted', 'admin-action', { testId: id });
       }
     }
     
@@ -1033,10 +1228,12 @@
           item.style.display = 'none';
         }
       });
+      logActivity('Filtered tests', 'admin-action', { searchTerm });
     }
     
     function saveStudentTests() {
       localStorage.setItem('studentTests', JSON.stringify(studentTests));
+      logActivity('Tests saved to storage', 'system');
     }
     
     function playAlertSound() {
@@ -1130,6 +1327,7 @@
         const test = activeTests[0];
         passwordInput.value = test.password;
         startStudentTest();
+        logActivity('Test auto-started based on schedule', 'system', { testId: test.id });
       }
     }
     
@@ -1139,6 +1337,7 @@
       
       if (!test) {
         showAlert("Invalid test password!");
+        logActivity('Failed test start - invalid password', 'student-action');
         return;
       }
       
@@ -1152,11 +1351,19 @@
         
         if (now < testStartTime) {
           showAlert(`Test cannot be started before ${testStartTime.toLocaleString()}`);
+          logActivity('Failed test start - before scheduled time', 'student-action', { 
+            currentTime: now.toISOString(),
+            scheduledStart: testStartTime.toISOString()
+          });
           return;
         }
         
         if (now > testEndTime) {
           showAlert(`Test time has ended at ${testEndTime.toLocaleString()}`);
+          logActivity('Failed test start - after scheduled time', 'student-action', { 
+            currentTime: now.toISOString(),
+            scheduledEnd: testEndTime.toISOString()
+          });
           return;
         }
       }
@@ -1176,11 +1383,15 @@
         <strong>🏫 ${test.className || 'N/A'}</strong>
       `;
       
+      // Show security warning
+      document.getElementById('securityWarning').style.display = 'block';
+      
       // Enter fullscreen
       const elem = document.documentElement;
       if (elem.requestFullscreen) {
         elem.requestFullscreen().catch(err => {
           showAlert(`Fullscreen error: ${err.message}`);
+          logActivity('Fullscreen error', 'system', { error: err.message });
         });
       } else if (elem.webkitRequestFullscreen) {
         elem.webkitRequestFullscreen();
@@ -1230,12 +1441,23 @@
       
       // Disable keyboard shortcuts
       document.addEventListener('keydown', preventShortcuts);
+
+      // Log test start
+      logActivity('Test started', 'student-action', { 
+        testId: test.id,
+        studentName: test.studentName,
+        rollNumber: test.rollNumber
+      });
     }
     
     function preventRightClick(e) {
       if (testActive) {
         e.preventDefault();
         showWarning("Right-click is disabled during the test.");
+        logActivity('Right-click attempted', 'security', { 
+          action: 'contextmenu',
+          testId: currentTest.id
+        });
       }
     }
     
@@ -1253,6 +1475,13 @@
         if (forbiddenKeys.includes(e.keyCode) || forbiddenCombos.some(combo => combo)) {
           e.preventDefault();
           showWarning("This keyboard shortcut is disabled during the test.");
+          logActivity('Restricted shortcut attempted', 'security', { 
+            keyCode: e.keyCode,
+            ctrlKey: e.ctrlKey,
+            shiftKey: e.shiftKey,
+            altKey: e.altKey,
+            testId: currentTest.id
+          });
         }
       }
     }
@@ -1260,6 +1489,10 @@
     function submitTest() {
       if (confirm("Are you sure you want to submit the test now?")) {
         endTest("✅ Test submitted successfully!", true);
+        logActivity('Test submitted manually', 'student-action', { 
+          testId: currentTest.id,
+          timeLeft: timeLeft
+        });
       }
     }
     
@@ -1268,6 +1501,10 @@
         tabSwitchCount++;
         if (tabSwitchCount >= MAX_TAB_SWITCHES) {
           endTest(`🚫 Test auto-submitted. You switched tabs/windows ${MAX_TAB_SWITCHES} times.`, true);
+          logActivity('Test auto-submitted - max tab switches reached', 'security', { 
+            testId: currentTest.id,
+            tabSwitchCount: tabSwitchCount
+          });
         } else {
           const remainingSwitches = MAX_TAB_SWITCHES - tabSwitchCount;
           const warningMsg = 
@@ -1275,6 +1512,11 @@
           document.getElementById('fsWarning').innerText = warningMsg;
           showWarning(warningMsg);
           playWarningSound();
+          logActivity('Tab/window switch detected', 'security', { 
+            testId: currentTest.id,
+            tabSwitchCount: tabSwitchCount,
+            remainingSwitches: remainingSwitches
+          });
         }
       }
     }
@@ -1283,6 +1525,9 @@
       if (testActive) {
         document.getElementById('fsWarning').innerText = 
           "Warning: The test window lost focus. Don't switch applications!";
+        logActivity('Window focus lost', 'security', { 
+          testId: currentTest.id
+        });
       }
     }
     
@@ -1315,6 +1560,9 @@
     function checkFullscreenExit() {
       if (!isFullscreen() && testActive) {
         endTest("🚫 Test auto-submitted because you exited full screen mode.", true);
+        logActivity('Test auto-submitted - fullscreen exited', 'security', { 
+          testId: currentTest.id
+        });
       }
     }
     
@@ -1334,6 +1582,9 @@
         playAlertSound();
       }
       
+      // Hide security warning
+      document.getElementById('securityWarning').style.display = 'none';
+      
       // Calculate time taken
       const endTime = new Date();
       const timeTaken = Math.round((endTime - startTime) / 1000);
@@ -1342,15 +1593,46 @@
       
       document.getElementById('testWindow').innerHTML = `
         <h2>${message}</h2>
-        <div style="text-align: center; margin-top: 20px; font-size: 18px;">
-          <p>Time taken: ${minutesTaken}m ${secondsTaken}s</p>
-          <p>Tab/window switches: ${tabSwitchCount}</p>
-          <button onclick="resetStudentView()" style="margin-top: 20px;">Return to Test Login</button>
+        <div class="test-results">
+          <div class="result-item">
+            <strong>Student:</strong> ${currentTest.studentName}
+          </div>
+          <div class="result-item">
+            <strong>Roll Number:</strong> ${currentTest.rollNumber}
+          </div>
+          <div class="result-item">
+            <strong>Class:</strong> ${currentTest.className || 'N/A'}
+          </div>
+          <div class="result-item">
+            <strong>Time taken:</strong> ${minutesTaken}m ${secondsTaken}s
+          </div>
+          <div class="result-item">
+            <strong>Tab/window switches:</strong> ${tabSwitchCount}
+          </div>
+          <div class="result-item">
+            <strong>Test completed at:</strong> ${endTime.toLocaleString()}
+          </div>
         </div>
+        <button onclick="resetStudentView()" style="margin-top: 20px; display: block; margin-left: auto; margin-right: auto;">Return to Test Login</button>
       `;
       
       exitFullscreen();
       cleanupEventListeners();
+
+      // Update test status
+      if (currentTest) {
+        currentTest.status = 'completed';
+        currentTest.lastUpdated = new Date().toISOString();
+        saveStudentTests();
+        updateStudentList();
+      }
+
+      logActivity('Test ended', 'student-action', { 
+        testId: currentTest.id,
+        reason: message,
+        timeTaken: timeTaken,
+        tabSwitchCount: tabSwitchCount
+      });
     }
     
     function resetStudentView() {
@@ -1374,6 +1656,7 @@
       document.getElementById('testWindow').style.display = 'none';
       document.getElementById('submitBtn').style.display = 'none';
       document.getElementById('testScheduleInfo').style.display = 'none';
+      document.getElementById('securityWarning').style.display = 'none';
       
       // Reset progress bar
       document.getElementById('progressBar').style.width = '100%';
@@ -1385,6 +1668,7 @@
       // Exit fullscreen if still in it
       exitFullscreen();
       cleanupEventListeners();
+      logActivity('Student view reset', 'navigation');
     }
     
     function exitFullscreen() {
@@ -1464,12 +1748,199 @@
         }, 5000);
       }
     }
+
+    function logActivity(action, category, details = {}) {
+      const activity = {
+        timestamp: new Date().toISOString(),
+        action,
+        category,
+        details
+      };
+      
+      activityLog.push(activity);
+      
+      // Keep only the last 100 activities
+      if (activityLog.length > 100) {
+        activityLog.shift();
+      }
+      
+      // For demo purposes, we'll log to console
+      console.log('Activity:', activity);
+    }
+
+    function exportAllTests() {
+      const dataStr = JSON.stringify(studentTests, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportName = `student-tests-${new Date().toISOString().slice(0,10)}.json`;
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportName);
+      linkElement.click();
+      
+      logActivity('Exported all tests', 'admin-action');
+    }
+
+    function importTests() {
+      document.getElementById('importModal').style.display = 'block';
+      logActivity('Import tests dialog opened', 'admin-action');
+    }
+
+    function closeImportModal() {
+      document.getElementById('importModal').style.display = 'none';
+    }
+
+    function processImport() {
+      const fileInput = document.getElementById('importFile');
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        showAlert("Please select a file to import");
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const importedTests = JSON.parse(e.target.result);
+          
+          if (!Array.isArray(importedTests)) {
+            throw new Error("Invalid file format - expected an array of tests");
+          }
+          
+          if (confirm(`Import ${importedTests.length} tests? This will overwrite existing tests with matching IDs.`)) {
+            // Merge imported tests with existing ones
+            importedTests.forEach(importedTest => {
+              // Remove existing test with same ID if it exists
+              studentTests = studentTests.filter(test => test.id !== importedTest.id);
+              studentTests.push(importedTest);
+            });
+            
+            saveStudentTests();
+            updateStudentList();
+            showAlert(`Successfully imported ${importedTests.length} tests`, "success");
+            closeImportModal();
+            
+            logActivity('Tests imported', 'admin-action', { count: importedTests.length });
+          }
+        } catch (error) {
+          showAlert(`Error importing tests: ${error.message}`);
+          logActivity('Import failed', 'admin-action', { error: error.message });
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function clearAllTests() {
+      if (confirm("Are you sure you want to delete ALL tests? This action cannot be undone.")) {
+        studentTests = [];
+        saveStudentTests();
+        updateStudentList();
+        showAlert("All tests have been deleted", "success");
+        logActivity('All tests cleared', 'admin-action');
+      }
+    }
+
+    function generateSampleData() {
+      if (confirm("Generate sample test data? This will add 5 sample tests to the system.")) {
+        const sampleTests = [
+          {
+            id: Date.now(),
+            studentName: "John Doe",
+            rollNumber: "S1001",
+            className: "Computer Science",
+            email: "john.doe@example.com",
+            password: "test123",
+            duration: 30,
+            testContent: "Sample test questions for John Doe:\n\n1. What is the capital of France?\n2. Solve for x: 2x + 5 = 15\n3. Explain the concept of OOP.",
+            startTime: new Date(Date.now() + 3600000).toISOString().slice(0, 16),
+            endTime: new Date(Date.now() + 5400000).toISOString().slice(0, 16),
+            createdAt: new Date().toISOString(),
+            status: "scheduled",
+            lastUpdated: new Date().toISOString()
+          },
+          {
+            id: Date.now() + 1,
+            studentName: "Jane Smith",
+            rollNumber: "S1002",
+            className: "Mathematics",
+            email: "jane.smith@example.com",
+            password: "math456",
+            duration: 45,
+            testContent: "Mathematics Test:\n\n1. Differentiate x^2 + 3x + 2\n2. Integrate sin(x)\n3. Solve the quadratic equation x^2 - 5x + 6 = 0",
+            startTime: new Date(Date.now() - 3600000).toISOString().slice(0, 16),
+            endTime: new Date(Date.now() + 3600000).toISOString().slice(0, 16),
+            createdAt: new Date().toISOString(),
+            status: "active",
+            lastUpdated: new Date().toISOString()
+          },
+          {
+            id: Date.now() + 2,
+            studentName: "Alice Johnson",
+            rollNumber: "S1003",
+            className: "Physics",
+            email: "alice.j@example.com",
+            password: "physics789",
+            duration: 60,
+            testContent: "Physics Exam:\n\n1. State Newton's laws of motion\n2. Calculate the force needed to accelerate a 5kg object at 2m/s²\n3. Explain the photoelectric effect",
+            startTime: new Date(Date.now() - 7200000).toISOString().slice(0, 16),
+            endTime: new Date(Date.now() - 3600000).toISOString().slice(0, 16),
+            createdAt: new Date().toISOString(),
+            status: "completed",
+            lastUpdated: new Date().toISOString()
+          },
+          {
+            id: Date.now() + 3,
+            studentName: "Bob Williams",
+            rollNumber: "S1004",
+            className: "History",
+            email: "bob.w@example.com",
+            password: "history101",
+            duration: 20,
+            testContent: "History Quiz:\n\n1. When did World War II end?\n2. Who was the first president of the United States?\n3. Name three ancient civilizations",
+            createdAt: new Date().toISOString(),
+            status: "active",
+            lastUpdated: new Date().toISOString()
+          },
+          {
+            id: Date.now() + 4,
+            studentName: "Charlie Brown",
+            rollNumber: "S1005",
+            className: "Chemistry",
+            email: "charlie.b@example.com",
+            password: "chem202",
+            duration: 90,
+            testContent: "Chemistry Final:\n\n1. Balance the equation: H2 + O2 → H2O\n2. Define Avogadro's number\n3. Explain the difference between ionic and covalent bonds",
+            startTime: new Date(Date.now() + 86400000).toISOString().slice(0, 16),
+            endTime: new Date(Date.now() + 90000000).toISOString().slice(0, 16),
+            createdAt: new Date().toISOString(),
+            status: "scheduled",
+            lastUpdated: new Date().toISOString()
+          }
+        ];
+
+        sampleTests.forEach(test => {
+          studentTests.push(test);
+        });
+
+        saveStudentTests();
+        updateStudentList();
+        showAlert("5 sample tests generated successfully!", "success");
+        logActivity('Sample data generated', 'admin-action', { count: 5 });
+      }
+    }
     
     // Close modal when clicking outside of it
     window.onclick = function(event) {
       const modal = document.getElementById('testDetailsModal');
       if (event.target == modal) {
         closeModal();
+      }
+      
+      const importModal = document.getElementById('importModal');
+      if (event.target == importModal) {
+        closeImportModal();
       }
     }
   </script>
