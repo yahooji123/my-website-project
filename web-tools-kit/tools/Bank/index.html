@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bank + ATM Simulator (HTML, CSS & JavaScript)</title>
+  <style>
+    :root{
+      --bg:#0b1220;         /* deep blue */
+      --card:#121a2b;       /* card surface */
+      --muted:#7f8aa3;      /* secondary text */
+      --text:#e9eefc;       /* primary text */
+      --accent:#4f7cff;     /* buttons / links */
+      --accent-2:#22c55e;   /* success */
+      --danger:#ef4444;     /* danger */
+      --warn:#f59e0b;       /* warn */
+      --shadow: 0 15px 40px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      background: radial-gradient(1200px 600px at 20% -10%, #1b2340 0%, transparent 60%),
+                  radial-gradient(900px 400px at 120% 10%, #13224a 0%, transparent 60%),
+                  var(--bg);
+      color:var(--text);
+    }
+    header{
+      position: sticky; top:0; z-index:2;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(0deg, rgba(18,26,43,.7), rgba(18,26,43,.7));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .nav{
+      max-width:1100px; margin:0 auto; padding:14px 20px; display:flex; gap:16px; align-items:center; justify-content:space-between;
+    }
+    .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.3px}
+    .brand .logo{width:40px; height:40px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg,#4f7cff, #22c55e); box-shadow: var(--shadow)}
+    .brand .logo span{font-weight:900}
+    .tabs{display:flex; gap:8px; flex-wrap:wrap}
+    .tab-btn{
+      background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.12);
+      padding:10px 14px; border-radius:12px; cursor:pointer; transition:.2s; font-weight:600
+    }
+    .tab-btn.active, .tab-btn:hover{ background: rgba(79,124,255,.18); border-color: rgba(79,124,255,.55)}
+
+    main{max-width:1100px; margin:22px auto 60px; padding:0 20px;}
+    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:20px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+
+    .card{background:linear-gradient(0deg, rgba(255,255,255,.02), rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden}
+    .card header{position:initial; background:transparent; border:0}
+    .card-title{padding:18px 18px 0; font-size:20px; font-weight:800}
+    .card-sub{padding:0 18px 8px; color:var(--muted); font-size:13px}
+    .card-body{padding:18px}
+
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 720px){ .row{grid-template-columns:1fr} }
+
+    label{font-size:12px; color:var(--muted); margin:10px 4px 6px; display:block}
+    input, select, textarea{
+      width:100%; padding:12px 12px; background:#0d1526; color:var(--text);
+      border:1px solid rgba(255,255,255,.12); border-radius:12px; outline:none; transition:.2s;
+    }
+    input:focus, select:focus, textarea:focus{ border-color:var(--accent)}
+
+    .btn{display:inline-flex; align-items:center; gap:10px; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:#0d1526; color:var(--text); cursor:pointer; transition:.2s; font-weight:700}
+    .btn.primary{ background: linear-gradient(135deg, #4f7cff, #22c55e); border:0; color:white }
+    .btn.ghost{ background: transparent}
+    .btn.warn{ background: linear-gradient(135deg, #f59e0b, #ef4444); color:#1b0d0d; border:0 }
+    .btn:disabled{ opacity:.65; cursor:not-allowed }
+
+    .stack{display:flex; flex-wrap:wrap; gap:10px}
+    .muted{color:var(--muted)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+
+    .divider{height:1px; background: rgba(255,255,255,.08); margin:18px 0}
+
+    .stat{
+      background: linear-gradient(0deg, rgba(255,255,255,.02), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.08);
+      padding:12px 14px; border-radius:14px; display:flex; align-items:center; justify-content:space-between
+    }
+
+    .good{color:var(--accent-2)}
+    .bad{color:var(--danger)}
+    .chip{display:inline-flex; align-items:center; gap:8px; background: rgba(79,124,255,.16); padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid rgba(79,124,255,.42)}
+
+    table{width:100%; border-collapse: collapse;}
+    th, td{ text-align:left; padding:10px 12px; border-bottom: 1px dashed rgba(255,255,255,.08)}
+    th{ font-size:12px; color:var(--muted); font-weight:700; letter-spacing:.2px }
+
+    .footer{max-width:1100px; margin:28px auto 60px; padding:0 20px; color:var(--muted); font-size:13px}
+    .kbd{border:1px solid rgba(255,255,255,.18); background:#0d1526; padding:2px 6px; border-radius:6px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"><span>₹</span></div>
+        <div>
+          <div style="font-size:14px; color:var(--muted); font-weight:700; letter-spacing:1.4px; text-transform:uppercase">Virtual Finance</div>
+          <div style="font-size:18px; font-weight:900">Bank + ATM Simulator</div>
+        </div>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="bank">🏦 Bank Portal</button>
+        <button class="tab-btn" data-tab="atm">🏧 ATM</button>
+        <button class="tab-btn" data-tab="about">ℹ️ Guide</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="bank" class="card">
+      <div class="card-title">🏦 Bank Portal</div>
+      <div class="card-sub">Account kholna, deposit/withdraw, transfer, aur statement – sab yahin se. (Demo only – real paisa nahi!)</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="card">
+            <div class="card-title">🆕 Naya Account</div>
+            <div class="card-sub">Apna naam, phone aur 4-digit PIN set karke account banao.</div>
+            <div class="card-body">
+              <div class="row">
+                <div>
+                  <label>Full Name</label>
+                  <input id="regName" placeholder="Anurag Rastogi" />
+                </div>
+                <div>
+                  <label>Phone</label>
+                  <input id="regPhone" placeholder="98765 43210" />
+                </div>
+              </div>
+              <div class="row">
+                <div>
+                  <label>Set 4-digit PIN</label>
+                  <input id="regPIN" placeholder="••••" maxlength="4" inputmode="numeric" />
+                </div>
+                <div style="display:flex; align-items:flex-end">
+                  <button id="btnOpenAccount" class="btn primary" style="width:100%">Create Account</button>
+                </div>
+              </div>
+              <div id="regOut" class="muted" style="margin-top:8px"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🔐 Login</div>
+            <div class="card-sub">Apna Account No. aur PIN dal kar login karein.</div>
+            <div class="card-body">
+              <div class="row">
+                <div>
+                  <label>Account Number</label>
+                  <input id="loginAcc" placeholder="e.g., 1002003001" />
+                </div>
+                <div>
+                  <label>PIN</label>
+                  <input id="loginPIN" placeholder="••••" maxlength="4" inputmode="numeric" />
+                </div>
+              </div>
+              <div class="stack" style="margin-top:12px">
+                <button id="btnLogin" class="btn primary">Login</button>
+                <button id="btnLogout" class="btn ghost">Logout</button>
+                <span id="loginMsg" class="chip" style="display:none"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <div class="card">
+            <div class="card-title">💰 Deposit / Withdraw</div>
+            <div class="card-body">
+              <div class="row">
+                <div>
+                  <label>Amount (₹)</label>
+                  <input id="txnAmount" placeholder="500" inputmode="numeric" />
+                </div>
+                <div>
+                  <label>Action</label>
+                  <select id="txnType">
+                    <option value="deposit">Deposit</option>
+                    <option value="withdraw">Withdraw</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div>
+                  <label>Narration (optional)</label>
+                  <input id="txnNote" placeholder="Cash / Salary / ATM withdraw..." />
+                </div>
+                <div style="display:flex; align-items:flex-end">
+                  <button id="btnDoTxn" class="btn primary" style="width:100%">Submit</button>
+                </div>
+              </div>
+              <div id="txnOut" class="muted" style="margin-top:8px"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🔁 Transfer</div>
+            <div class="card-body">
+              <div class="row">
+                <div>
+                  <label>To Account No.</label>
+                  <input id="toAcc" placeholder="Receiver account" />
+                </div>
+                <div>
+                  <label>Amount (₹)</label>
+                  <input id="toAmt" placeholder="250" inputmode="numeric" />
+                </div>
+              </div>
+              <div class="row">
+                <div>
+                  <label>Your PIN</label>
+                  <input id="toPIN" placeholder="••••" maxlength="4" inputmode="numeric" />
+                </div>
+                <div style="display:flex; align-items:flex-end">
+                  <button id="btnTransfer" class="btn primary" style="width:100%">Transfer</button>
+                </div>
+              </div>
+              <div id="transferOut" class="muted" style="margin-top:8px"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <div class="card">
+            <div class="card-title">📊 Account Summary</div>
+            <div class="card-body">
+              <div class="row">
+                <div class="stat"><span>Holder</span><strong id="sumName">—</strong></div>
+                <div class="stat"><span>Account No.</span><strong class="mono" id="sumAcc">—</strong></div>
+              </div>
+              <div class="row" style="margin-top:12px">
+                <div class="stat"><span>Balance</span><strong id="sumBal">₹0.00</strong></div>
+                <div class="stat"><span>Last Updated</span><span class="muted" id="sumTime">—</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🧾 Statement</div>
+            <div class="card-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date/Time</th>
+                    <th>Type</th>
+                    <th>Narration</th>
+                    <th class="right">Amount</th>
+                    <th class="right">Balance</th>
+                  </tr>
+                </thead>
+                <tbody id="stmtBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="atm" class="card" style="display:none">
+      <div class="card-title">🏧 ATM Simulator</div>
+      <div class="card-sub">Insert card → PIN verify → Withdraw / Balance / Mini statement.</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="card">
+            <div class="card-title">💳 Insert Card</div>
+            <div class="card-body">
+              <label>Select Account (as card)</label>
+              <select id="atmCard"></select>
+              <div class="row" style="margin-top:12px">
+                <div>
+                  <label>Enter PIN</label>
+                  <input id="atmPIN" placeholder="••••" maxlength="4" inputmode="numeric" />
+                </div>
+                <div style="display:flex; align-items:flex-end">
+                  <button id="btnAtmEnter" class="btn primary" style="width:100%">Enter</button>
+                </div>
+              </div>
+              <div id="atmAuthMsg" class="muted" style="margin-top:8px"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🏧 ATM Screen</div>
+            <div class="card-body">
+              <div class="row">
+                <div class="stat"><span>Active Card</span><strong class="mono" id="atmActive">—</strong></div>
+                <div class="stat"><span>Status</span><strong id="atmStatus">Insert card</strong></div>
+              </div>
+              <div class="row" style="margin-top:12px">
+                <div>
+                  <label>Amount (₹) to Withdraw</label>
+                  <input id="atmAmt" placeholder="400" inputmode="numeric" />
+                </div>
+                <div style="display:flex; align-items:flex-end">
+                  <button id="btnAtmWithdraw" class="btn primary" style="width:100%">Withdraw</button>
+                </div>
+              </div>
+              <div class="stack" style="margin-top:10px">
+                <button id="btnAtmBal" class="btn">Balance</button>
+                <button id="btnAtmMini" class="btn">Mini Statement (5)</button>
+                <button id="btnAtmEject" class="btn warn">Eject Card</button>
+              </div>
+              <div id="atmOut" class="muted" style="margin-top:8px"></div>
+              <div class="divider"></div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date/Time</th>
+                    <th>Type</th>
+                    <th>Narration</th>
+                    <th class="right">Amount</th>
+                    <th class="right">Balance</th>
+                  </tr>
+                </thead>
+                <tbody id="atmStmtBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="card" style="display:none">
+      <div class="card-title">ℹ️ Guide</div>
+      <div class="card-body">
+        <ul>
+          <li>Yeh ek <strong>demo simulator</strong> hai – real money/UPI integration nahi.</li>
+          <li>Accounts aur transactions <strong>localStorage</strong> me save hote hain (same browser, same device).</li>
+          <li>ATM aur Bank portal dono <strong>same database</strong> share karte hain.</li>
+          <li>PIN galat 3 baar dalne par ATM temporary lock (session) ho jayega.</li>
+          <li>Account number auto-generate hota hai. Aap multiple accounts bana sakte ho.</li>
+          <li>Transfer karne ke liye receiver ka account number valid hona chahiye.</li>
+        </ul>
+        <p class="muted">Tip: <span class="kbd">Ctrl</span> + <span class="kbd">S</span> se is page ko save kar ke offline bhi chala sakte ho.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">Made for learning: banking basics, ATM flow, and UI/UX. No real banking. © 2025</div>
+
+  <script>
+    // ——————————————————————————————————————————————————————————
+    // Minimal in-browser "database" using localStorage
+    // ——————————————————————————————————————————————————————————
+    const DB_KEY = 'bankDB_v1';
+    const nowISO = () => new Date().toISOString();
+
+    const DB = {
+      load(){
+        try { return JSON.parse(localStorage.getItem(DB_KEY)) || { seq: 1002003000, users:{}, sessions:{}} } catch { return { seq: 1002003000, users:{}, sessions:{}} }
+      },
+      save(data){ localStorage.setItem(DB_KEY, JSON.stringify(data)); },
+      createUser(name, phone, pin){
+        const db = this.load();
+        if(!/^\d{4}$/.test(pin)) throw new Error('PIN must be exactly 4 digits');
+        const acc = (++db.seq).toString();
+        db.users[acc] = { acc, name, phone, pin, balance: 0, createdAt: nowISO(), updatedAt: nowISO(), txns: [] };
+        this.save(db); return db.users[acc];
+      },
+      getUser(acc){ const db = this.load(); return db.users[acc] || null },
+      allUsers(){ const db = this.load(); return Object.values(db.users) },
+      verify(acc, pin){ const u = this.getUser(acc); return !!(u && u.pin === pin) },
+      postTxn(acc, type, amount, note){
+        const db = this.load();
+        const u = db.users[acc]; if(!u) throw new Error('Account not found');
+        if(amount <= 0 || !Number.isFinite(amount)) throw new Error('Invalid amount');
+        if(type === 'deposit') u.balance += amount;
+        else if(type === 'withdraw'){ if(u.balance < amount) throw new Error('Insufficient funds'); u.balance -= amount; }
+        else throw new Error('Invalid txn type');
+        const txn = { id: crypto.randomUUID(), ts: nowISO(), type, amount, note: note||'', postBal: u.balance };
+        u.txns.unshift(txn); // newest first
+        u.updatedAt = nowISO();
+        db.users[acc] = u; this.save(db); return txn;
+      },
+      transfer(fromAcc, toAcc, amount){
+        if(fromAcc === toAcc) throw new Error('Cannot transfer to same account');
+        const db = this.load();
+        const from = db.users[fromAcc]; const to = db.users[toAcc];
+        if(!from || !to) throw new Error('Invalid account number');
+        if(amount <= 0 || !Number.isFinite(amount)) throw new Error('Invalid amount');
+        if(from.balance < amount) throw new Error('Insufficient funds');
+        from.balance -= amount; to.balance += amount;
+        const t1 = { id: crypto.randomUUID(), ts: nowISO(), type: 'transfer-out', amount, note: `To ${toAcc}`, postBal: from.balance };
+        const t2 = { id: crypto.randomUUID(), ts: nowISO(), type: 'transfer-in', amount, note: `From ${fromAcc}`, postBal: to.balance };
+        from.txns.unshift(t1); to.txns.unshift(t2);
+        from.updatedAt = to.updatedAt = nowISO();
+        db.users[fromAcc] = from; db.users[toAcc] = to; this.save(db);
+        return { from: t1, to: t2 };
+      }
+    };
+
+    // ——————————————————————————————————————————————————————————
+    // UI Helpers
+    // ——————————————————————————————————————————————————————————
+    const $ = sel => document.querySelector(sel);
+    const fmt = (n) => `₹${(n||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+    const human = (iso) => new Date(iso).toLocaleString();
+
+    function toast(el, msg, color){ el.textContent = msg; el.style.color = color || 'var(--muted)'; }
+
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.dataset.tab;
+        ['bank','atm','about'].forEach(id=>{ document.getElementById(id).style.display = (id===tab)?'block':'none'; });
+        if(tab==='atm') refreshATMCardList();
+      })
+    })
+
+    // Session state (simple)
+    let currentAcc = null;  // logged-in account for Bank portal
+
+    function refreshSummary(){
+      const u = currentAcc ? DB.getUser(currentAcc) : null;
+      $('#sumName').textContent = u? u.name : '—';
+      $('#sumAcc').textContent = u? u.acc : '—';
+      $('#sumBal').textContent = fmt(u? u.balance : 0);
+      $('#sumTime').textContent = u? human(u.updatedAt) : '—';
+      const tbody = $('#stmtBody');
+      tbody.innerHTML = '';
+      if(u){
+        for(const t of u.txns){
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${human(t.ts)}</td>
+                          <td>${t.type}</td>
+                          <td>${t.note||''}</td>
+                          <td class="right ${t.type.includes('withdraw')||t.type==='transfer-out'?'bad':'good'}">${fmt(t.amount)}</td>
+                          <td class="right">${fmt(t.postBal)}</td>`;
+          tbody.appendChild(tr);
+        }
+      }
+    }
+
+    function refreshATMCardList(){
+      const sel = $('#atmCard');
+      const users = DB.allUsers();
+      sel.innerHTML = users.length? '' : '<option value="">No accounts yet</option>';
+      for(const u of users){
+        const opt = document.createElement('option');
+        opt.value = u.acc; opt.textContent = `${u.name} — ${u.acc}`; sel.appendChild(opt);
+      }
+    }
+
+    // ——————————————————————————————————————————————————————————
+    // Account creation
+    // ——————————————————————————————————————————————————————————
+    $('#btnOpenAccount').addEventListener('click', ()=>{
+      const name = $('#regName').value.trim();
+      const phone = $('#regPhone').value.trim();
+      const pin = $('#regPIN').value.trim();
+      const out = $('#regOut');
+      try{
+        if(!name) throw new Error('Name required');
+        if(!/^[0-9]{10}$/.test(phone.replace(/\s+/g,''))) throw new Error('Phone must be 10 digits');
+        if(!/^\d{4}$/.test(pin)) throw new Error('PIN must be 4 digits');
+        const user = DB.createUser(name, phone, pin);
+        toast(out, `Account created ✅ Account No: ${user.acc}. Remember your PIN!`, 'var(--accent-2)');
+        refreshATMCardList();
+      }catch(e){ toast(out, e.message, 'var(--danger)'); }
+    });
+
+    // ——————————————————————————————————————————————————————————
+    // Login / Logout
+    // ——————————————————————————————————————————————————————————
+    $('#btnLogin').addEventListener('click', ()=>{
+      const acc = $('#loginAcc').value.trim();
+      const pin = $('#loginPIN').value.trim();
+      const ok = DB.verify(acc, pin);
+      const badge = $('#loginMsg');
+      if(ok){ currentAcc = acc; badge.style.display='inline-flex'; badge.textContent='Logged in'; refreshSummary(); }
+      else { badge.style.display='inline-flex'; badge.textContent='Login failed'; }
+    });
+    $('#btnLogout').addEventListener('click', ()=>{ currentAcc = null; refreshSummary(); $('#loginMsg').style.display='none'; });
+
+    // ——————————————————————————————————————————————————————————
+    // Deposit / Withdraw
+    // ——————————————————————————————————————————————————————————
+    $('#btnDoTxn').addEventListener('click', ()=>{
+      const out = $('#txnOut');
+      if(!currentAcc){ toast(out,'Please login first','var(--warn)'); return }
+      const amt = parseFloat($('#txnAmount').value);
+      const type = $('#txnType').value;
+      const note = $('#txnNote').value.trim();
+      try{
+        DB.postTxn(currentAcc, type, amt, note);
+        toast(out, `${type==='deposit'?'Deposited':'Withdrawn'} ${fmt(amt)} ✔`, 'var(--accent-2)');
+        refreshSummary();
+      }catch(e){ toast(out, e.message, 'var(--danger)'); }
+    });
+
+    // ——————————————————————————————————————————————————————————
+    // Transfer
+    // ——————————————————————————————————————————————————————————
+    $('#btnTransfer').addEventListener('click', ()=>{
+      const out = $('#transferOut');
+      if(!currentAcc){ toast(out,'Please login first','var(--warn)'); return }
+      const toAcc = $('#toAcc').value.trim();
+      const amt = parseFloat($('#toAmt').value);
+      const pin = $('#toPIN').value.trim();
+      try{
+        if(!DB.verify(currentAcc, pin)) throw new Error('Invalid PIN');
+        DB.transfer(currentAcc, toAcc, amt);
+        toast(out, `Transferred ${fmt(amt)} to ${toAcc} ✔`, 'var(--accent-2)');
+        refreshSummary();
+      }catch(e){ toast(out, e.message, 'var(--danger)'); }
+    });
+
+    // ——————————————————————————————————————————————————————————
+    // ATM logic
+    // ——————————————————————————————————————————————————————————
+    let atmSession = { acc: null, tries: 0, locked: false };
+
+    function atmSetStatus(msg){ $('#atmStatus').textContent = msg; }
+    function atmSetActive(acc){ $('#atmActive').textContent = acc || '—'; }
+
+    $('#btnAtmEnter').addEventListener('click', ()=>{
+      const acc = $('#atmCard').value;
+      const pin = $('#atmPIN').value.trim();
+      const msg = $('#atmAuthMsg');
+      if(!acc){ toast(msg,'Select an account as card','var(--warn)'); return }
+      if(atmSession.locked){ toast(msg,'ATM session locked. Eject card to reset.','var(--danger)'); return }
+      if(DB.verify(acc, pin)){
+        atmSession = { acc, tries: 0, locked: false };
+        atmSetActive(acc); atmSetStatus('Authenticated');
+        toast(msg,'PIN verified ✔','var(--accent-2)');
+        renderAtmStatement();
+      } else {
+        atmSession.tries++;
+        if(atmSession.tries>=3){ atmSession.locked = true; toast(msg,'3 wrong PIN attempts. Locked.','var(--danger)'); atmSetStatus('LOCKED'); }
+        else toast(msg,`Wrong PIN. Attempts: ${atmSession.tries}/3`,'var(--danger)');
+      }
+    });
+
+    $('#btnAtmWithdraw').addEventListener('click', ()=>{
+      const out = $('#atmOut');
+      if(!atmSession.acc || atmSession.locked){ toast(out,'Authenticate first','var(--warn)'); return }
+      const amt = parseFloat($('#atmAmt').value);
+      try{ DB.postTxn(atmSession.acc, 'withdraw', amt, 'ATM Cash'); toast(out, `Dispensed ${fmt(amt)} 💸`, 'var(--accent-2)'); atmSetStatus('Transaction OK'); renderAtmStatement(); refreshSummary(); }
+      catch(e){ toast(out, e.message, 'var(--danger)'); atmSetStatus('Transaction Failed') }
+    });
+
+    $('#btnAtmBal').addEventListener('click', ()=>{
+      const out = $('#atmOut');
+      if(!atmSession.acc || atmSession.locked){ toast(out,'Authenticate first','var(--warn)'); return }
+      const u = DB.getUser(atmSession.acc); toast(out, `Available balance: ${fmt(u.balance)}`, 'var(--accent-2)'); atmSetStatus('Balance shown');
+    });
+
+    function renderAtmStatement(){
+      const tbody = $('#atmStmtBody'); tbody.innerHTML = '';
+      if(!atmSession.acc) return;
+      const u = DB.getUser(atmSession.acc);
+      (u.txns.slice(0,5)).forEach(t=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${human(t.ts)}</td>
+                        <td>${t.type}</td>
+                        <td>${t.note||''}</td>
+                        <td class="right ${t.type.includes('withdraw')||t.type==='transfer-out'?'bad':'good'}">${fmt(t.amount)}</td>
+                        <td class="right">${fmt(t.postBal)}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    $('#btnAtmMini').addEventListener('click', ()=>{ if(!atmSession.acc){ toast($('#atmOut'),'Authenticate first','var(--warn)'); return } renderAtmStatement(); atmSetStatus('Mini statement'); });
+    $('#btnAtmEject').addEventListener('click', ()=>{ atmSession = { acc:null, tries:0, locked:false }; atmSetActive(null); atmSetStatus('Card ejected'); $('#atmAuthMsg').textContent=''; $('#atmOut').textContent=''; $('#atmStmtBody').innerHTML=''; });
+
+    // Init
+    refreshSummary();
+    refreshATMCardList();
+  </script>
+</body>
+</html>
