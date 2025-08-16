@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bank + ATM Simulator (HTML, CSS & JavaScript)</title>
+  <title>Bank + ATM + Phone (UPI) Simulator</title>
   <style>
     :root{
       --bg:#0b1220;         /* deep blue */
@@ -103,12 +103,13 @@
         <div class="logo" aria-hidden="true"><span>₹</span></div>
         <div>
           <div style="font-size:14px; color:var(--muted); font-weight:700; letter-spacing:1.4px; text-transform:uppercase">Virtual Finance</div>
-          <div style="font-size:18px; font-weight:900">Bank + ATM Simulator</div>
+          <div style="font-size:18px; font-weight:900">Bank + ATM + Phone (UPI) Simulator</div>
         </div>
       </div>
       <div class="tabs">
         <button class="tab-btn active" data-tab="bank">🏦 Bank Portal</button>
         <button class="tab-btn" data-tab="atm">🏧 ATM</button>
+        <button class="tab-btn" data-tab="phone">📱 Smart Phone</button>
         <button class="tab-btn" data-tab="about">ℹ️ Guide</button>
       </div>
     </div>
@@ -331,23 +332,97 @@
       </div>
     </section>
 
+    <section id="phone" class="card" style="display:none">
+      <div class="card-title">📱 Smart Phone – UPI/Wallet</div>
+      <div class="card-sub">Mobile banking style: Login → Pay → Balance/History. (Demo only)</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="card">
+            <div class="card-title">🔐 Phone Login</div>
+            <div class="card-body">
+              <label>Select Your Account</label>
+              <select id="phoneCard"></select>
+              <div class="row" style="margin-top:12px">
+                <div>
+                  <label>Enter UPI PIN (same as account PIN)</label>
+                  <input id="phonePIN" placeholder="••••" maxlength="4" inputmode="numeric" />
+                </div>
+                <div style="display:flex; align-items:flex-end">
+                  <button id="btnPhoneEnter" class="btn primary" style="width:100%">Login</button>
+                </div>
+              </div>
+              <div id="phoneAuthMsg" class="muted" style="margin-top:8px"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">📲 Phone Screen</div>
+            <div class="card-body">
+              <div class="row">
+                <div class="stat"><span>Active User</span><strong class="mono" id="phoneActive">—</strong></div>
+                <div class="stat"><span>Status</span><strong id="phoneStatus">Logged out</strong></div>
+              </div>
+              <div class="row" style="margin-top:12px">
+                <div>
+                  <label>Send To (Account No.)</label>
+                  <input id="phoneToAcc" placeholder="Receiver account" />
+                </div>
+                <div>
+                  <label>Amount (₹)</label>
+                  <input id="phoneAmt" placeholder="300" inputmode="numeric" />
+                </div>
+              </div>
+              <div class="row">
+                <div>
+                  <label>Confirm UPI PIN</label>
+                  <input id="phonePIN2" placeholder="••••" maxlength="4" inputmode="numeric" />
+                </div>
+                <div style="display:flex; align-items:flex-end">
+                  <button id="btnPhonePay" class="btn primary" style="width:100%">Pay</button>
+                </div>
+              </div>
+              <div class="stack" style="margin-top:10px">
+                <button id="btnPhoneBal" class="btn">Balance</button>
+                <button id="btnPhoneMini" class="btn">Mini Statement (10)</button>
+                <button id="btnPhoneLogout" class="btn warn">Logout</button>
+              </div>
+              <div id="phoneOut" class="muted" style="margin-top:8px"></div>
+              <div class="divider"></div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date/Time</th>
+                    <th>Type</th>
+                    <th>Narration</th>
+                    <th class="right">Amount</th>
+                    <th class="right">Balance</th>
+                  </tr>
+                </thead>
+                <tbody id="phoneStmtBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="about" class="card" style="display:none">
       <div class="card-title">ℹ️ Guide</div>
       <div class="card-body">
         <ul>
           <li>Yeh ek <strong>demo simulator</strong> hai – real money/UPI integration nahi.</li>
           <li>Accounts aur transactions <strong>localStorage</strong> me save hote hain (same browser, same device).</li>
-          <li>ATM aur Bank portal dono <strong>same database</strong> share karte hain.</li>
-          <li>PIN galat 3 baar dalne par ATM temporary lock (session) ho jayega.</li>
+          <li>Bank, ATM, aur Phone app – tino <strong>same database</strong> share karte hain.</li>
+          <li>PIN galat 3 baar dalne par ATM/Phone session lock (temporary) ho jayega.</li>
           <li>Account number auto-generate hota hai. Aap multiple accounts bana sakte ho.</li>
-          <li>Transfer karne ke liye receiver ka account number valid hona chahiye.</li>
+          <li>Transfer ke liye receiver ka account number valid hona chahiye.</li>
         </ul>
         <p class="muted">Tip: <span class="kbd">Ctrl</span> + <span class="kbd">S</span> se is page ko save kar ke offline bhi chala sakte ho.</p>
       </div>
     </section>
   </main>
 
-  <div class="footer">Made for learning: banking basics, ATM flow, and UI/UX. No real banking. © 2025</div>
+  <div class="footer">Made for learning: banking basics, ATM & UPI flow, and UI/UX. No real banking. © 2025</div>
 
   <script>
     // ——————————————————————————————————————————————————————————
@@ -415,8 +490,9 @@
         document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
         const tab = btn.dataset.tab;
-        ['bank','atm','about'].forEach(id=>{ document.getElementById(id).style.display = (id===tab)?'block':'none'; });
+        ['bank','atm','phone','about'].forEach(id=>{ document.getElementById(id).style.display = (id===tab)?'block':'none'; });
         if(tab==='atm') refreshATMCardList();
+        if(tab==='phone') refreshPhoneCardList();
       })
     })
 
@@ -454,6 +530,16 @@
       }
     }
 
+    function refreshPhoneCardList(){
+      const sel = $('#phoneCard');
+      const users = DB.allUsers();
+      sel.innerHTML = users.length? '' : '<option value="">No accounts yet</option>';
+      for(const u of users){
+        const opt = document.createElement('option');
+        opt.value = u.acc; opt.textContent = `${u.name} — ${u.acc}`; sel.appendChild(opt);
+      }
+    }
+
     // ——————————————————————————————————————————————————————————
     // Account creation
     // ——————————————————————————————————————————————————————————
@@ -469,11 +555,12 @@
         const user = DB.createUser(name, phone, pin);
         toast(out, `Account created ✅ Account No: ${user.acc}. Remember your PIN!`, 'var(--accent-2)');
         refreshATMCardList();
+        refreshPhoneCardList();
       }catch(e){ toast(out, e.message, 'var(--danger)'); }
     });
 
     // ——————————————————————————————————————————————————————————
-    // Login / Logout
+    // Login / Logout (Bank)
     // ——————————————————————————————————————————————————————————
     $('#btnLogin').addEventListener('click', ()=>{
       const acc = $('#loginAcc').value.trim();
@@ -502,7 +589,7 @@
     });
 
     // ——————————————————————————————————————————————————————————
-    // Transfer
+    // Transfer (Bank)
     // ——————————————————————————————————————————————————————————
     $('#btnTransfer').addEventListener('click', ()=>{
       const out = $('#transferOut');
@@ -518,67 +605,206 @@
       }catch(e){ toast(out, e.message, 'var(--danger)'); }
     });
 
-    // ——————————————————————————————————————————————————————————
-    // ATM logic
-    // ——————————————————————————————————————————————————————————
-    let atmSession = { acc: null, tries: 0, locked: false };
+   // ——————————————————————————————————————————————————————————
+// ATM logic
+// ——————————————————————————————————————————————————————————
+let atmSession = { acc: null, tries: 0, locked: false };
 
-    function atmSetStatus(msg){ $('#atmStatus').textContent = msg; }
-    function atmSetActive(acc){ $('#atmActive').textContent = acc || '—'; }
+function atmSetStatus(msg){ $('#atmStatus').textContent = msg; }
+function atmSetActive(acc){ $('#atmActive').textContent = acc || '—'; }
 
-    $('#btnAtmEnter').addEventListener('click', ()=>{
-      const acc = $('#atmCard').value;
-      const pin = $('#atmPIN').value.trim();
-      const msg = $('#atmAuthMsg');
-      if(!acc){ toast(msg,'Select an account as card','var(--warn)'); return }
-      if(atmSession.locked){ toast(msg,'ATM session locked. Eject card to reset.','var(--danger)'); return }
-      if(DB.verify(acc, pin)){
-        atmSession = { acc, tries: 0, locked: false };
-        atmSetActive(acc); atmSetStatus('Authenticated');
-        toast(msg,'PIN verified ✔','var(--accent-2)');
-        renderAtmStatement();
-      } else {
-        atmSession.tries++;
-        if(atmSession.tries>=3){ atmSession.locked = true; toast(msg,'3 wrong PIN attempts. Locked.','var(--danger)'); atmSetStatus('LOCKED'); }
-        else toast(msg,`Wrong PIN. Attempts: ${atmSession.tries}/3`,'var(--danger)');
-      }
-    });
+$('#btnAtmEnter').addEventListener('click', ()=>{
+  const acc = $('#atmCard').value;
+  const pin = $('#atmPIN').value.trim();
+  const msg = $('#atmAuthMsg');
 
-    $('#btnAtmWithdraw').addEventListener('click', ()=>{
-      const out = $('#atmOut');
-      if(!atmSession.acc || atmSession.locked){ toast(out,'Authenticate first','var(--warn)'); return }
-      const amt = parseFloat($('#atmAmt').value);
-      try{ DB.postTxn(atmSession.acc, 'withdraw', amt, 'ATM Cash'); toast(out, `Dispensed ${fmt(amt)} 💸`, 'var(--accent-2)'); atmSetStatus('Transaction OK'); renderAtmStatement(); refreshSummary(); }
-      catch(e){ toast(out, e.message, 'var(--danger)'); atmSetStatus('Transaction Failed') }
-    });
+  if(!acc){ toast(msg,'Select an account as card','var(--warn)'); return }
+  if(atmSession.locked){ toast(msg,'ATM session locked. Eject card to reset.','var(--danger)'); return }
 
-    $('#btnAtmBal').addEventListener('click', ()=>{
-      const out = $('#atmOut');
-      if(!atmSession.acc || atmSession.locked){ toast(out,'Authenticate first','var(--warn)'); return }
-      const u = DB.getUser(atmSession.acc); toast(out, `Available balance: ${fmt(u.balance)}`, 'var(--accent-2)'); atmSetStatus('Balance shown');
-    });
-
-    function renderAtmStatement(){
-      const tbody = $('#atmStmtBody'); tbody.innerHTML = '';
-      if(!atmSession.acc) return;
-      const u = DB.getUser(atmSession.acc);
-      (u.txns.slice(0,5)).forEach(t=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${human(t.ts)}</td>
-                        <td>${t.type}</td>
-                        <td>${t.note||''}</td>
-                        <td class="right ${t.type.includes('withdraw')||t.type==='transfer-out'?'bad':'good'}">${fmt(t.amount)}</td>
-                        <td class="right">${fmt(t.postBal)}</td>`;
-        tbody.appendChild(tr);
-      });
+  if(DB.verify(acc, pin)){
+    atmSession = { acc, tries: 0, locked: false };
+    atmSetActive(acc); atmSetStatus('Authenticated');
+    toast(msg,'PIN verified ✔','var(--accent-2)');
+    renderAtmStatement();
+  } else {
+    atmSession.tries++;
+    if(atmSession.tries>=3){
+      atmSession.locked = true;
+      toast(msg,'3 wrong PIN attempts. Locked.','var(--danger)');
+      atmSetStatus('LOCKED');
+    } else {
+      toast(msg,`Wrong PIN. Attempts: ${atmSession.tries}/3`,'var(--danger)');
     }
+  }
+});
 
-    $('#btnAtmMini').addEventListener('click', ()=>{ if(!atmSession.acc){ toast($('#atmOut'),'Authenticate first','var(--warn)'); return } renderAtmStatement(); atmSetStatus('Mini statement'); });
-    $('#btnAtmEject').addEventListener('click', ()=>{ atmSession = { acc:null, tries:0, locked:false }; atmSetActive(null); atmSetStatus('Card ejected'); $('#atmAuthMsg').textContent=''; $('#atmOut').textContent=''; $('#atmStmtBody').innerHTML=''; });
+$('#btnAtmWithdraw').addEventListener('click', ()=>{
+  const out = $('#atmOut');
+  if(!atmSession.acc || atmSession.locked){ toast(out,'Authenticate first','var(--warn)'); return }
 
-    // Init
+  const amt = parseFloat($('#atmAmt').value);
+  try{
+    DB.postTxn(atmSession.acc, 'withdraw', amt, 'ATM Cash');
+    toast(out, `Dispensed ${fmt(amt)} 💸`, 'var(--accent-2)');
+    atmSetStatus('Transaction OK');
+    renderAtmStatement();
     refreshSummary();
-    refreshATMCardList();
+  } catch(e){
+    toast(out, e.message, 'var(--danger)');
+    atmSetStatus('Transaction Failed');
+  }
+});
+
+$('#btnAtmBal').addEventListener('click', ()=>{
+  const out = $('#atmOut');
+  if(!atmSession.acc || atmSession.locked){ toast(out,'Authenticate first','var(--warn)'); return }
+  const u = DB.getUser(atmSession.acc);
+  toast(out, `Available balance: ${fmt(u.balance)}`, 'var(--accent-2)');
+  atmSetStatus('Balance shown');
+});
+
+function renderAtmStatement(){
+  const tbody = $('#atmStmtBody');
+  tbody.innerHTML = '';
+  if(!atmSession.acc) return;
+  const u = DB.getUser(atmSession.acc);
+
+  (u.txns.slice(0,5)).forEach(t=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${human(t.ts)}</td>
+      <td>${t.type}</td>
+      <td>${t.note||''}</td>
+      <td class="right ${t.type.includes('withdraw')||t.type==='transfer-out' ? 'bad':'good'}">${fmt(t.amount)}</td>
+      <td class="right">${fmt(t.postBal)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+$('#btnAtmMini').addEventListener('click', ()=>{
+  if(!atmSession.acc){
+    toast($('#atmOut'),'Authenticate first','var(--warn)');
+    return;
+  }
+  renderAtmStatement();
+  atmSetStatus('Mini statement');
+});
+
+$('#btnAtmEject').addEventListener('click', ()=>{
+  atmSession = { acc:null, tries:0, locked:false };
+  atmSetActive(null);
+  atmSetStatus('Card ejected');
+  $('#atmAuthMsg').textContent='';
+  $('#atmOut').textContent='';
+  $('#atmStmtBody').innerHTML='';
+});
+
+
+// ——————————————————————————————————————————————————————————
+// Phone (UPI) logic
+// ——————————————————————————————————————————————————————————
+let phoneSession = { acc: null, tries: 0, locked: false };
+
+function phoneSetStatus(msg){ $('#phoneStatus').textContent = msg; }
+function phoneSetActive(acc){ $('#phoneActive').textContent = acc || '—'; }
+
+$('#btnPhoneEnter').addEventListener('click', ()=>{
+  const acc = $('#phoneCard').value;
+  const pin = $('#phonePIN').value.trim();
+  const msg = $('#phoneAuthMsg');
+
+  if(!acc){ toast(msg,'Select your account','var(--warn)'); return }
+  if(phoneSession.locked){ toast(msg,'Phone session locked. Logout to reset.','var(--danger)'); return }
+
+  if(DB.verify(acc, pin)){
+    phoneSession = { acc, tries: 0, locked: false };
+    phoneSetActive(acc); phoneSetStatus('Authenticated');
+    toast(msg,'UPI PIN verified ✔','var(--accent-2)');
+    renderPhoneStatement();
+  } else {
+    phoneSession.tries++;
+    if(phoneSession.tries>=3){
+      phoneSession.locked = true;
+      toast(msg,'3 wrong PIN attempts. Locked.','var(--danger)');
+      phoneSetStatus('LOCKED');
+    } else {
+      toast(msg,`Wrong PIN. Attempts: ${phoneSession.tries}/3`,'var(--danger)');
+    }
+  }
+});
+
+$('#btnPhonePay').addEventListener('click', ()=>{
+  const out = $('#phoneOut');
+  if(!phoneSession.acc || phoneSession.locked){ toast(out,'Login on phone first','var(--warn)'); return }
+
+  const toAcc = $('#phoneToAcc').value.trim();
+  const amt = parseFloat($('#phoneAmt').value);
+  const pin2 = $('#phonePIN2').value.trim();
+
+  try{
+    if(!DB.verify(phoneSession.acc, pin2)) throw new Error('Invalid UPI PIN');
+    DB.transfer(phoneSession.acc, toAcc, amt);
+    toast(out, `Paid ${fmt(amt)} to ${toAcc} ✔`, 'var(--accent-2)');
+    phoneSetStatus('Payment success');
+    renderPhoneStatement();
+    refreshSummary();
+  }catch(e){
+    toast(out, e.message, 'var(--danger)');
+    phoneSetStatus('Payment failed');
+  }
+});
+
+$('#btnPhoneBal').addEventListener('click', ()=>{
+  const out = $('#phoneOut');
+  if(!phoneSession.acc || phoneSession.locked){ toast(out,'Login on phone first','var(--warn)'); return }
+  const u = DB.getUser(phoneSession.acc);
+  toast(out, `Available balance: ${fmt(u.balance)}`, 'var(--accent-2)');
+  phoneSetStatus('Balance shown');
+});
+
+function renderPhoneStatement(){
+  const tbody = $('#phoneStmtBody');
+  tbody.innerHTML = '';
+  if(!phoneSession.acc) return;
+  const u = DB.getUser(phoneSession.acc);
+
+  (u.txns.slice(0,10)).forEach(t=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${human(t.ts)}</td>
+      <td>${t.type}</td>
+      <td>${t.note||''}</td>
+      <td class="right ${t.type.includes('withdraw')||t.type==='transfer-out' ? 'bad':'good'}">${fmt(t.amount)}</td>
+      <td class="right">${fmt(t.postBal)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+$('#btnPhoneMini').addEventListener('click', ()=>{
+  if(!phoneSession.acc){
+    toast($('#phoneOut'),'Login first','var(--warn)');
+    return;
+  }
+  renderPhoneStatement();
+  phoneSetStatus('Mini statement');
+});
+
+$('#btnPhoneLogout').addEventListener('click', ()=>{
+  phoneSession = { acc:null, tries:0, locked:false };
+  phoneSetActive(null);
+  phoneSetStatus('Logged out');
+  $('#phoneAuthMsg').textContent='';
+  $('#phoneOut').textContent='';
+  $('#phoneStmtBody').innerHTML='';
+});
+
+// Init
+refreshSummary();
+refreshATMCardList();
+refreshPhoneCardList();
+
+
+
   </script>
 </body>
 </html>
