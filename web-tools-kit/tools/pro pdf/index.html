@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PDFMerge Pro - Order-Preserving PDF Generator (With Preview & Page Numbers)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root { --primary: #ff6161; --primary-dark: #e04a4a; --secondary: #4a6cf7; --dark: #2d3748; --darker: #1a202c; --light: #f7fafc; --gray: #e2e8f0; --muted: #a0aec0; --success: #48bb78; --warning: #ed8936; --danger: #f56565; --border-radius: 8px; --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); --transition: all 0.2s ease; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background-color: #f5f7fa; color: var(--dark); line-height: 1.6; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; margin-bottom: 30px; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--primary); font-weight: 700; font-size: 24px; }
+    .logo i { font-size: 28px; }
+    .nav-links { display: flex; gap: 20px; }
+    .nav-link { text-decoration: none; color: var(--dark); font-weight: 500; transition: var(--transition); }
+    .nav-link:hover { color: var(--primary); }
+    .main { background-color: white; border-radius: var(--border-radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 30px; }
+    .tool-header { background-color: var(--primary); color: white; padding: 20px; text-align: center; }
+    .tool-header h1 { font-size: 28px; margin-bottom: 10px; }
+    .tool-header p { opacity: 0.9; font-size: 16px; }
+    .tool-body { padding: 30px; }
+    .dropzone-container { text-align: center; margin-bottom: 30px; }
+    .dropzone { border: 2px dashed var(--gray); border-radius: var(--border-radius); padding: 60px 20px; cursor: pointer; transition: var(--transition); background-color: #f8fafc; margin-bottom: 15px; }
+    .dropzone:hover, .dropzone.dragover { border-color: var(--primary); background-color: rgba(255, 97, 97, 0.05); }
+    .dropzone-icon { font-size: 48px; color: var(--primary); margin-bottom: 15px; }
+    .dropzone h3 { font-size: 20px; margin-bottom: 10px; color: var(--dark); }
+    .dropzone p { color: var(--muted); margin-bottom: 20px; }
+    .btn { display: inline-block; padding: 12px 24px; background-color: var(--primary); color: white; border: none; border-radius: var(--border-radius); font-weight: 600; cursor: pointer; transition: var(--transition); text-decoration: none; text-align: center; }
+    .btn:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+    .btn-outline { background-color: transparent; border: 2px solid var(--primary); color: var(--primary); }
+    .btn-outline:hover { background-color: var(--primary); color: white; }
+    .btn-secondary { background-color: var(--secondary); }
+    .btn-secondary:hover { background-color: #3a5af0; }
+    .btn-sm { padding: 8px 16px; font-size: 14px; }
+    .file-list { margin-top: 30px; }
+    .file-list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .file-list-header h3 { font-size: 18px; }
+    .file-list-count { background-color: var(--primary); color: white; padding: 4px 10px; border-radius: 20px; font-size: 14px; font-weight: 600; }
+    .file-items { border: 1px solid var(--gray); border-radius: var(--border-radius); overflow: hidden; }
+    .file-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid var(--gray); transition: var(--transition); background: white; }
+    .file-item:last-child { border-bottom: none; }
+    .file-item:hover { background-color: #f8fafc; }
+    .file-icon { width: 40px; height: 40px; display:flex; align-items:center; justify-content:center; background-color: rgba(255,97,97,0.1); border-radius:6px; color: var(--primary); margin-right:15px; flex-shrink:0; }
+    .file-info { flex-grow: 1; min-width: 0; }
+    .file-name { font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .file-meta { display: flex; gap: 15px; font-size: 13px; color: var(--muted); }
+    .file-actions { display: flex; gap: 10px; margin-left: 15px; }
+    .file-order { background-color: var(--primary); color: white; width: 28px; height: 28px; border-radius: 50%; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:14px; margin-right:15px; flex-shrink:0; }
+    .preview-container { margin-top: 30px; border: 1px solid var(--gray); border-radius: var(--border-radius); overflow: hidden; }
+    .preview-header { background-color: #f8fafc; padding: 15px; border-bottom: 1px solid var(--gray); display:flex; justify-content:space-between; align-items:center; }
+    .preview-content { padding: 20px; min-height: 300px; display:flex; align-items:center; justify-content:center; background-color: #f5f7fa; }
+    .preview-placeholder { text-align:center; color: var(--muted); }
+    .preview-placeholder i { font-size: 48px; margin-bottom: 15px; opacity: 0.5; }
+    .options { display:flex; gap:15px; margin-top:20px; flex-wrap:wrap; }
+    .option-group { flex-grow: 1; }
+    .option-group label { display:block; margin-bottom:8px; font-weight:500; font-size:14px; }
+    .select { width:100%; padding:10px 15px; border:1px solid var(--gray); border-radius: var(--border-radius); background-color: white; font-family: inherit; font-size:14px; transition:var(--transition); }
+    .select:focus { outline:none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,97,97,0.2); }
+    .footer { text-align:center; padding:30px 0; color: var(--muted); font-size:14px; }
+    .footer-links { display:flex; justify-content:center; gap:20px; margin-bottom:15px; }
+    .footer-link { color: var(--muted); text-decoration:none; transition: var(--transition); }
+    .footer-link:hover { color: var(--primary); }
+    @media (max-width: 768px) { .header { flex-direction: column; gap: 15px; } .nav-links { gap: 15px; } .file-item { flex-wrap: wrap; } .file-actions { margin-left: 0; margin-top: 10px; width: 100%; justify-content: flex-end; } }
+    .hidden { display: none !important; }
+    .pdf-preview { width: 100%; height: 500px; border: none; background-color: white; }
+    .image-preview { max-width: 100%; max-height: 500px; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .text-preview { width: 100%; max-height: 500px; overflow: auto; padding: 15px; background-color: white; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); font-family: monospace; white-space: pre-wrap; text-align: left; }
+    .loading { position: relative; pointer-events: none; opacity: 0.7; }
+    .loading::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; }
+    @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+    .toast { position: fixed; bottom: 20px; right: 20px; background-color: var(--dark); color: white; padding: 15px 20px; border-radius: var(--border-radius); box-shadow: var(--shadow); display: flex; align-items: center; gap: 10px; transform: translateY(100px); opacity: 0; transition: all 0.3s ease; z-index: 1000; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { background-color: var(--success); }
+    .toast.error { background-color: var(--danger); }
+    .toast i { font-size: 20px; }
+    .file-item.dragging { opacity: 0.5; transform: scale(0.98); }
+    .file-item.drop-target { outline: 2px dashed var(--secondary); }
+    
+    /* Text to PDF specific styles */
+    .text-to-pdf-container { display: none; }
+    .text-editor { width: 100%; min-height: 300px; padding: 15px; border: 1px solid var(--gray); border-radius: var(--border-radius); font-family: inherit; font-size: 16px; resize: vertical; }
+    .text-editor:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,97,97,0.1); }
+    .tool-switcher { display: flex; border-bottom: 1px solid var(--gray); margin-bottom: 20px; }
+    .tool-tab { padding: 12px 20px; cursor: pointer; border-bottom: 3px solid transparent; font-weight: 600; transition: var(--transition); }
+    .tool-tab:hover { color: var(--primary); }
+    .tool-tab.active { border-bottom-color: var(--primary); color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <a href="#" class="logo">
+        <i class="fas fa-file-pdf"></i>
+        <span>PDFMerge Pro</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Tools</a>
+        <a href="#" class="nav-link">Pricing</a>
+        <a href="#" class="nav-link">Help</a>
+      </nav>
+    </header>
+
+    <div class="tool-switcher">
+      <div class="tool-tab active" data-tool="merge-pdf">Merge PDF</div>
+      <div class="tool-tab" data-tool="text-to-pdf">Text to PDF</div>
+    </div>
+
+    <!-- Merge PDF Tool -->
+    <main class="main merge-pdf-container">
+      <div class="tool-header">
+        <h1>Merge PDF Files</h1>
+        <p>Combine multiple PDFs, images, or text files into a single PDF document while preserving original order (drag to reorder)</p>
+      </div>
+      
+      <div class="tool-body">
+        <div class="dropzone-container">
+          <div class="dropzone" id="dropzone">
+            <div class="dropzone-icon">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <h3>Select or drop files here</h3>
+            <p>Supported formats: PDF, JPG, PNG, TXT</p>
+            <button class="btn btn-outline" id="selectBtn">
+              <i class="fas fa-folder-open"></i> Select Files
+            </button>
+          </div>
+          <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.txt" class="hidden">
+        </div>
+        
+        <div class="options">
+          <div class="option-group">
+            <label for="pageSize">Page Size</label>
+            <select id="pageSize" class="select">
+              <option value="A4">A4</option>
+              <option value="Letter">Letter</option>
+              <option value="A3">A3</option>
+              <option value="Legal">Legal</option>
+              <option value="original">Original (images keep original size)</option>
+            </select>
+          </div>
+          <div class="option-group">
+            <label for="orientation">Orientation</label>
+            <select id="orientation" class="select">
+              <option value="portrait">Portrait</option>
+              <option value="landscape">Landscape</option>
+            </select>
+          </div>
+          <div class="option-group">
+            <label for="margin">Margin</label>
+            <select id="margin" class="select">
+              <option value="20">Small (20px)</option>
+              <option value="40" selected>Medium (40px)</option>
+              <option value="60">Large (60px)</option>
+              <option value="0">None</option>
+            </select>
+          </div>
+          <div class="option-group">
+            <label for="imageQuality">Image Quality</label>
+            <select id="imageQuality" class="select">
+              <option value="original">Original</option>
+              <option value="0.92">High</option>
+              <option value="0.80" selected>Medium</option>
+              <option value="0.60">Low</option>
+            </select>
+          </div>
+          <div class="option-group">
+            <label for="addPageNumbers">Page Numbers</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="checkbox" id="addPageNumbers">
+              <label for="pageNumberPos">Position</label>
+              <select id="pageNumberPos" class="select" style="width:140px;">
+                <option value="center">Center</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+              </select>
+            </div>
+          </div>
+          <div class="option-group">
+            <label for="startNumber">Start Number</label>
+            <input id="startNumber" class="select" type="number" value="1" min="0">
+          </div>
+        </div>
+        
+        <div class="file-list">
+          <div class="file-list-header">
+            <h3>Files to merge</h3>
+            <div class="file-list-count" id="fileCount">0 files</div>
+          </div>
+          
+          <div class="file-items" id="fileList">
+            <div class="file-item empty-state">
+              <div class="file-icon">
+                <i class="far fa-folder-open"></i>
+              </div>
+              <div class="file-info">
+                <div class="file-name">No files selected</div>
+                <div class="file-meta">Add files to begin merging</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="preview-container">
+          <div class="preview-header">
+            <h3>Preview</h3>
+            <div class="file-meta">Select a file to preview or preview the merged PDF</div>
+          </div>
+          <div class="preview-content" id="previewContent">
+            <div class="preview-placeholder">
+              <i class="far fa-file-alt"></i>
+              <p>Select a file to preview its content</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="actions" style="margin-top: 30px; text-align: center; display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-secondary" id="clearAll" style="margin-right: 10px;">
+            <i class="fas fa-trash-alt"></i> Clear All
+          </button>
+          <button class="btn" id="previewMerged">
+            <i class="fas fa-eye"></i> Preview Merged PDF
+          </button>
+          <button class="btn" id="generateBtn">
+            <i class="fas fa-file-pdf"></i> Merge & Download
+          </button>
+        </div>
+      </div>
+    </main>
+    
+    <!-- Text to PDF Tool -->
+    <main class="main text-to-pdf-container">
+      <div class="tool-header">
+        <h1>Text to PDF Converter</h1>
+        <p>Convert plain text to PDF with customizable formatting options</p>
+      </div>
+      
+      <div class="tool-body">
+        <div class="dropzone-container">
+          <textarea class="text-editor" id="textEditor" placeholder="Type or paste your text here..."></textarea>
+        </div>
+        
+        <div class="options">
+          <div class="option-group">
+            <label for="textPageSize">Page Size</label>
+            <select id="textPageSize" class="select">
+              <option value="A4">A4</option>
+              <option value="Letter">Letter</option>
+              <option value="A3">A3</option>
+              <option value="Legal">Legal</option>
+            </select>
+          </div>
+          <div class="option-group">
+            <label for="textOrientation">Orientation</label>
+            <select id="textOrientation" class="select">
+              <option value="portrait">Portrait</option>
+              <option value="landscape">Landscape</option>
+            </select>
+          </div>
+          <div class="option-group">
+            <label for="textMargin">Margin</label>
+            <select id="textMargin" class="select">
+              <option value="20">Small (20px)</option>
+              <option value="40" selected>Medium (40px)</option>
+              <option value="60">Large (60px)</option>
+              <option value="0">None</option>
+            </select>
+          </div>
+          <div class="option-group">
+            <label for="textFontSize">Font Size</label>
+            <select id="textFontSize" class="select">
+              <option value="10">10pt</option>
+              <option value="12" selected>12pt</option>
+              <option value="14">14pt</option>
+              <option value="16">16pt</option>
+              <option value="18">18pt</option>
+            </select>
+          </div>
+          <div class="option-group">
+            <label for="textFontFamily">Font Family</label>
+            <select id="textFontFamily" class="select">
+              <option value="Helvetica">Helvetica</option>
+              <option value="Times-Roman">Times New Roman</option>
+              <option value="Courier">Courier</option>
+            </select>
+          </div>
+          <div class="option-group">
+            <label for="textLineHeight">Line Height</label>
+            <select id="textLineHeight" class="select">
+              <option value="1.0">1.0</option>
+              <option value="1.2">1.2</option>
+              <option value="1.4" selected>1.4</option>
+              <option value="1.6">1.6</option>
+              <option value="1.8">1.8</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="preview-container">
+          <div class="preview-header">
+            <h3>Preview</h3>
+            <div class="file-meta">Preview your text as it will appear in the PDF</div>
+          </div>
+          <div class="preview-content" id="textPreviewContent">
+            <div class="preview-placeholder">
+              <i class="far fa-file-alt"></i>
+              <p>Enter text above to see a preview</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="actions" style="margin-top: 30px; text-align: center; display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-secondary" id="clearText">
+            <i class="fas fa-trash-alt"></i> Clear Text
+          </button>
+          <button class="btn" id="previewTextPdf">
+            <i class="fas fa-eye"></i> Preview PDF
+          </button>
+          <button class="btn" id="generateTextPdf">
+            <i class="fas fa-file-pdf"></i> Generate & Download
+          </button>
+        </div>
+      </div>
+    </main>
+    
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="#" class="footer-link">Terms of Service</a>
+        <a href="#" class="footer-link">Privacy Policy</a>
+        <a href="#" class="footer-link">Contact Us</a>
+      </div>
+      <p>© 2025 PDFMerge Pro. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    // Order-preserving queue implementation
+    const queue = []; // each item: {id, name, type:'pdf'|'image'|'text', file, url, size, date, icon, textContent}
+    let counter = 0;
+    // DOM elements
+    const fileInput = document.getElementById('fileInput');
+    const selectBtn = document.getElementById('selectBtn');
+    const dropzone = document.getElementById('dropzone');
+    const fileList = document.getElementById('fileList');
+    const fileCount = document.getElementById('fileCount');
+    const previewContent = document.getElementById('previewContent');
+    const generateBtn = document.getElementById('generateBtn');
+    const clearBtn = document.getElementById('clearAll');
+    const toast = document.getElementById('toast');
+    const previewMergedBtn = document.getElementById('previewMerged');
+    
+    // Text to PDF elements
+    const textEditor = document.getElementById('textEditor');
+    const clearTextBtn = document.getElementById('clearText');
+    const previewTextPdfBtn = document.getElementById('previewTextPdf');
+    const generateTextPdfBtn = document.getElementById('generateTextPdf');
+    const textPreviewContent = document.getElementById('textPreviewContent');
+    
+    // Tool switcher elements
+    const toolTabs = document.querySelectorAll('.tool-tab');
+    const mergePdfContainer = document.querySelector('.merge-pdf-container');
+    const textToPdfContainer = document.querySelector('.text-to-pdf-container');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Merge PDF event listeners
+      selectBtn.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', handleFileSelect);
+      ['dragenter', 'dragover'].forEach(event => { dropzone.addEventListener(event, highlightDropzone); });
+      ['dragleave', 'drop'].forEach(event => { dropzone.addEventListener(event, unhighlightDropzone); });
+      dropzone.addEventListener('drop', handleFileDrop);
+      clearBtn.addEventListener('click', clearAllFiles);
+      generateBtn.addEventListener('click', () => generatePDF({ download: true }));
+      previewMergedBtn.addEventListener('click', () => generatePDF({ download: false, preview: true }));
+      updateFileCount();
+      
+      // Text to PDF event listeners
+      clearTextBtn.addEventListener('click', clearTextEditor);
+      previewTextPdfBtn.addEventListener('click', () => generateTextPDF({ preview: true }));
+      generateTextPdfBtn.addEventListener('click', () => generateTextPDF({ download: true }));
+      textEditor.addEventListener('input', updateTextPreview);
+      
+      // Tool switcher listeners
+      toolTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const tool = tab.dataset.tool;
+          toolTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          
+          if (tool === 'merge-pdf') {
+            mergePdfContainer.style.display = 'block';
+            textToPdfContainer.style.display = 'none';
+          } else if (tool === 'text-to-pdf') {
+            mergePdfContainer.style.display = 'none';
+            textToPdfContainer.style.display = 'block';
+            updateTextPreview();
+          }
+        });
+      });
+      
+      // Initialize with Merge PDF tool visible
+      mergePdfContainer.style.display = 'block';
+      textToPdfContainer.style.display = 'none';
+    });
+
+    function handleFileSelect(e) {
+      const files = Array.from(e.target.files || []);
+      if (files.length > 0) { addFilesToQueue(files); fileInput.value = ''; }
+    }
+    function handleFileDrop(e) {
+      e.preventDefault();
+      const files = Array.from(e.dataTransfer.files || []);
+      if (files.length > 0) addFilesToQueue(files);
+    }
+    function highlightDropzone(e) { e.preventDefault(); dropzone.classList.add('dragover'); }
+    function unhighlightDropzone(e) { e.preventDefault(); dropzone.classList.remove('dragover'); }
+
+    function addFilesToQueue(files) {
+      const added = [];
+      // Keep the order of the FileList as provided by user
+      files.forEach(file => {
+        const id = ++counter;
+        const ext = (file.name.split('.').pop() || '').toLowerCase();
+        const type = (file.type || '').toLowerCase();
+        const fileObj = { id, name: file.name, file, size: formatFileSize(file.size), date: new Date(file.lastModified).toLocaleDateString(), url: URL.createObjectURL(file) };
+        if (type === 'application/pdf' || ext === 'pdf') { fileObj.type = 'pdf'; fileObj.icon = 'far fa-file-pdf'; }
+        else if (type.startsWith('image/') || ['png','jpg','jpeg','gif','webp','bmp'].includes(ext)) { fileObj.type = 'image'; fileObj.icon = 'far fa-file-image'; }
+        else { fileObj.type = 'text'; fileObj.icon = 'far fa-file-alt'; const reader = new FileReader(); reader.onload = () => { fileObj.textContent = reader.result; renderFileList(); }; reader.readAsText(file); }
+        queue.push(fileObj); added.push(file.name);
+      });
+      renderFileList(); updateFileCount(); showToast(`${added.length} file(s) added`, 'success');
+    }
+
+    function renderFileList() {
+      if (queue.length === 0) {
+        fileList.innerHTML = `\n          <div class="file-item empty-state">\n            <div class="file-icon">\n              <i class="far fa-folder-open"></i>\n            </div>\n            <div class="file-info">\n              <div class="file-name">No files selected</div>\n              <div class="file-meta">Add files to begin merging</div>\n            </div>\n          </div>\n        `;
+        return;
+      }
+      fileList.innerHTML = '';
+      queue.forEach((file, index) => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.dataset.id = file.id;
+        fileItem.draggable = true; // enable drag-reorder
+
+        fileItem.innerHTML = `
+          <div class="file-order">${index + 1}</div>
+          <div class="file-icon">
+            <i class="${file.icon}"></i>
+          </div>
+          <div class="file-info">
+            <div class="file-name" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</div>
+            <div class="file-meta">
+              <span>${(file.type || '').toUpperCase() || 'FILE'}</span>
+              <span>${file.size || ''}</span>
+              <span>${file.date || ''}</span>
+            </div>
+          </div>
+          <div class="file-actions">
+            <button class="btn btn-sm btn-outline" data-action="preview">
+              <i class="fas fa-eye"></i> Preview
+            </button>
+            <button class="btn btn-sm btn-outline" data-action="download">
+              <i class="fas fa-download"></i> Download
+            </button>
+            <button class="btn btn-sm" data-action="remove" style="background-color: var(--danger);">
+              <i class="fas fa-trash-alt"></i> Remove
+            </button>
+          </div>
+        `;
+
+        fileList.appendChild(fileItem);
+
+        // action listeners
+        fileItem.querySelector('[data-action="preview"]').addEventListener('click', () => previewFile(file.id));
+        fileItem.querySelector('[data-action="download"]').addEventListener('click', () => downloadFile(file.id));
+        fileItem.querySelector('[data-action="remove"]').addEventListener('click', () => removeFile(file.id));
+
+        // drag & drop handlers for reordering
+        fileItem.addEventListener('dragstart', (ev) => {
+          ev.dataTransfer.setData('text/plain', String(file.id));
+          fileItem.classList.add('dragging');
+        });
+        fileItem.addEventListener('dragend', () => { fileItem.classList.remove('dragging'); removeDropTargetMarks(); });
+        fileItem.addEventListener('dragover', (ev) => { ev.preventDefault(); fileItem.classList.add('drop-target'); });
+        fileItem.addEventListener('dragleave', () => fileItem.classList.remove('drop-target'));
+        fileItem.addEventListener('drop', (ev) => {
+          ev.preventDefault();
+          const draggedId = Number(ev.dataTransfer.getData('text/plain'));
+          const targetId = Number(fileItem.dataset.id);
+          if (!isNaN(draggedId) && !isNaN(targetId) && draggedId !== targetId) {
+            reorderQueue(draggedId, targetId);
+            renderFileList();
+            showToast('Order updated', 'success');
+          }
+        });
+      });
+    }
+
+    function removeDropTargetMarks() { document.querySelectorAll('.file-item.drop-target').forEach(el => el.classList.remove('drop-target')); }
+
+    function reorderQueue(draggedId, targetId) {
+      const fromIndex = queue.findIndex(f => f.id === draggedId);
+      const toIndex = queue.findIndex(f => f.id === targetId);
+      if (fromIndex === -1 || toIndex === -1) return;
+      const [item] = queue.splice(fromIndex, 1);
+      // insert before target index
+      queue.splice(toIndex, 0, item);
+    }
+
+    function previewFile(id) {
+      const file = queue.find(f => f.id === id);
+      if (!file) return;
+      previewContent.innerHTML = '';
+      if (file.type === 'pdf') {
+        const iframe = document.createElement('iframe'); iframe.className = 'pdf-preview'; iframe.src = file.url; previewContent.appendChild(iframe);
+      } else if (file.type === 'image') {
+        const img = document.createElement('img'); img.className = 'image-preview'; img.src = file.url; previewContent.appendChild(img);
+      } else if (file.type === 'text') {
+        const pre = document.createElement('pre'); pre.className = 'text-preview'; pre.textContent = file.textContent ? file.textContent.slice(0, 10000) : 'No content available'; previewContent.appendChild(pre);
+      } else {
+        previewContent.innerHTML = `<div class="preview-placeholder"><i class="far fa-file-alt"></i><p>Cannot preview this file type</p></div>`;
+      }
+    }
+
+    function downloadFile(id) {
+      const file = queue.find(f => f.id === id);
+      if (!file) return;
+      try {
+        if (file.file instanceof Blob) { saveAs(file.file, file.name); }
+        else if (file.url) { fetch(file.url).then(r => r.blob()).then(blob => saveAs(blob, file.name)); }
+        else if (file.type === 'text' && file.textContent != null) { const blob = new Blob([file.textContent], { type: 'text/plain;charset=utf-8' }); saveAs(blob, file.name || `text-${file.id}.txt`); }
+        else { showToast('Unable to download file', 'error'); }
+        showToast(`Downloaded ${file.name}`, 'success');
+      } catch (err) { console.error('Download error', err); showToast('Download failed', 'error'); }
+    }
+
+    function removeFile(id) {
+      const index = queue.findIndex(f => f.id === id);
+      if (index === -1) return;
+      const [removed] = queue.splice(index, 1);
+      if (removed && removed.url) URL.revokeObjectURL(removed.url);
+      renderFileList(); updateFileCount(); previewContent.innerHTML = `\n        <div class="preview-placeholder">\n          <i class="far fa-file-alt"></i>\n          <p>Select a file to preview its content</p>\n        </div>\n      `;
+      showToast('File removed', 'success');
+    }
+
+    function clearAllFiles() {
+      if (queue.length === 0) return;
+      if (!confirm('Are you sure you want to remove all files?')) return;
+      queue.forEach(file => { if (file.url) URL.revokeObjectURL(file.url); });
+      queue.length = 0; counter = 0; renderFileList(); updateFileCount(); previewContent.innerHTML = `\n        <div class="preview-placeholder">\n          <i class="far fa-file-alt"></i>\n          <p>Select a file to preview its content</p>\n        </div>\n      `; showToast('All files cleared', 'success');
+    }
+
+    // helper: convert image File to compressed ArrayBuffer according to quality (for JPEG)
+    async function imageFileToArrayBufferWithQuality(file, qualityOption) {
+      // if qualityOption === 'original' -> just return original arrayBuffer
+      if (qualityOption === 'original') return await file.arrayBuffer();
+      // convert to canvas and re-encode as jpeg with qualityOption
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = async () => {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            canvas.toBlob(async (blob) => {
+              if (!blob) return reject(new Error('Compression failed'));
+              const ab = await blob.arrayBuffer();
+              resolve(ab);
+            }, 'image/jpeg', parseFloat(qualityOption));
+          } catch (e) { reject(e); }
+        };
+        img.onerror = () => reject(new Error('Image load error'));
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
+    async function generatePDF({ download = false, preview = false } = {}) {
+      if (queue.length === 0) { showToast('No files to merge', 'error'); return; }
+      // ensure queue order matches the visible order (safe-guard)
+      const domOrder = Array.from(document.querySelectorAll('.file-item')).map(el => Number(el.dataset.id)).filter(Boolean);
+      if (domOrder.length === queue.length) {
+        const reordered = domOrder.map(id => queue.find(f => f.id === id)).filter(Boolean);
+        if (reordered.length === queue.length) { queue.length = 0; queue.push(...reordered); }
+      }
+
+      generateBtn.classList.add('loading'); generateBtn.disabled = true; const originalBtnHtml = generateBtn.innerHTML; generateBtn.innerHTML = 'Processing...';
+      const imageQuality = document.getElementById('imageQuality').value; // 'original' or '0.92' etc.
+      const addPageNumbers = document.getElementById('addPageNumbers').checked;
+      const pageNumberPos = document.getElementById('pageNumberPos').value;
+      const startNumber = parseInt(document.getElementById('startNumber').value) || 1;
+
+      try {
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const outPdf = await PDFDocument.create();
+        const pageSize = document.getElementById('pageSize').value;
+        const orientation = document.getElementById('orientation').value;
+        const margin = parseInt(document.getElementById('margin').value) || 0;
+        for (const file of queue) {
+          if (file.type === 'pdf') {
+            try {
+              const arrayBuffer = await file.file.arrayBuffer();
+              const src = await PDFDocument.load(arrayBuffer);
+              const copied = await outPdf.copyPages(src, src.getPageIndices());
+              copied.forEach(page => outPdf.addPage(page));
+            } catch (err) { console.error(`Error processing PDF ${file.name}:`, err); showToast(`Skipped ${file.name} (PDF error)`, 'error'); continue; }
+          } else if (file.type === 'image') {
+            try {
+              const arrayBuffer = await imageFileToArrayBufferWithQuality(file.file, imageQuality);
+              const header = new Uint8Array(arrayBuffer).subarray(0, 4);
+              const headerStr = Array.from(header).map(b => b.toString(16).padStart(2,'0')).join('').toUpperCase();
+              let image;
+              // embedJpg expects jpeg bytes, embedPng expects png bytes. pdf-lib also accepts jpeg/png ArrayBuffer
+              if (headerStr.includes('FFD8')) { image = await outPdf.embedJpg(arrayBuffer); }
+              else if (headerStr.includes('89504E47')) { image = await outPdf.embedPng(arrayBuffer); }
+              else { try { image = await outPdf.embedPng(arrayBuffer); } catch { image = await outPdf.embedJpg(arrayBuffer); } }
+
+              if (pageSize === 'original') {
+                const page = outPdf.addPage([image.width, image.height]);
+                page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
+              } else {
+                const dims = getPageDimensions(pageSize, orientation);
+                const page = outPdf.addPage([dims.width, dims.height]);
+                const maxWidth = dims.width - (margin * 2);
+                const maxHeight = dims.height - (margin * 2);
+                let width = image.width; let height = image.height;
+                if (width > maxWidth) { const ratio = maxWidth / width; width *= ratio; height *= ratio; }
+                if (height > maxHeight) { const ratio = maxHeight / height; width *= ratio; height *= ratio; }
+                const x = (dims.width - width) / 2; const y = (dims.height - height) / 2;
+                page.drawImage(image, { x, y, width, height });
+              }
+            } catch (err) { console.error(`Error processing image ${file.name}:`, err); showToast(`Skipped ${file.name} (image error)`, 'error'); continue; }
+          } else if (file.type === 'text') {
+            try {
+              const text = file.textContent || '';
+              const dims = getPageDimensions(pageSize, orientation);
+              let page = outPdf.addPage([dims.width, dims.height]);
+              const font = await outPdf.embedFont(StandardFonts.Helvetica);
+              const fontSize = 12; const lineHeight = fontSize * 1.4;
+              const maxTextWidth = dims.width - (margin * 2);
+              const lines = splitTextIntoLines(text, maxTextWidth, font, fontSize);
+              let y = dims.height - margin - fontSize;
+              for (const line of lines) {
+                if (y < margin + fontSize) { page = outPdf.addPage([dims.width, dims.height]); y = dims.height - margin - fontSize; }
+                page.drawText(line, { x: margin, y, size: fontSize, font, color: rgb(0,0,0), });
+                y -= lineHeight;
+              }
+            } catch (err) { console.error(`Error processing text ${file.name}:`, err); showToast(`Skipped ${file.name} (text error)`, 'error'); continue; }
+          } else { console.warn('Unknown type, skipping', file); showToast(`Skipped ${file.name} (unsupported)`, 'error'); }
+        }
+
+        // Add page numbers if requested
+        if (addPageNumbers) {
+          const font = await outPdf.embedFont(StandardFonts.HelveticaBold);
+          const pages = outPdf.getPages();
+          for (let i = 0; i < pages.length; i++) {
+            const page = pages[i];
+            const { width, height } = page.getSize();
+            const text = String(startNumber + i);
+            const fontSize = 10;
+            const textWidth = font.widthOfTextAtSize(text, fontSize);
+            let x;
+            if (pageNumberPos === 'center') x = (width - textWidth) / 2;
+            else if (pageNumberPos === 'left') x = 20;
+            else x = width - textWidth - 20;
+            const y = 15; // 15px from bottom
+            page.drawText(text, { x, y, size: fontSize, font, color: rgb(0.2,0.2,0.2) });
+          }
+        }
+
+        const pdfBytes = await outPdf.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const filename = `merged-${timestamp}.pdf`;
+
+        if (preview) {
+          // show merged PDF in preview
+          const url = URL.createObjectURL(blob);
+          previewContent.innerHTML = '';
+          const iframe = document.createElement('iframe'); iframe.className = 'pdf-preview'; iframe.src = url; previewContent.appendChild(iframe);
+          showToast('Preview ready', 'success');
+        }
+
+        if (download) {
+          saveAs(blob, filename);
+          showToast('PDF generated successfully!', 'success');
+        }
+
+        // return blob for further usage if required
+        return blob;
+      } catch (err) { console.error('Error generating PDF:', err); showToast('Error generating PDF: ' + (err.message || err), 'error'); }
+      finally { generateBtn.classList.remove('loading'); generateBtn.disabled = false; generateBtn.innerHTML = originalBtnHtml; }
+    }
+    
+    // Text to PDF functions
+    function clearTextEditor() {
+      if (!textEditor.value) return;
+      if (!confirm('Are you sure you want to clear all text?')) return;
+      textEditor.value = '';
+      updateTextPreview();
+      showToast('Text cleared', 'success');
+    }
+    
+    function updateTextPreview() {
+      const text = textEditor.value;
+      if (!text) {
+        textPreviewContent.innerHTML = `
+          <div class="preview-placeholder">
+            <i class="far fa-file-alt"></i>
+            <p>Enter text above to see a preview</p>
+          </div>
+        `;
+        return;
+      }
+      
+      const pre = document.createElement('pre');
+      pre.className = 'text-preview';
+      
+      // Apply some basic formatting to simulate PDF appearance
+      const fontSize = parseInt(document.getElementById('textFontSize').value) || 12;
+      const fontFamily = document.getElementById('textFontFamily').value;
+      const lineHeight = parseFloat(document.getElementById('textLineHeight').value) || 1.4;
+      const margin = parseInt(document.getElementById('textMargin').value) || 40;
+      
+      pre.style.fontSize = `${fontSize}px`;
+      pre.style.fontFamily = fontFamily === 'Helvetica' ? 'Arial, sans-serif' : 
+                            fontFamily === 'Times-Roman' ? 'Times New Roman, serif' : 
+                            'Courier New, monospace';
+      pre.style.lineHeight = lineHeight;
+      pre.style.padding = `${margin}px`;
+      pre.style.textAlign = 'left';
+      pre.style.whiteSpace = 'pre-wrap';
+      pre.style.wordWrap = 'break-word';
+      
+      pre.textContent = text;
+      
+      textPreviewContent.innerHTML = '';
+      textPreviewContent.appendChild(pre);
+    }
+    
+    async function generateTextPDF({ download = false, preview = false } = {}) {
+      const text = textEditor.value;
+      if (!text) { showToast('Please enter some text first', 'error'); return; }
+      
+      generateTextPdfBtn.classList.add('loading'); 
+      generateTextPdfBtn.disabled = true; 
+      const originalBtnHtml = generateTextPdfBtn.innerHTML; 
+      generateTextPdfBtn.innerHTML = 'Processing...';
+      
+      try {
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const outPdf = await PDFDocument.create();
+        
+        const pageSize = document.getElementById('textPageSize').value;
+        const orientation = document.getElementById('textOrientation').value;
+        const margin = parseInt(document.getElementById('textMargin').value) || 40;
+        const fontSize = parseInt(document.getElementById('textFontSize').value) || 12;
+        const fontFamily = document.getElementById('textFontFamily').value;
+        const lineHeight = parseFloat(document.getElementById('textLineHeight').value) || 1.4;
+        
+        const dims = getPageDimensions(pageSize, orientation);
+        let page = outPdf.addPage([dims.width, dims.height]);
+        
+        // Embed the selected font
+        let font;
+        switch(fontFamily) {
+          case 'Helvetica': font = await outPdf.embedFont(StandardFonts.Helvetica); break;
+          case 'Times-Roman': font = await outPdf.embedFont(StandardFonts.TimesRoman); break;
+          case 'Courier': font = await outPdf.embedFont(StandardFonts.Courier); break;
+          default: font = await outPdf.embedFont(StandardFonts.Helvetica);
+        }
+        
+        const effectiveLineHeight = fontSize * lineHeight;
+        const maxTextWidth = dims.width - (margin * 2);
+        
+        const lines = splitTextIntoLines(text, maxTextWidth, font, fontSize);
+        let y = dims.height - margin - fontSize;
+        
+        for (const line of lines) {
+          if (y < margin + fontSize) { 
+            page = outPdf.addPage([dims.width, dims.height]); 
+            y = dims.height - margin - fontSize; 
+          }
+          page.drawText(line, { 
+            x: margin, 
+            y, 
+            size: fontSize, 
+            font, 
+            color: rgb(0, 0, 0),
+            maxWidth: maxTextWidth
+          });
+          y -= effectiveLineHeight;
+        }
+        
+        const pdfBytes = await outPdf.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const filename = `text-document-${new Date().toISOString().slice(0,10)}.pdf`;
+        
+        if (preview) {
+          const url = URL.createObjectURL(blob);
+          textPreviewContent.innerHTML = '';
+          const iframe = document.createElement('iframe'); 
+          iframe.className = 'pdf-preview'; 
+          iframe.src = url; 
+          textPreviewContent.appendChild(iframe);
+          showToast('PDF preview generated', 'success');
+        }
+        
+        if (download) {
+          saveAs(blob, filename);
+          showToast('PDF downloaded successfully!', 'success');
+        }
+        
+        return blob;
+      } catch (err) {
+        console.error('Error generating text PDF:', err);
+        showToast('Error generating PDF: ' + (err.message || err), 'error');
+      } finally {
+        generateTextPdfBtn.classList.remove('loading');
+        generateTextPdfBtn.disabled = false;
+        generateTextPdfBtn.innerHTML = originalBtnHtml;
+      }
+    }
+
+    function updateFileCount() { const count = queue.length; fileCount.textContent = `${count} file${count !== 1 ? 's' : ''}`; fileCount.style.display = count > 0 ? 'block' : 'none'; }
+    function formatFileSize(bytes) { if (!bytes && bytes !== 0) return ''; if (bytes === 0) return '0 Bytes'; const k = 1024; const sizes = ['Bytes', 'KB', 'MB', 'GB']; const i = Math.floor(Math.log(bytes) / Math.log(k)); return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]; }
+    function escapeHtml(unsafe) { if (!unsafe) return ''; return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&#039;"); }
+
+    function showToast(message, type = '') {
+      toast.textContent = ''; toast.className = 'toast'; if (type) toast.classList.add(type);
+      let iconHtml; if (type === 'success') iconHtml = '<i class="fas fa-check-circle"></i>'; else if (type === 'error') iconHtml = '<i class="fas fa-exclamation-circle"></i>'; else iconHtml = '<i class="fas fa-info-circle"></i>';
+      toast.innerHTML = `${iconHtml} <div style="max-width: 320px;">${escapeHtml(String(message))}</div>`;
+      toast.classList.add('show'); clearTimeout(toast._hideTimer); toast._hideTimer = setTimeout(() => { toast.classList.remove('show'); }, 3000);
+    }
+
+    function getPageDimensions(size, orientation) {
+      const sizes = { 'A4': { width: 595, height: 842 }, 'Letter': { width: 612, height: 792 }, 'A3': { width: 842, height: 1190 }, 'Legal': { width: 612, height: 1008 } };
+      const dimensions = sizes[size] || sizes['A4'];
+      return orientation === 'landscape' ? { width: dimensions.height, height: dimensions.width } : dimensions;
+    }
+
+    function splitTextIntoLines(text, maxWidth, font, fontSize) {
+      if (!text) return [''];
+      const words = text.split(/\s+/);
+      const lines = []; let current = '';
+      for (const word of words) {
+        const test = current ? `${current} ${word}` : word;
+        const width = font.widthOfTextAtSize(test, fontSize);
+        if (width <= maxWidth) { current = test; }
+        else {
+          if (current) lines.push(current);
+          if (font.widthOfTextAtSize(word, fontSize) > maxWidth) {
+            const broken = breakLongWord(word, maxWidth, font, fontSize);
+            lines.push(...broken.slice(0, -1)); current = broken[broken.length - 1];
+          } else { current = word; }
+        }
+      }
+      if (current) lines.push(current); return lines;
+    }
+
+    function breakLongWord(word, maxWidth, font, fontSize) {
+      const parts = []; let start = 0;
+      for (let i = 1; i <= word.length; i++) {
+        const substr = word.slice(start, i);
+        if (font.widthOfTextAtSize(substr, fontSize) > maxWidth) { parts.push(word.slice(start, i - 1)); start = i - 1; }
+        else if (i === word.length) { parts.push(word.slice(start, i)); }
+      }
+      return parts;
+    }
+
+    if (PDFLib && PDFLib.PDFDocument) { PDFLib.PDFDocument.prototype.embedJpgOrPng = async function (arrayBuffer) { try { return await this.embedPng(arrayBuffer); } catch (e) { return await this.embedJpg(arrayBuffer); } }; }
+  </script>
+</body>
+</html>
