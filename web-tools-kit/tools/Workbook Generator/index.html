@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Programming Workbook Generator</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Prism.js for syntax highlighting -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* === CSS Variables === */
+    :root {
+      --primary: #4361ee;
+      --primary-light: #6a7eeb;
+      --primary-dark: #2f4ac7;
+      --secondary: #3a0ca3;
+      --success: #4cc9f0;
+      --success-light: #7ad7f4;
+      --danger: #f72585;
+      --warning: #fca311;
+      --info: #4895ef;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --light-gray: #e9ecef;
+      --lighter-gray: #f5f7f9;
+      --border-radius: 12px;
+      --border-radius-sm: 8px;
+      --box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      --box-shadow-light: 0 5px 15px rgba(0,0,0,0.05);
+      --transition: all 0.3s ease;
+    }
+
+    /* === Dark Theme Variables === */
+    .dark-theme {
+      --bg-color: #121212;
+      --bg-secondary: #1a1a1a;
+      --card-bg: #1e1e1e;
+      --card-bg-light: #252525;
+      --text-color: #f0f0f0;
+      --text-muted: #a0a0a0;
+      --border-color: #333;
+      --input-bg: #2d2d2d;
+      --hover-color: #2d2d2d;
+    }
+
+    /* === Light Theme Variables === */
+    .light-theme {
+      --bg-color: #f7f7f7;
+      --bg-secondary: #f0f2f5;
+      --card-bg: #ffffff;
+      --card-bg-light: #fafafa;
+      --text-color: #333333;
+      --text-muted: #6c757d;
+      --border-color: #ddd;
+      --input-bg: #ffffff;
+      --hover-color: #f5f7f9;
+    }
+
+    /* === Global Styles === */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: var(--transition);
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* === Header Styles === */
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 1rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-weight: 700;
+      font-size: 1.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    header h1 i {
+      font-size: 1.4rem;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* === Theme Toggle === */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.5rem 0.8rem;
+      border-radius: 30px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 45px;
+      height: 22px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.3);
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary-light);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(23px);
+    }
+
+    /* === Main Layout === */
+    main {
+      padding: 2rem 0;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 992px) {
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* === Panel Styles === */
+    .panel {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow-light);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      transition: var(--transition);
+      border: 1px solid var(--border-color);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .panel-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary);
+    }
+
+    /* === Controls === */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    input, select, button, textarea {
+      padding: 0.75rem 1rem;
+      border-radius: var(--border-radius-sm);
+      border: 1px solid var(--border-color);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      transition: var(--transition);
+      background-color: var(--input-bg);
+      color: var(--text-color);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+
+    /* === Button Styles === */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--border-radius-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      font-size: 0.95rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: var(--success-light);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(76, 201, 240, 0.3);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(247, 37, 133, 0.3);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 0.8rem;
+      font-size: 0.85rem;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    /* === Questions Container === */
+    #questionsContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .question {
+      background-color: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow-light);
+      transition: var(--transition);
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .question:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--box-shadow);
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .question-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .question-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .question-actions button {
+      padding: 0.5rem;
+      border-radius: 6px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: var(--transition);
+    }
+
+    .question-actions button:hover {
+      background-color: var(--hover-color);
+      color: var(--primary);
+    }
+
+    .question-body {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .question-textarea {
+      width: 100%;
+      padding: 1rem;
+      border-radius: var(--border-radius-sm);
+      border: 1px solid var(--border-color);
+      font-family: 'Inter', sans-serif;
+      resize: vertical;
+      min-height: 100px;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      transition: var(--transition);
+    }
+
+    .question-textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+
+    .link-input-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .link-input-container label {
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .link-input {
+      width: 100%;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .language-selector {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .language-selector label {
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .code-editor-container {
+      position: relative;
+      margin-top: 0.5rem;
+    }
+
+    .code-editor {
+      width: 100%;
+      min-height: 150px;
+      padding: 1rem;
+      border-radius: var(--border-radius-sm);
+      border: 1px solid var(--border-color);
+      font-family: 'Fira Code', monospace;
+      background: #2d2d2d;
+      color: #f8f8f2;
+      overflow-x: auto;
+      resize: vertical;
+      tab-size: 4;
+      -moz-tab-size: 4;
+      white-space: pre-wrap;
+      font-size: 0.9rem;
+    }
+
+    .code-actions {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .code-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 4px;
+      color: white;
+      padding: 0.4rem 0.6rem;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: var(--transition);
+    }
+
+    .code-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* === Preview Section === */
+    #previewContent {
+      background-color: var(--card-bg);
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      min-height: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+      border: 1px solid var(--border-color);
+    }
+
+    .preview-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .preview-question {
+      margin-bottom: 2rem;
+      page-break-inside: avoid;
+      padding: 1.5rem;
+      background-color: var(--card-bg-light);
+      border-radius: var(--border-radius-sm);
+      border-left: 4px solid var(--primary);
+    }
+
+    .preview-code {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 1rem;
+      border-radius: var(--border-radius-sm);
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+
+    /* === Toast Notifications === */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      padding: 12px 20px;
+      border-radius: var(--border-radius-sm);
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      box-shadow: var(--box-shadow);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease;
+      border-left: 4px solid var(--primary);
+      max-width: 300px;
+    }
+
+    .toast.success {
+      border-left-color: var(--success);
+    }
+
+    .toast.error {
+      border-left-color: var(--danger);
+    }
+
+    .toast.warning {
+      border-left-color: var(--warning);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* === Footer === */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      background-color: var(--card-bg);
+      border-top: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* === Responsive Design === */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+      
+      .controls-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+      
+      .question-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .question-actions {
+        align-self: flex-end;
+      }
+      
+      .code-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      
+      .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .header-actions {
+        justify-content: center;
+      }
+    }
+
+    /* === Animation === */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .question {
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* === Scrollbar Styling === */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--light-gray);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--gray);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--dark);
+    }
+
+    .dark-theme ::-webkit-scrollbar-track {
+      background: #2d2d2d;
+    }
+
+    .dark-theme ::-webkit-scrollbar-thumb {
+      background: #555;
+    }
+
+    .dark-theme ::-webkit-scrollbar-thumb:hover {
+      background: #777;
+    }
+
+    /* === Empty State === */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    /* === Confirmation Dialog === */
+    .confirmation-dialog {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .confirmation-dialog.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .dialog-content {
+      background-color: var(--card-bg);
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      max-width: 400px;
+      width: 90%;
+      box-shadow: var(--box-shadow);
+    }
+
+    .dialog-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    /* === Tooltips === */
+    .tooltip {
+      position: relative;
+    }
+
+    .tooltip:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.5rem;
+      background-color: var(--dark);
+      color: white;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      z-index: 100;
+    }
+
+    /* === Badges === */
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background-color: var(--primary-light);
+      color: white;
+    }
+
+    /* === Help Text === */
+    .help-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* === Focus States === */
+    button:focus, input:focus, select:focus, textarea:focus {
+      outline: 2px solid var(--primary-light);
+      outline-offset: 2px;
+    }
+
+    /* === Loading State === */
+    .loading {
+      position: relative;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="light-theme">
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <h1><i class="fas fa-code"></i> Programming Workbook Generator</h1>
+        <div class="header-actions">
+          <div class="theme-toggle">
+            <i class="fas fa-sun"></i>
+            <label class="switch">
+              <input type="checkbox" id="themeSwitch">
+              <span class="slider"></span>
+            </label>
+            <i class="fas fa-moon"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid-container">
+      <div class="editor-panel">
+        <section class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title"><i class="fas fa-cog"></i> Workbook Settings</h2>
+          </div>
+          <div class="controls-grid">
+            <div class="control-group">
+              <label for="workbookTitle">Workbook Title</label>
+              <input type="text" id="workbookTitle" placeholder="Enter workbook title">
+              <div class="help-text">This will appear as the title of your PDF</div>
+            </div>
+            <div class="control-group">
+              <label for="authorName">Author Name</label>
+              <input type="text" id="authorName" placeholder="Enter author name">
+            </div>
+            <div class="control-group">
+              <label for="pageSize">Page Size</label>
+              <select id="pageSize">
+                <option value="a4">A4</option>
+                <option value="letter">Letter</option>
+                <option value="legal">Legal</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label for="fontSize">Font Size</label>
+              <select id="fontSize">
+                <option value="12px">Small</option>
+                <option value="14px" selected>Medium</option>
+                <option value="16px">Large</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label for="globalLanguage">Default Code Language</label>
+              <select id="globalLanguage">
+                <option value="javascript">JavaScript</option>
+                <option value="python">Python</option>
+                <option value="java">Java</option>
+                <option value="c">C</option>
+                <option value="cpp">C++</option>
+                <option value="html">HTML</option>
+                <option value="css">CSS</option>
+              </select>
+            </div>
+          </div>
+          <div class="action-buttons">
+            <button class="btn btn-primary" id="addQuestionBtn">
+              <i class="fas fa-plus"></i> Add Question
+            </button>
+            <button class="btn btn-success" id="generatePdfBtn">
+              <i class="fas fa-file-pdf"></i> Generate PDF
+            </button>
+            <button class="btn btn-outline" id="importBtn">
+              <i class="fas fa-file-import"></i> Import
+            </button>
+            <button class="btn btn-outline" id="exportBtn">
+              <i class="fas fa-file-export"></i> Export
+            </button>
+            <button class="btn btn-danger" id="clearAllBtn">
+              <i class="fas fa-trash"></i> Clear All
+            </button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title"><i class="fas fa-question-circle"></i> Questions</h2>
+            <span class="badge" id="questionCount">0 Questions</span>
+          </div>
+          <div id="questionsContainer">
+            <!-- Dynamic Questions will appear here -->
+            <div class="empty-state" id="emptyState">
+              <i class="fas fa-question-circle"></i>
+              <h3>No Questions Added</h3>
+              <p>Click the "Add Question" button to get started</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="preview-panel">
+        <section class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title"><i class="fas fa-eye"></i> Live Preview</h2>
+            <div class="action-buttons">
+              <button class="btn btn-outline btn-sm" id="refreshPreviewBtn" data-tooltip="Refresh Preview">
+                <i class="fas fa-sync-alt"></i>
+              </button>
+              <button class="btn btn-outline btn-sm" id="applyLanguageToAllBtn" data-tooltip="Apply default language to all questions">
+                <i class="fas fa-language"></i>
+              </button>
+            </div>
+          </div>
+          <div id="previewContent">
+            <div class="preview-header">
+              <h1>Workbook Preview</h1>
+              <p>Add questions to see the preview</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Confirmation Dialog -->
+  <div class="confirmation-dialog" id="confirmationDialog">
+    <div class="dialog-content">
+      <h3>Clear All Questions</h3>
+      <p>Are you sure you want to remove all questions? This action cannot be undone.</p>
+      <div class="dialog-buttons">
+        <button class="btn btn-outline" id="cancelClearBtn">Cancel</button>
+        <button class="btn btn-danger" id="confirmClearBtn">Clear All</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>© 2023 Programming Workbook Generator | Created with <i class="fas fa-heart" style="color: var(--danger);"></i></p>
+    </div>
+  </footer>
+
+  <!-- Dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-html.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-html.min.js"></script>
+
+  <script>
+    // === DOM Elements ===
+    const addQuestionBtn = document.getElementById('addQuestionBtn');
+    const questionsContainer = document.getElementById('questionsContainer');
+    const generatePdfBtn = document.getElementById('generatePdfBtn');
+    const refreshPreviewBtn = document.getElementById('refreshPreviewBtn');
+    const previewContent = document.getElementById('previewContent');
+    const workbookTitle = document.getElementById('workbookTitle');
+    const authorName = document.getElementById('authorName');
+    const pageSize = document.getElementById('pageSize');
+    const fontSize = document.getElementById('fontSize');
+    const globalLanguage = document.getElementById('globalLanguage');
+    const themeSwitch = document.getElementById('themeSwitch');
+    const importBtn = document.getElementById('importBtn');
+    const exportBtn = document.getElementById('exportBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    const questionCountEl = document.getElementById('questionCount');
+    const emptyState = document.getElementById('emptyState');
+    const toastContainer = document.getElementById('toastContainer');
+    const confirmationDialog = document.getElementById('confirmationDialog');
+    const cancelClearBtn = document.getElementById('cancelClearBtn');
+    const confirmClearBtn = document.getElementById('confirmClearBtn');
+    const applyLanguageToAllBtn = document.getElementById('applyLanguageToAllBtn');
+
+    let questionCount = 0;
+    let questionsData = [];
+
+    // Show toast notification
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i>
+        <span>${message}</span>
+      `;
+      
+      toastContainer.appendChild(toast);
+      
+      // Remove toast after 3 seconds
+      setTimeout(() => {
+        toast.style.animation = 'slideIn 0.3s ease reverse';
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3000);
+    }
+
+    // Update question count display
+    function updateQuestionCount() {
+      const count = document.querySelectorAll('.question').length;
+      questionCountEl.textContent = `${count} Question${count !== 1 ? 's' : ''}`;
+      
+      // Show/hide empty state
+      if (count === 0) {
+        emptyState.style.display = 'block';
+      } else {
+        emptyState.style.display = 'none';
+      }
+    }
+
+    // Initialize the app
+    function init() {
+      // Load saved data if available
+      const savedData = localStorage.getItem('workbookData');
+      if (savedData) {
+        try {
+          const data = JSON.parse(savedData);
+          workbookTitle.value = data.title || '';
+          authorName.value = data.author || '';
+          pageSize.value = data.pageSize || 'a4';
+          fontSize.value = data.fontSize || '14px';
+          globalLanguage.value = data.globalLanguage || 'javascript';
+          
+          if (data.questions && data.questions.length > 0) {
+            data.questions.forEach(q => {
+              addQuestion(q.text, q.code, q.language, q.link);
+            });
+          }
+          
+          updatePreview();
+          updateQuestionCount();
+          showToast('Previous work restored', 'success');
+        } catch (e) {
+          console.error('Error loading saved data:', e);
+          showToast('Error loading saved data', 'error');
+        }
+      }
+      
+      // Set up auto-save
+      setInterval(saveWorkbook, 10000); // Auto-save every 10 seconds
+    }
+
+    // Add a new question dynamically
+    function addQuestion(questionText = '', codeText = '', language = null, linkText = '') {
+      questionCount++;
+      const questionDiv = document.createElement('div');
+      questionDiv.classList.add('question');
+      questionDiv.dataset.id = questionCount;
+
+      // Use global language if not specified
+      const questionLanguage = language || globalLanguage.value;
+
+      questionDiv.innerHTML = `
+        <div class="question-header">
+          <h3 class="question-title">Question ${questionCount}</h3>
+          <div class="question-actions">
+            <button class="move-up-btn" title="Move Up"><i class="fas fa-arrow-up"></i></button>
+            <button class="move-down-btn" title="Move Down"><i class="fas fa-arrow-down"></i></button>
+            <button class="removeBtn" title="Remove"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+        <div class="question-body">
+          <textarea class="question-textarea" placeholder="Enter question text...">${escapeHtml(questionText)}</textarea>
+          
+          <div class="link-input-container">
+            <label>Link (optional):</label>
+            <input type="text" class="link-input" placeholder="https://example.com" value="${escapeHtml(linkText)}">
+          </div>
+          
+          <div class="code-editor-container">
+            <div class="code-header">
+              <div class="language-selector">
+                <label>Language:</label>
+                <select class="language-select">
+                  <option value="javascript" ${questionLanguage === 'javascript' ? 'selected' : ''}>JavaScript</option>
+                  <option value="python" ${questionLanguage === 'python' ? 'selected' : ''}>Python</option>
+                  <option value="java" ${questionLanguage === 'java' ? 'selected' : ''}>Java</option>
+                  <option value="c" ${questionLanguage === 'c' ? 'selected' : ''}>C</option>
+                  <option value="cpp" ${questionLanguage === 'cpp' ? 'selected' : ''}>C++</option>
+                  <option value="html" ${questionLanguage === 'html' ? 'selected' : ''}>HTML</option>
+                  <option value="css" ${questionLanguage === 'css' ? 'selected' : ''}>CSS</option>
+                </select>
+              </div>
+            </div>
+            <textarea class="code-editor" placeholder="Enter your code here..." data-language="${questionLanguage}">${escapeHtml(codeText)}</textarea>
+            <div class="code-actions">
+              <button class="code-btn format-btn" title="Format Code"><i class="fas fa-indent"></i></button>
+              <button class="code-btn clear-btn" title="Clear Code"><i class="fas fa-broom"></i></button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Remove question
+      questionDiv.querySelector('.removeBtn').addEventListener('click', () => {
+        questionDiv.remove();
+        updateQuestionNumbers();
+        updatePreview();
+        updateQuestionCount();
+        saveWorkbook();
+        showToast('Question removed', 'success');
+      });
+
+      // Move question up
+      questionDiv.querySelector('.move-up-btn').addEventListener('click', () => {
+        const prev = questionDiv.previousElementSibling;
+        if (prev) {
+          questionsContainer.insertBefore(questionDiv, prev);
+          updateQuestionNumbers();
+          updatePreview();
+          saveWorkbook();
+        }
+      });
+
+      // Move question down
+      questionDiv.querySelector('.move-down-btn').addEventListener('click', () => {
+        const next = questionDiv.nextElementSibling;
+        if (next) {
+          questionsContainer.insertBefore(next, questionDiv);
+          updateQuestionNumbers();
+          updatePreview();
+          saveWorkbook();
+        }
+      });
+
+      // Update preview on typing
+      questionDiv.querySelector('.question-textarea').addEventListener('input', () => {
+        updatePreview();
+        saveWorkbook();
+      });
+      
+      questionDiv.querySelector('.code-editor').addEventListener('input', () => {
+        updatePreview();
+        saveWorkbook();
+      });
+      
+      questionDiv.querySelector('.link-input').addEventListener('input', () => {
+        updatePreview();
+        saveWorkbook();
+      });
+      
+      // Language change
+      questionDiv.querySelector('.language-select').addEventListener('change', function() {
+        const codeEditor = questionDiv.querySelector('.code-editor');
+        codeEditor.dataset.language = this.value;
+        updatePreview();
+        saveWorkbook();
+      });
+      
+      // Format code
+      questionDiv.querySelector('.format-btn').addEventListener('click', () => {
+        const codeEditor = questionDiv.querySelector('.code-editor');
+        const code = codeEditor.value;
+        const language = codeEditor.dataset.language;
+        
+        try {
+          let formatted = code;
+          if (language === 'javascript') {
+            formatted = js_beautify(code, { indent_size: 2 });
+          } else if (language === 'html') {
+            formatted = html_beautify(code, { indent_size: 2 });
+          } else if (language === 'css') {
+            formatted = css_beautify(code, { indent_size: 2 });
+          } else if (language === 'python') {
+            // For Python, we can't auto-format easily, but we can clean up indentation
+            formatted = code.replace(/^(\s*)/mg, (match) => {
+              return '  '.repeat(match.length / 2);
+            });
+          } else {
+            // For other languages, just do basic formatting
+            formatted = code.replace(/^(.*)$/mg, '  $1');
+          }
+          codeEditor.value = formatted;
+          updatePreview();
+          saveWorkbook();
+          showToast('Code formatted', 'success');
+        } catch (e) {
+          console.error('Error formatting code:', e);
+          showToast('Error formatting code', 'error');
+        }
+      });
+      
+      // Clear code
+      questionDiv.querySelector('.clear-btn').addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear the code?')) {
+          questionDiv.querySelector('.code-editor').value = '';
+          updatePreview();
+          saveWorkbook();
+          showToast('Code cleared', 'success');
+        }
+      });
+
+      questionsContainer.appendChild(questionDiv);
+      updatePreview();
+      updateQuestionCount();
+      saveWorkbook();
+      
+      // Scroll to the new question
+      questionDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(unsafe) {
+      if (!unsafe) return '';
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Update question numbering
+    function updateQuestionNumbers() {
+      const questions = document.querySelectorAll('.question');
+      questions.forEach((q, index) => {
+        q.querySelector('.question-title').textContent = `Question ${index + 1}`;
+      });
+    }
+
+    // Generate PDF with proper pagination
+    function generatePDF() {
+      if (document.querySelectorAll('.question').length === 0) {
+        showToast('Add at least one question before generating PDF', 'warning');
+        return;
+      }
+
+      try {
+        // Create a clone of the preview content for PDF generation
+        const element = document.createElement('div');
+        element.style.padding = '20px';
+        element.style.fontFamily = 'Inter, sans-serif';
+        
+        // Add title and author
+        element.innerHTML = `
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="margin-bottom: 10px; font-size: 28px;">${escapeHtml(workbookTitle.value) || 'Programming Workbook'}</h1>
+            <p style="font-size: 18px;">Author: ${escapeHtml(authorName.value) || 'Anonymous'}</p>
+          </div>
+        `;
+        
+        // Add each question with page breaks
+        const questions = document.querySelectorAll('.question');
+        questions.forEach((q, index) => {
+          const questionText = q.querySelector('.question-textarea').value;
+          const codeText = q.querySelector('.code-editor').value;
+          const language = q.querySelector('.code-editor').dataset.language;
+          const link = q.querySelector('.link-input').value;
+          
+          // Add page break before each question (except the first one)
+          const pageBreak = index > 0 ? 'style="page-break-before: always;"' : '';
+          
+          element.innerHTML += `
+            <div class="preview-question" ${pageBreak}>
+              <h3 style="font-size: 20px; margin-bottom: 15px;">Question ${index + 1}</h3>
+              <p style="font-size: 16px; margin-bottom: 15px; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(questionText).replace(/\n/g, '<br>')}</p>
+              ${link ? `<p style="margin-bottom: 15px;"><strong>Reference:</strong> <a href="${escapeHtml(link)}">${escapeHtml(link)}</a></p>` : ''}
+              <pre style="background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 8px; overflow-x: auto; font-family: 'Fira Code', monospace; margin: 1rem 0; font-size: 14px; white-space: pre-wrap;">
+  <code class="language-${language}">${Prism.highlight(codeText, Prism.languages[language], language)}</code></pre>
+            </div>
+          `;
+        });
+
+        // PDF options
+        const opt = {
+          margin: [10, 10, 10, 10],
+          filename: `${workbookTitle.value || 'Workbook'}.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { 
+            unit: 'mm', 
+            format: pageSize.value, 
+            orientation: 'portrait' 
+          },
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+        
+        // Generate and download PDF
+        html2pdf().set(opt).from(element).save();
+        showToast('PDF generated successfully', 'success');
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+        showToast('Error generating PDF', 'error');
+      }
+    }
+
+    // Update live preview
+    function updatePreview() {
+      const questions = document.querySelectorAll('.question');
+      let html = `
+        <div class="preview-header">
+          <h1>${escapeHtml(workbookTitle.value) || 'Programming Workbook'}</h1>
+          <p>Author: ${escapeHtml(authorName.value) || 'Anonymous'}</p>
+        </div>
+      `;
+
+      if (questions.length === 0) {
+        html += `
+          <div class="empty-state">
+            <i class="fas fa-question-circle"></i>
+            <h3>No Questions Added</h3>
+            <p>Add questions to see the preview</p>
+          </div>
+        `;
+      } else {
+        questions.forEach((q, index) => {
+          const questionText = q.querySelector('.question-textarea').value;
+          const codeText = q.querySelector('.code-editor').value;
+          const language = q.querySelector('.code-editor').dataset.language;
+          const link = q.querySelector('.link-input').value;
+          
+          html += `
+            <div class="preview-question">
+              <h3>Question ${index + 1}</h3>
+              <p style="white-space: pre-wrap;">${escapeHtml(questionText).replace(/\n/g, '<br>')}</p>
+              ${link ? `<p><strong>Reference:</strong> <a href="${escapeHtml(link)}" target="_blank">${escapeHtml(link)}</a></p>` : ''}
+              <pre class="preview-code language-${language}"><code class="language-${language}">${Prism.highlight(codeText, Prism.languages[language], language)}</code></pre>
+            </div>
+          `;
+        });
+      }
+
+      previewContent.innerHTML = html;
+      
+      // Apply font size
+      previewContent.style.fontSize = fontSize.value;
+    }
+
+    // Save workbook to localStorage
+    function saveWorkbook() {
+      try {
+        const questions = [];
+        document.querySelectorAll('.question').forEach(q => {
+          questions.push({
+            text: q.querySelector('.question-textarea').value,
+            code: q.querySelector('.code-editor').value,
+            language: q.querySelector('.code-editor').dataset.language,
+            link: q.querySelector('.link-input').value
+          });
+        });
+        
+        const workbookData = {
+          title: workbookTitle.value,
+          author: authorName.value,
+          pageSize: pageSize.value,
+          fontSize: fontSize.value,
+          globalLanguage: globalLanguage.value,
+          questions: questions
+        };
+        
+        localStorage.setItem('workbookData', JSON.stringify(workbookData));
+      } catch (error) {
+        console.error('Error saving workbook:', error);
+      }
+    }
+
+    // Export workbook as JSON
+    function exportWorkbook() {
+      try {
+        const questions = [];
+        document.querySelectorAll('.question').forEach(q => {
+          questions.push({
+            text: q.querySelector('.question-textarea').value,
+            code: q.querySelector('.code-editor').value,
+            language: q.querySelector('.code-editor').dataset.language,
+            link: q.querySelector('.link-input').value
+          });
+        });
+        
+        const workbookData = {
+          title: workbookTitle.value,
+          author: authorName.value,
+          pageSize: pageSize.value,
+          fontSize: fontSize.value,
+          globalLanguage: globalLanguage.value,
+          questions: questions
+        };
+        
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(workbookData, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", `${workbookTitle.value || 'workbook'}.json`);
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+        showToast('Workbook exported successfully', 'success');
+      } catch (error) {
+        console.error('Error exporting workbook:', error);
+        showToast('Error exporting workbook', 'error');
+      }
+    }
+
+    // Import workbook from JSON file
+    function importWorkbook(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          workbookTitle.value = data.title || '';
+          authorName.value = data.author || '';
+          pageSize.value = data.pageSize || 'a4';
+          fontSize.value = data.fontSize || '14px';
+          globalLanguage.value = data.globalLanguage || 'javascript';
+          
+          // Clear existing questions
+          questionsContainer.innerHTML = '';
+          questionCount = 0;
+          
+          // Add imported questions
+          if (data.questions && data.questions.length > 0) {
+            data.questions.forEach(q => {
+              addQuestion(q.text, q.code, q.language, q.link);
+            });
+            showToast('Workbook imported successfully', 'success');
+          } else {
+            addQuestion(); // Add one empty question if none in import
+            showToast('Imported workbook has no questions', 'warning');
+          }
+          
+          updatePreview();
+          saveWorkbook();
+        } catch (error) {
+          console.error('Import error:', error);
+          showToast('Error importing file: Invalid format', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Apply global language to all questions
+    function applyGlobalLanguageToAll() {
+      const questions = document.querySelectorAll('.question');
+      if (questions.length === 0) {
+        showToast('No questions to update', 'warning');
+        return;
+      }
+      
+      if (confirm('Are you sure you want to update the language for all questions?')) {
+        questions.forEach(q => {
+          const languageSelect = q.querySelector('.language-select');
+          const codeEditor = q.querySelector('.code-editor');
+          
+          languageSelect.value = globalLanguage.value;
+          codeEditor.dataset.language = globalLanguage.value;
+        });
+        
+        updatePreview();
+        saveWorkbook();
+        showToast('Language applied to all questions', 'success');
+      }
+    }
+
+    // Clear all questions
+    function clearAllQuestions() {
+      questionsContainer.innerHTML = '';
+      questionCount = 0;
+      updatePreview();
+      updateQuestionCount();
+      saveWorkbook();
+      confirmationDialog.classList.remove('active');
+      showToast('All questions cleared', 'success');
+    }
+
+    // === Event Listeners ===
+    addQuestionBtn.addEventListener('click', () => {
+      addQuestion();
+      saveWorkbook();
+      showToast('Question added', 'success');
+    });
+    
+    generatePdfBtn.addEventListener('click', generatePDF);
+    
+    refreshPreviewBtn.addEventListener('click', () => {
+      updatePreview();
+      showToast('Preview refreshed', 'success');
+    });
+    
+    workbookTitle.addEventListener('input', () => {
+      updatePreview();
+      saveWorkbook();
+    });
+    
+    authorName.addEventListener('input', () => {
+      updatePreview();
+      saveWorkbook();
+    });
+    
+    pageSize.addEventListener('change', saveWorkbook);
+    fontSize.addEventListener('change', updatePreview);
+    
+    globalLanguage.addEventListener('change', () => {
+      saveWorkbook();
+    });
+
+    // Theme toggle
+    themeSwitch.addEventListener('change', () => {
+      if (themeSwitch.checked) {
+        document.body.classList.remove('light-theme');
+        document.body.classList.add('dark-theme');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.classList.remove('dark-theme');
+        document.body.classList.add('light-theme');
+        localStorage.setItem('theme', 'light');
+      }
+    });
+
+    // Export functionality
+    exportBtn.addEventListener('click', exportWorkbook);
+    
+    // Import functionality
+    importBtn.addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          importWorkbook(e.target.files[0]);
+        }
+      });
+      input.click();
+    });
+
+    // Clear all functionality
+    clearAllBtn.addEventListener('click', () => {
+      if (document.querySelectorAll('.question').length > 0) {
+        confirmationDialog.classList.add('active');
+      } else {
+        showToast('No questions to clear', 'warning');
+      }
+    });
+
+    cancelClearBtn.addEventListener('click', () => {
+      confirmationDialog.classList.remove('active');
+    });
+
+    confirmClearBtn.addEventListener('click', clearAllQuestions);
+
+    // Apply language to all
+    applyLanguageToAllBtn.addEventListener('click', applyGlobalLanguageToAll);
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.body.classList.remove('light-theme');
+      document.body.classList.add('dark-theme');
+      themeSwitch.checked = true;
+    }
+
+    // Initialize the application
+    init();
+  </script>
+</body>
+</html>
