@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Teleprompter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        header {
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .input-section {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            border-color: #4a6491;
+            outline: none;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .advanced-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #ddd;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #ddd;
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4a6491;
+            cursor: pointer;
+        }
+        
+        select, input[type="color"] {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        #start-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        #start-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        #pause-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        #pause-btn:hover {
+            background-color: #d35400;
+        }
+        
+        #reset-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        #reset-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .secondary-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .secondary-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .teleprompter-display {
+            padding: 30px;
+            background-color: #2c3e50;
+            color: white;
+            min-height: 300px;
+            max-height: 500px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 0 0 15px 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #display {
+            font-size: 2.2rem;
+            line-height: 1.6;
+            text-align: center;
+            transition: transform 0.1s linear;
+            will-change: transform;
+        }
+        
+        .progress-bar {
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #f1c40f;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .current-speed {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+            background-color: #f1c40f;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .shortcuts {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-align: center;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+            opacity: 0.8;
+        }
+        
+        /* Fullscreen mode improvements */
+        .fullscreen-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            border-radius: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #2c3e50;
+        }
+        
+        .fullscreen-mode #display {
+            font-size: 3.5rem;
+            width: 80%;
+            margin: 0 auto;
+            max-height: 90vh;
+            overflow: hidden;
+        }
+        
+        .fullscreen-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            z-index: 101;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .fullscreen-mode:hover .fullscreen-controls {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .fullscreen-controls button {
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 10px 15px;
+        }
+        
+        .exit-fullscreen {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 101;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .fullscreen-mode .exit-fullscreen {
+            display: flex;
+        }
+        
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            #display {
+                font-size: 1.8rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .control-group {
+                min-width: 100%;
+            }
+            
+            .fullscreen-mode #display {
+                font-size: 2.5rem;
+                width: 90%;
+            }
+            
+            .button-group {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .button-group button {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            #display {
+                font-size: 1.5rem;
+            }
+            
+            button {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+            
+            .fullscreen-mode #display {
+                font-size: 2rem;
+                width: 95%;
+            }
+            
+            .input-section, .teleprompter-display {
+                padding: 15px;
+            }
+            
+            .advanced-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Orientation-specific styles */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .container {
+                max-width: 100%;
+                margin: 10px 0;
+            }
+            
+            .input-section {
+                padding: 10px;
+            }
+            
+            textarea {
+                height: 100px;
+            }
+            
+            .teleprompter-display {
+                min-height: 200px;
+                max-height: 250px;
+                padding: 15px;
+            }
+            
+            #display {
+                font-size: 1.8rem;
+            }
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .container {
+                background-color: white;
+                border: 2px solid black;
+            }
+            
+            button {
+                border: 1px solid black;
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+                animation: none !important;
+            }
+            
+            #display {
+                transition: none !important;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .container {
+                background-color: #1a1a1a;
+                color: #f0f0f0;
+            }
+            
+            textarea {
+                background-color: #2d2d2d;
+                color: #f0f0f0;
+                border-color: #444;
+            }
+            
+            label {
+                color: #f0f0f0;
+            }
+        }
+        
+        /* Loading state */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Enhanced Teleprompter</h1>
+            <p class="description">Enter your text and customize the display with advanced options</p>
+        </header>
+        
+        <div class="input-section">
+            <textarea id="text-input" placeholder="Enter your text here...">Welcome to your enhanced teleprompter! Simply enter your text in this box. You can adjust the scrolling speed using the slider below. Try out the new features like mirror mode, text size adjustment, and background colors. Press Start to begin, Pause to stop, and Reset to clear everything. Happy presenting!</textarea>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label for="speed-control">Scroll Speed (words per minute):</label>
+                    <input type="range" id="speed-control" min="10" max="300" value="60">
+                    <div class="current-speed">Current Speed: <span id="speed-value">60</span> WPM</div>
+                </div>
+                
+                <div class="button-group">
+                    <button id="start-btn">Start</button>
+                    <button id="pause-btn">Pause</button>
+                    <button id="reset-btn">Reset</button>
+                    <button id="fullscreen-btn" class="secondary-btn">Fullscreen</button>
+                </div>
+            </div>
+            
+            <div class="advanced-controls">
+                <div class="control-group">
+                    <label for="text-size">Text Size:</label>
+                    <input type="range" id="text-size" min="1" max="5" value="2">
+                </div>
+                
+                <div class="control-group">
+                    <label for="bg-color">Background Color:</label>
+                    <input type="color" id="bg-color" value="#2c3e50">
+                </div>
+                
+                <div class="control-group">
+                    <label for="text-color">Text Color:</label>
+                    <input type="color" id="text-color" value="#ffffff">
+                </div>
+                
+                <div class="control-group">
+                    <label for="text-align">Text Alignment:</label>
+                    <select id="text-align">
+                        <option value="center">Center</option>
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                        <option value="justify">Justify</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="direction">Scroll Direction:</label>
+                    <select id="direction">
+                        <option value="up">Up (Standard)</option>
+                        <option value="down">Down (Reverse)</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="smooth-scroll">
+                        <input type="checkbox" id="smooth-scroll" checked> Smooth Scrolling
+                    </label>
+                    
+                    <label for="mirror-mode" style="margin-top: 10px;">
+                        <input type="checkbox" id="mirror-mode"> Mirror Mode
+                    </label>
+                    
+                    <label for="auto-restart" style="margin-top: 10px;">
+                        <input type="checkbox" id="auto-restart" checked> Auto Restart
+                    </label>
+                </div>
+                
+                <div class="control-group">
+                    <label for="ultra-slow-mode">
+                        <input type="checkbox" id="ultra-slow-mode"> Ultra Slow Mode
+                    </label>
+                    
+                    <label for="line-by-line" style="margin-top: 10px;">
+                        <input type="checkbox" id="line-by-line"> Line-by-Line Scrolling
+                    </label>
+                </div>
+            </div>
+            
+            <div class="shortcuts">
+                Keyboard Shortcuts: Space (Play/Pause) | ↑ (Faster) | ↓ (Slower) | F (Fullscreen) | R (Reset) | Esc (Exit Fullscreen)
+            </div>
+        </div>
+        
+        <div class="teleprompter-display" id="display-container">
+            <div id="display">Your text will appear here...</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+        </div>
+    </div>
+    
+    <button class="exit-fullscreen" id="exit-fullscreen">✕</button>
+    
+    <div class="fullscreen-controls">
+        <button id="fs-start-btn">Start</button>
+        <button id="fs-pause-btn">Pause</button>
+        <button id="fs-slower-btn">Slower</button>
+        <button id="fs-faster-btn">Faster</button>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <footer>
+        <p>Created with ❤️ | Enhanced Teleprompter Tool</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const textInput = document.getElementById('text-input');
+            const speedControl = document.getElementById('speed-control');
+            const speedValue = document.getElementById('speed-value');
+            const startBtn = document.getElementById('start-btn');
+            const pauseBtn = document.getElementById('pause-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const fullscreenBtn = document.getElementById('fullscreen-btn');
+            const exitFullscreenBtn = document.getElementById('exit-fullscreen');
+            const display = document.getElementById('display');
+            const displayContainer = document.getElementById('display-container');
+            const progressBar = document.getElementById('progress');
+            const textSizeControl = document.getElementById('text-size');
+            const bgColorControl = document.getElementById('bg-color');
+            const textColorControl = document.getElementById('text-color');
+            const textAlignControl = document.getElementById('text-align');
+            const directionControl = document.getElementById('direction');
+            const mirrorModeControl = document.getElementById('mirror-mode');
+            const autoRestartControl = document.getElementById('auto-restart');
+            const smoothScrollControl = document.getElementById('smooth-scroll');
+            const ultraSlowModeControl = document.getElementById('ultra-slow-mode');
+            const lineByLineControl = document.getElementById('line-by-line');
+            const fsStartBtn = document.getElementById('fs-start-btn');
+            const fsPauseBtn = document.getElementById('fs-pause-btn');
+            const fsSlowerBtn = document.getElementById('fs-slower-btn');
+            const fsFasterBtn = document.getElementById('fs-faster-btn');
+            const toast = document.getElementById('toast');
+            
+            // State variables
+            let scrollInterval;
+            let isScrolling = false;
+            let currentPosition = 0;
+            let maxPosition = 0;
+            let scrollDirection = 'up';
+            let isFullscreen = false;
+            let animationFrameId = null;
+            let lastTimestamp = 0;
+            let scrollSpeed = 60; // words per minute
+            let lineHeight = 60; // Approximate line height in pixels
+            
+            // Update speed value display
+            speedControl.addEventListener('input', function() {
+                scrollSpeed = parseInt(this.value);
+                speedValue.textContent = scrollSpeed;
+                
+                if (isScrolling) {
+                    pauseScrolling();
+                    startScrolling();
+                }
+            });
+            
+            // Start scrolling
+            startBtn.addEventListener('click', startScrolling);
+            fsStartBtn.addEventListener('click', startScrolling);
+            
+            // Pause scrolling
+            pauseBtn.addEventListener('click', pauseScrolling);
+            fsPauseBtn.addEventListener('click', pauseScrolling);
+            
+            // Adjust speed in fullscreen
+            fsFasterBtn.addEventListener('click', function() {
+                if (scrollSpeed < 300) {
+                    scrollSpeed += ultraSlowModeControl.checked ? 1 : 10;
+                    speedControl.value = scrollSpeed;
+                    speedValue.textContent = scrollSpeed;
+                    if (isScrolling) {
+                        pauseScrolling();
+                        startScrolling();
+                    }
+                    showToast('Speed increased to ' + scrollSpeed + ' WPM');
+                }
+            });
+            
+            fsSlowerBtn.addEventListener('click', function() {
+                if (scrollSpeed > (ultraSlowModeControl.checked ? 1 : 10)) {
+                    scrollSpeed -= ultraSlowModeControl.checked ? 1 : 10;
+                    speedControl.value = scrollSpeed;
+                    speedValue.textContent = scrollSpeed;
+                    if (isScrolling) {
+                        pauseScrolling();
+                        startScrolling();
+                    }
+                    showToast('Speed decreased to ' + scrollSpeed + ' WPM');
+                }
+            });
+            
+            // Reset everything
+            resetBtn.addEventListener('click', function() {
+                pauseScrolling();
+                display.textContent = 'Your text will appear here...';
+                textInput.value = '';
+                currentPosition = 0;
+                display.style.transform = 'translateY(0)';
+                updateProgress();
+            });
+            
+            // Fullscreen mode
+            fullscreenBtn.addEventListener('click', enterFullscreen);
+            exitFullscreenBtn.addEventListener('click', exitFullscreen);
+            
+            // Advanced controls
+            textSizeControl.addEventListener('input', function() {
+                const sizes = ['1.5rem', '1.8rem', '2.2rem', '2.8rem', '3.5rem'];
+                display.style.fontSize = sizes[this.value - 1];
+                // Update line height based on font size
+                lineHeight = (this.value * 30) + 10;
+            });
+            
+            bgColorControl.addEventListener('input', function() {
+                displayContainer.style.backgroundColor = this.value;
+            });
+            
+            textColorControl.addEventListener('input', function() {
+                display.style.color = this.value;
+            });
+            
+            textAlignControl.addEventListener('change', function() {
+                display.style.textAlign = this.value;
+            });
+            
+            directionControl.addEventListener('change', function() {
+                scrollDirection = this.value;
+                if (isScrolling) {
+                    pauseScrolling();
+                    startScrolling();
+                }
+            });
+            
+            mirrorModeControl.addEventListener('change', function() {
+                if (this.checked) {
+                    display.style.transform = 'scaleX(-1)';
+                } else {
+                    display.style.transform = 'scaleX(1)';
+                }
+            });
+            
+            ultraSlowModeControl.addEventListener('change', function() {
+                if (this.checked) {
+                    speedControl.min = 1;
+                    speedControl.max = 50;
+                    if (scrollSpeed > 50) scrollSpeed = 30;
+                    speedControl.value = scrollSpeed;
+                    speedValue.textContent = scrollSpeed;
+                    showToast('Ultra Slow Mode enabled');
+                } else {
+                    speedControl.min = 10;
+                    speedControl.max = 300;
+                    showToast('Ultra Slow Mode disabled');
+                }
+            });
+            
+            // Handle fullscreen change events
+            document.addEventListener('fullscreenchange', function() {
+                if (!document.fullscreenElement) {
+                    exitFullscreen();
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    if (isScrolling) {
+                        pauseScrolling();
+                    } else {
+                        startScrolling();
+                    }
+                }
+                
+                if (e.code === 'KeyF') {
+                    e.preventDefault();
+                    if (isFullscreen) {
+                        exitFullscreen();
+                    } else {
+                        enterFullscreen();
+                    }
+                }
+                
+                if (e.code === 'Escape' && isFullscreen) {
+                    exitFullscreen();
+                }
+                
+                if (e.code === 'KeyR') {
+                    e.preventDefault();
+                    resetBtn.click();
+                }
+                
+                if (e.code === 'ArrowUp') {
+                    e.preventDefault();
+                    if (scrollSpeed < (ultraSlowModeControl.checked ? 50 : 300)) {
+                        scrollSpeed += ultraSlowModeControl.checked ? 1 : 10;
+                        speedControl.value = scrollSpeed;
+                        speedValue.textContent = scrollSpeed;
+                        if (isScrolling) {
+                            pauseScrolling();
+                            startScrolling();
+                        }
+                        showToast('Speed increased to ' + scrollSpeed + ' WPM');
+                    }
+                }
+                
+                if (e.code === 'ArrowDown') {
+                    e.preventDefault();
+                    if (scrollSpeed > (ultraSlowModeControl.checked ? 1 : 10)) {
+                        scrollSpeed -= ultraSlowModeControl.checked ? 1 : 10;
+                        speedControl.value = scrollSpeed;
+                        speedValue.textContent = scrollSpeed;
+                        if (isScrolling) {
+                            pauseScrolling();
+                            startScrolling();
+                        }
+                        showToast('Speed decreased to ' + scrollSpeed + ' WPM');
+                    }
+                }
+            });
+            
+            // Touch events for mobile
+            let touchStartY = 0;
+            displayContainer.addEventListener('touchstart', function(e) {
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+            
+            displayContainer.addEventListener('touchmove', function(e) {
+                if (!isScrolling) return;
+                
+                const touchY = e.touches[0].clientY;
+                const diff = touchStartY - touchY;
+                
+                if (Math.abs(diff) > 10) {
+                    if (diff > 0) {
+                        // Swipe up - go faster
+                        if (scrollSpeed < (ultraSlowModeControl.checked ? 50 : 300)) {
+                            scrollSpeed += ultraSlowModeControl.checked ? 1 : 10;
+                            speedControl.value = scrollSpeed;
+                            speedValue.textContent = scrollSpeed;
+                            if (isScrolling) {
+                                pauseScrolling();
+                                startScrolling();
+                            }
+                            showToast('Speed increased to ' + scrollSpeed + ' WPM');
+                        }
+                    } else {
+                        // Swipe down - go slower
+                        if (scrollSpeed > (ultraSlowModeControl.checked ? 1 : 10)) {
+                            scrollSpeed -= ultraSlowModeControl.checked ? 1 : 10;
+                            speedControl.value = scrollSpeed;
+                            speedValue.textContent = scrollSpeed;
+                            if (isScrolling) {
+                                pauseScrolling();
+                                startScrolling();
+                            }
+                            showToast('Speed decreased to ' + scrollSpeed + ' WPM');
+                        }
+                    }
+                    touchStartY = touchY;
+                }
+            }, { passive: true });
+            
+            // Double tap to play/pause on mobile
+            let lastTap = 0;
+            displayContainer.addEventListener('touchend', function(e) {
+                const currentTime = new Date().getTime();
+                const tapLength = currentTime - lastTap;
+                
+                if (tapLength < 300 && tapLength > 0) {
+                    // Double tap detected
+                    e.preventDefault();
+                    if (isScrolling) {
+                        pauseScrolling();
+                    } else {
+                        startScrolling();
+                    }
+                }
+                lastTap = currentTime;
+            });
+            
+            // Functions
+            function startScrolling() {
+                if (textInput.value.trim() === '') {
+                    showToast('Please enter some text first');
+                    return;
+                }
+                
+                isScrolling = true;
+                display.textContent = textInput.value;
+                maxPosition = display.scrollHeight;
+                
+                // Calculate scroll speed based on mode
+                let pixelsPerSecond;
+                
+                if (ultraSlowModeControl.checked) {
+                    // Ultra slow mode - much slower scrolling
+                    pixelsPerSecond = scrollSpeed / 10; // Very slow speed
+                } else if (lineByLineControl.checked) {
+                    // Line-by-line mode - scroll by lines
+                    pixelsPerSecond = (scrollSpeed * lineHeight) / 60; // Lines per minute to pixels per second
+                } else {
+                    // Normal mode - words per minute
+                    const avgWordWidth = 30; // Approximate pixels per word including space
+                    pixelsPerSecond = (scrollSpeed * avgWordWidth) / 60;
+                }
+                
+                if (smoothScrollControl.checked) {
+                    // Use requestAnimationFrame for smooth scrolling
+                    lastTimestamp = performance.now();
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = requestAnimationFrame(smoothScroll);
+                } else {
+                    // Use interval for traditional scrolling
+                    clearInterval(scrollInterval);
+                    const intervalTime = 1000 / (pixelsPerSecond || 1); // Prevent division by zero
+                    
+                    scrollInterval = setInterval(function() {
+                        if (lineByLineControl.checked) {
+                            // Line-by-line scrolling
+                            if (scrollDirection === 'up') {
+                                currentPosition += 1;
+                                if (currentPosition > maxPosition + 300) {
+                                    if (autoRestartControl.checked) {
+                                        currentPosition = -300;
+                                    } else {
+                                        pauseScrolling();
+                                        return;
+                                    }
+                                }
+                            } else {
+                                currentPosition -= 1;
+                                if (currentPosition < -300) {
+                                    if (autoRestartControl.checked) {
+                                        currentPosition = maxPosition + 300;
+                                    } else {
+                                        pauseScrolling();
+                                        return;
+                                    }
+                                }
+                            }
+                        } else {
+                            // Standard scrolling
+                            if (scrollDirection === 'up') {
+                                currentPosition += ultraSlowModeControl.checked ? 0.2 : 1;
+                                if (currentPosition > maxPosition + 300) {
+                                    if (autoRestartControl.checked) {
+                                        currentPosition = -300;
+                                    } else {
+                                        pauseScrolling();
+                                        return;
+                                    }
+                                }
+                            } else {
+                                currentPosition -= ultraSlowModeControl.checked ? 0.2 : 1;
+                                if (currentPosition < -300) {
+                                    if (autoRestartControl.checked) {
+                                        currentPosition = maxPosition + 300;
+                                    } else {
+                                        pauseScrolling();
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        display.style.transform = `translateY(-${currentPosition}px)`;
+                        updateProgress();
+                    }, intervalTime);
+                }
+            }
+            
+            function smoothScroll(timestamp) {
+                if (!isScrolling) return;
+                
+                const elapsed = timestamp - lastTimestamp;
+                lastTimestamp = timestamp;
+                
+                // Calculate scroll speed based on mode
+                let pixelsPerMillisecond;
+                
+                if (ultraSlowModeControl.checked) {
+                    // Ultra slow mode - much slower scrolling
+                    pixelsPerMillisecond = scrollSpeed / 10000; // Very slow speed
+                } else if (lineByLineControl.checked) {
+                    // Line-by-line mode - scroll by lines
+                    pixelsPerMillisecond = (scrollSpeed * lineHeight) / 60000; // Lines per minute to pixels per millisecond
+                } else {
+                    // Normal mode - words per minute
+                    const avgWordWidth = 30;
+                    pixelsPerMillisecond = (scrollSpeed * avgWordWidth) / 60000;
+                }
+                
+                const delta = pixelsPerMillisecond * elapsed;
+                
+                if (scrollDirection === 'up') {
+                    currentPosition += delta;
+                    if (currentPosition > maxPosition + 300) {
+                        if (autoRestartControl.checked) {
+                            currentPosition = -300;
+                        } else {
+                            pauseScrolling();
+                            return;
+                        }
+                    }
+                } else {
+                    currentPosition -= delta;
+                    if (currentPosition < -300) {
+                        if (autoRestartControl.checked) {
+                            currentPosition = maxPosition + 300;
+                        } else {
+                            pauseScrolling();
+                            return;
+                        }
+                    }
+                }
+                
+                display.style.transform = `translateY(-${currentPosition}px)`;
+                updateProgress();
+                
+                animationFrameId = requestAnimationFrame(smoothScroll);
+            }
+            
+            function pauseScrolling() {
+                isScrolling = false;
+                clearInterval(scrollInterval);
+                cancelAnimationFrame(animationFrameId);
+            }
+            
+            function updateProgress() {
+                const progress = (currentPosition / maxPosition) * 100;
+                progressBar.style.width = Math.min(100, Math.max(0, progress)) + '%';
+            }
+            
+            function enterFullscreen() {
+                isFullscreen = true;
+                displayContainer.classList.add('fullscreen-mode');
+                
+                if (displayContainer.requestFullscreen) {
+                    displayContainer.requestFullscreen().catch(err => {
+                        console.error('Error attempting to enable fullscreen:', err);
+                    });
+                } else if (displayContainer.webkitRequestFullscreen) {
+                    displayContainer.webkitRequestFullscreen();
+                } else if (displayContainer.msRequestFullscreen) {
+                    displayContainer.msRequestFullscreen();
+                }
+                
+                // Start scrolling automatically when entering fullscreen
+                if (textInput.value.trim() !== '' && !isScrolling) {
+                    startScrolling();
+                }
+                
+                showToast('Fullscreen mode - Press Esc to exit');
+            }
+            
+            function exitFullscreen() {
+                isFullscreen = false;
+                displayContainer.classList.remove('fullscreen-mode');
+                
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+            
+            function showToast(message) {
+                toast.textContent = message;
+                toast.classList.add('show');
+                
+                setTimeout(function() {
+                    toast.classList.remove('show');
+                }, 2000);
+            }
+            
+            // Initialize with example text
+            display.textContent = textInput.value;
+            
+            // Set initial text size
+            textSizeControl.dispatchEvent(new Event('input'));
+            
+            // Initialize speed display
+            scrollSpeed = parseInt(speedControl.value);
+            speedValue.textContent = scrollSpeed;
+        });
+    </script>
+</body>
+</html>
