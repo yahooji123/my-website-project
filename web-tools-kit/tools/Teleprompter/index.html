@@ -37,6 +37,7 @@
             color: white;
             padding: 20px;
             text-align: center;
+            position: relative;
         }
         
         h1 {
@@ -52,6 +53,18 @@
         .input-section {
             padding: 20px;
             border-bottom: 1px solid #eee;
+        }
+        
+        .text-tools {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .text-tools button {
+            padding: 8px 12px;
+            font-size: 0.9rem;
         }
         
         textarea {
@@ -235,6 +248,17 @@
             text-align: center;
         }
         
+        .timer-display {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
         footer {
             text-align: center;
             margin-top: 20px;
@@ -311,6 +335,100 @@
         
         .fullscreen-mode .exit-fullscreen {
             display: flex;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .preset-list {
+            list-style: none;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        
+        .preset-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .preset-item:last-child {
+            border-bottom: none;
+        }
+        
+        .preset-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .preset-btn {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+        
+        /* Remote control info */
+        .remote-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-family: monospace;
+            word-break: break-all;
         }
         
         /* Responsive improvements */
@@ -468,6 +586,35 @@
         .toast.show {
             opacity: 1;
         }
+        
+        /* Text formatting toolbar */
+        .format-toolbar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .format-btn {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            background: #f1f2f6;
+            border: 1px solid #ddd;
+        }
+        
+        /* Markers */
+        .marker-nav {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .marker-btn {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            background: #dfe4ea;
+        }
     </style>
 </head>
 <body>
@@ -475,10 +622,39 @@
         <header>
             <h1>Enhanced Teleprompter</h1>
             <p class="description">Enter your text and customize the display with advanced options</p>
+            <button id="presets-btn" class="secondary-btn" style="position: absolute; top: 20px; right: 20px; padding: 8px 15px;">Presets</button>
         </header>
         
         <div class="input-section">
-            <textarea id="text-input" placeholder="Enter your text here...">Welcome to your enhanced teleprompter! Simply enter your text in this box. You can adjust the scrolling speed using the slider below. Try out the new features like mirror mode, text size adjustment, and background colors. Press Start to begin, Pause to stop, and Reset to clear everything. Happy presenting!</textarea>
+            <div class="text-tools">
+                <button id="import-btn" class="secondary-btn">Import Text</button>
+                <button id="export-btn" class="secondary-btn">Export Text</button>
+                <button id="remote-btn" class="secondary-btn">Remote Control</button>
+                <button id="voice-btn" class="secondary-btn">Voice Control</button>
+                <button id="timer-btn" class="secondary-btn">Set Timer</button>
+            </div>
+            
+            <div class="format-toolbar">
+                <button class="format-btn" data-tag="h2">Heading</button>
+                <button class="format-btn" data-tag="strong">Bold</button>
+                <button class="format-btn" data-tag="em">Italic</button>
+                <button class="format-btn" data-tag="mark">Highlight</button>
+                <button class="format-btn" data-cmd="insertMarker">Add Marker</button>
+            </div>
+            
+            <textarea id="text-input" placeholder="Enter your text here...">Welcome to your enhanced teleprompter! Simply enter your text in this box. You can adjust the scrolling speed using the slider below. Try out the new features like mirror mode, text size adjustment, and background colors. Press Start to begin, Pause to stop, and Reset to clear everything. Happy presenting!
+
+::marker::Section 1
+This is the first section of your presentation.
+
+::marker::Section 2
+This is the second section with important points.</textarea>
+            
+            <div class="marker-nav">
+                <button class="marker-btn" data-marker="0">Start</button>
+                <button class="marker-btn" data-marker="1">Section 1</button>
+                <button class="marker-btn" data-marker="2">Section 2</button>
+            </div>
             
             <div class="controls">
                 <div class="control-group">
@@ -560,6 +736,7 @@
         </div>
         
         <div class="teleprompter-display" id="display-container">
+            <div class="timer-display" id="timer">00:00</div>
             <div id="display">Your text will appear here...</div>
             <div class="progress-bar">
                 <div class="progress-fill" id="progress"></div>
@@ -574,6 +751,83 @@
         <button id="fs-pause-btn">Pause</button>
         <button id="fs-slower-btn">Slower</button>
         <button id="fs-faster-btn">Faster</button>
+        <button id="fs-next-marker">Next Marker</button>
+        <button id="fs-prev-marker">Prev Marker</button>
+    </div>
+    
+    <!-- Modals -->
+    <div class="modal" id="presets-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Manage Presets</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Save or load your teleprompter settings:</p>
+                <input type="text" id="preset-name" placeholder="Preset name" style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px;">
+                <div class="button-group">
+                    <button id="save-preset" class="secondary-btn">Save Current</button>
+                    <button id="load-preset" class="secondary-btn">Load Selected</button>
+                    <button id="delete-preset" class="secondary-btn" style="background: #e74c3c;">Delete</button>
+                </div>
+                <h3 style="margin: 15px 0 10px 0;">Saved Presets</h3>
+                <ul class="preset-list" id="preset-list">
+                    <li class="preset-item">
+                        <span>Default</span>
+                        <div class="preset-actions">
+                            <button class="preset-btn secondary-btn" data-name="Default">Load</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="close-modal secondary-btn">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="remote-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Remote Control</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>To control this teleprompter from another device:</p>
+                <ol style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>Ensure both devices are on the same network</li>
+                    <li>Open this URL on your mobile device:</li>
+                </ol>
+                <div class="remote-info" id="remote-url">Calculating...</div>
+                <p style="margin-top: 15px;">Scan the QR code below with your mobile device:</p>
+                <div id="qrcode" style="text-align: center; margin: 15px 0;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="close-modal secondary-btn">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="timer-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Set Timer</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Set a countdown timer for your presentation:</p>
+                <div style="display: flex; gap: 10px; margin: 15px 0;">
+                    <input type="number" id="timer-minutes" min="0" max="59" value="5" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <span style="line-height: 40px;">Minutes</span>
+                    <input type="number" id="timer-seconds" min="0" max="59" value="0" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <span style="line-height: 40px;">Seconds</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="start-timer" class="secondary-btn">Start Timer</button>
+                <button class="close-modal secondary-btn">Cancel</button>
+            </div>
+        </div>
     </div>
     
     <div class="toast" id="toast"></div>
@@ -610,7 +864,35 @@
             const fsPauseBtn = document.getElementById('fs-pause-btn');
             const fsSlowerBtn = document.getElementById('fs-slower-btn');
             const fsFasterBtn = document.getElementById('fs-faster-btn');
+            const fsNextMarker = document.getElementById('fs-next-marker');
+            const fsPrevMarker = document.getElementById('fs-prev-marker');
             const toast = document.getElementById('toast');
+            const timerDisplay = document.getElementById('timer');
+            
+            // New elements for enhanced features
+            const importBtn = document.getElementById('import-btn');
+            const exportBtn = document.getElementById('export-btn');
+            const remoteBtn = document.getElementById('remote-btn');
+            const voiceBtn = document.getElementById('voice-btn');
+            const timerBtn = document.getElementById('timer-btn');
+            const presetsBtn = document.getElementById('presets-btn');
+            const formatBtns = document.querySelectorAll('.format-btn');
+            const markerBtns = document.querySelectorAll('.marker-btn');
+            
+            // Modal elements
+            const presetsModal = document.getElementById('presets-modal');
+            const remoteModal = document.getElementById('remote-modal');
+            const timerModal = document.getElementById('timer-modal');
+            const closeModalBtns = document.querySelectorAll('.close-modal');
+            const presetNameInput = document.getElementById('preset-name');
+            const savePresetBtn = document.getElementById('save-preset');
+            const loadPresetBtn = document.getElementById('load-preset');
+            const deletePresetBtn = document.getElementById('delete-preset');
+            const presetList = document.getElementById('preset-list');
+            const startTimerBtn = document.getElementById('start-timer');
+            const timerMinutes = document.getElementById('timer-minutes');
+            const timerSeconds = document.getElementById('timer-seconds');
+            const remoteUrl = document.getElementById('remote-url');
             
             // State variables
             let scrollInterval;
@@ -623,157 +905,34 @@
             let lastTimestamp = 0;
             let scrollSpeed = 60; // words per minute
             let lineHeight = 60; // Approximate line height in pixels
+            let markers = []; // Array to store marker positions
+            let timerInterval = null;
+            let timerEndTime = null;
             
-            // Update speed value display
-            speedControl.addEventListener('input', function() {
-                scrollSpeed = parseInt(this.value);
-                speedValue.textContent = scrollSpeed;
-                
-                if (isScrolling) {
-                    pauseScrolling();
-                    startScrolling();
-                }
-            });
-            
-            // Start scrolling
-            startBtn.addEventListener('click', startScrolling);
-            fsStartBtn.addEventListener('click', startScrolling);
-            
-            // Pause scrolling
-            pauseBtn.addEventListener('click', pauseScrolling);
-            fsPauseBtn.addEventListener('click', pauseScrolling);
-            
-            // Adjust speed in fullscreen
-            fsFasterBtn.addEventListener('click', function() {
-                if (scrollSpeed < 300) {
-                    scrollSpeed += ultraSlowModeControl.checked ? 1 : 10;
-                    speedControl.value = scrollSpeed;
+            // Initialize
+            function init() {
+                // Update speed value display
+                speedControl.addEventListener('input', function() {
+                    scrollSpeed = parseInt(this.value);
                     speedValue.textContent = scrollSpeed;
+                    
                     if (isScrolling) {
                         pauseScrolling();
                         startScrolling();
                     }
-                    showToast('Speed increased to ' + scrollSpeed + ' WPM');
-                }
-            });
-            
-            fsSlowerBtn.addEventListener('click', function() {
-                if (scrollSpeed > (ultraSlowModeControl.checked ? 1 : 10)) {
-                    scrollSpeed -= ultraSlowModeControl.checked ? 1 : 10;
-                    speedControl.value = scrollSpeed;
-                    speedValue.textContent = scrollSpeed;
-                    if (isScrolling) {
-                        pauseScrolling();
-                        startScrolling();
-                    }
-                    showToast('Speed decreased to ' + scrollSpeed + ' WPM');
-                }
-            });
-            
-            // Reset everything
-            resetBtn.addEventListener('click', function() {
-                pauseScrolling();
-                display.textContent = 'Your text will appear here...';
-                textInput.value = '';
-                currentPosition = 0;
-                display.style.transform = 'translateY(0)';
-                updateProgress();
-            });
-            
-            // Fullscreen mode
-            fullscreenBtn.addEventListener('click', enterFullscreen);
-            exitFullscreenBtn.addEventListener('click', exitFullscreen);
-            
-            // Advanced controls
-            textSizeControl.addEventListener('input', function() {
-                const sizes = ['1.5rem', '1.8rem', '2.2rem', '2.8rem', '3.5rem'];
-                display.style.fontSize = sizes[this.value - 1];
-                // Update line height based on font size
-                lineHeight = (this.value * 30) + 10;
-            });
-            
-            bgColorControl.addEventListener('input', function() {
-                displayContainer.style.backgroundColor = this.value;
-            });
-            
-            textColorControl.addEventListener('input', function() {
-                display.style.color = this.value;
-            });
-            
-            textAlignControl.addEventListener('change', function() {
-                display.style.textAlign = this.value;
-            });
-            
-            directionControl.addEventListener('change', function() {
-                scrollDirection = this.value;
-                if (isScrolling) {
-                    pauseScrolling();
-                    startScrolling();
-                }
-            });
-            
-            mirrorModeControl.addEventListener('change', function() {
-                if (this.checked) {
-                    display.style.transform = 'scaleX(-1)';
-                } else {
-                    display.style.transform = 'scaleX(1)';
-                }
-            });
-            
-            ultraSlowModeControl.addEventListener('change', function() {
-                if (this.checked) {
-                    speedControl.min = 1;
-                    speedControl.max = 50;
-                    if (scrollSpeed > 50) scrollSpeed = 30;
-                    speedControl.value = scrollSpeed;
-                    speedValue.textContent = scrollSpeed;
-                    showToast('Ultra Slow Mode enabled');
-                } else {
-                    speedControl.min = 10;
-                    speedControl.max = 300;
-                    showToast('Ultra Slow Mode disabled');
-                }
-            });
-            
-            // Handle fullscreen change events
-            document.addEventListener('fullscreenchange', function() {
-                if (!document.fullscreenElement) {
-                    exitFullscreen();
-                }
-            });
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                if (e.code === 'Space') {
-                    e.preventDefault();
-                    if (isScrolling) {
-                        pauseScrolling();
-                    } else {
-                        startScrolling();
-                    }
-                }
+                });
                 
-                if (e.code === 'KeyF') {
-                    e.preventDefault();
-                    if (isFullscreen) {
-                        exitFullscreen();
-                    } else {
-                        enterFullscreen();
-                    }
-                }
+                // Start scrolling
+                startBtn.addEventListener('click', startScrolling);
+                fsStartBtn.addEventListener('click', startScrolling);
                 
-                if (e.code === 'Escape' && isFullscreen) {
-                    exitFullscreen();
-                }
+                // Pause scrolling
+                pauseBtn.addEventListener('click', pauseScrolling);
+                fsPauseBtn.addEventListener('click', pauseScrolling);
                 
-                if (e.code === 'KeyR') {
-                    e.preventDefault();
-                    resetBtn.click();
-                }
-                
-                if (e.code === 'ArrowUp') {
-                    e.preventDefault();
-                    if (scrollSpeed < (ultraSlowModeControl.checked ? 50 : 300)) {
+                // Adjust speed in fullscreen
+                fsFasterBtn.addEventListener('click', function() {
+                    if (scrollSpeed < 300) {
                         scrollSpeed += ultraSlowModeControl.checked ? 1 : 10;
                         speedControl.value = scrollSpeed;
                         speedValue.textContent = scrollSpeed;
@@ -783,10 +942,9 @@
                         }
                         showToast('Speed increased to ' + scrollSpeed + ' WPM');
                     }
-                }
+                });
                 
-                if (e.code === 'ArrowDown') {
-                    e.preventDefault();
+                fsSlowerBtn.addEventListener('click', function() {
                     if (scrollSpeed > (ultraSlowModeControl.checked ? 1 : 10)) {
                         scrollSpeed -= ultraSlowModeControl.checked ? 1 : 10;
                         speedControl.value = scrollSpeed;
@@ -797,24 +955,112 @@
                         }
                         showToast('Speed decreased to ' + scrollSpeed + ' WPM');
                     }
-                }
-            });
-            
-            // Touch events for mobile
-            let touchStartY = 0;
-            displayContainer.addEventListener('touchstart', function(e) {
-                touchStartY = e.touches[0].clientY;
-            }, { passive: true });
-            
-            displayContainer.addEventListener('touchmove', function(e) {
-                if (!isScrolling) return;
+                });
                 
-                const touchY = e.touches[0].clientY;
-                const diff = touchStartY - touchY;
+                // Reset everything
+                resetBtn.addEventListener('click', function() {
+                    pauseScrolling();
+                    display.textContent = 'Your text will appear here...';
+                    textInput.value = '';
+                    currentPosition = 0;
+                    display.style.transform = 'translateY(0)';
+                    updateProgress();
+                    resetTimer();
+                });
                 
-                if (Math.abs(diff) > 10) {
-                    if (diff > 0) {
-                        // Swipe up - go faster
+                // Fullscreen mode
+                fullscreenBtn.addEventListener('click', enterFullscreen);
+                exitFullscreenBtn.addEventListener('click', exitFullscreen);
+                
+                // Advanced controls
+                textSizeControl.addEventListener('input', function() {
+                    const sizes = ['1.5rem', '1.8rem', '2.2rem', '2.8rem', '3.5rem'];
+                    display.style.fontSize = sizes[this.value - 1];
+                    // Update line height based on font size
+                    lineHeight = (this.value * 30) + 10;
+                });
+                
+                bgColorControl.addEventListener('input', function() {
+                    displayContainer.style.backgroundColor = this.value;
+                });
+                
+                textColorControl.addEventListener('input', function() {
+                    display.style.color = this.value;
+                });
+                
+                textAlignControl.addEventListener('change', function() {
+                    display.style.textAlign = this.value;
+                });
+                
+                directionControl.addEventListener('change', function() {
+                    scrollDirection = this.value;
+                    if (isScrolling) {
+                        pauseScrolling();
+                        startScrolling();
+                    }
+                });
+                
+                mirrorModeControl.addEventListener('change', function() {
+                    if (this.checked) {
+                        display.style.transform = 'scaleX(-1)';
+                    } else {
+                        display.style.transform = 'scaleX(1)';
+                    }
+                });
+                
+                ultraSlowModeControl.addEventListener('change', function() {
+                    if (this.checked) {
+                        speedControl.min = 1;
+                        speedControl.max = 50;
+                        if (scrollSpeed > 50) scrollSpeed = 30;
+                        speedControl.value = scrollSpeed;
+                        speedValue.textContent = scrollSpeed;
+                        showToast('Ultra Slow Mode enabled');
+                    } else {
+                        speedControl.min = 10;
+                        speedControl.max = 300;
+                        showToast('Ultra Slow Mode disabled');
+                    }
+                });
+                
+                // Handle fullscreen change events
+                document.addEventListener('fullscreenchange', function() {
+                    if (!document.fullscreenElement) {
+                        exitFullscreen();
+                    }
+                });
+                
+                // Keyboard shortcuts
+                document.addEventListener('keydown', function(e) {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        if (isScrolling) {
+                            pauseScrolling();
+                        } else {
+                            startScrolling();
+                        }
+                    }
+                    
+                    if (e.code === 'KeyF') {
+                        e.preventDefault();
+                        if (isFullscreen) {
+                            exitFullscreen();
+                        } else {
+                            enterFullscreen();
+                        }
+                    }
+                    
+                    if (e.code === 'Escape' && isFullscreen) {
+                        exitFullscreen();
+                    }
+                    
+                    if (e.code === 'KeyR') {
+                        e.preventDefault();
+                        resetBtn.click();
+                    }
+                    
+                    if (e.code === 'ArrowUp') {
+                        e.preventDefault();
                         if (scrollSpeed < (ultraSlowModeControl.checked ? 50 : 300)) {
                             scrollSpeed += ultraSlowModeControl.checked ? 1 : 10;
                             speedControl.value = scrollSpeed;
@@ -825,8 +1071,10 @@
                             }
                             showToast('Speed increased to ' + scrollSpeed + ' WPM');
                         }
-                    } else {
-                        // Swipe down - go slower
+                    }
+                    
+                    if (e.code === 'ArrowDown') {
+                        e.preventDefault();
                         if (scrollSpeed > (ultraSlowModeControl.checked ? 1 : 10)) {
                             scrollSpeed -= ultraSlowModeControl.checked ? 1 : 10;
                             speedControl.value = scrollSpeed;
@@ -838,27 +1086,330 @@
                             showToast('Speed decreased to ' + scrollSpeed + ' WPM');
                         }
                     }
-                    touchStartY = touchY;
-                }
-            }, { passive: true });
-            
-            // Double tap to play/pause on mobile
-            let lastTap = 0;
-            displayContainer.addEventListener('touchend', function(e) {
-                const currentTime = new Date().getTime();
-                const tapLength = currentTime - lastTap;
-                
-                if (tapLength < 300 && tapLength > 0) {
-                    // Double tap detected
-                    e.preventDefault();
-                    if (isScrolling) {
-                        pauseScrolling();
-                    } else {
-                        startScrolling();
+                    
+                    // Marker navigation with number keys
+                    if (e.code >= 'Digit1' && e.code <= 'Digit9' && markers.length > 0) {
+                        const markerIndex = parseInt(e.code.replace('Digit', '')) - 1;
+                        if (markerIndex < markers.length) {
+                            jumpToMarker(markerIndex);
+                        }
                     }
-                }
-                lastTap = currentTime;
-            });
+                });
+                
+                // Touch events for mobile
+                let touchStartY = 0;
+                displayContainer.addEventListener('touchstart', function(e) {
+                    touchStartY = e.touches[0].clientY;
+                }, { passive: true });
+                
+                displayContainer.addEventListener('touchmove', function(e) {
+                    if (!isScrolling) return;
+                    
+                    const touchY = e.touches[0].clientY;
+                    const diff = touchStartY - touchY;
+                    
+                    if (Math.abs(diff) > 10) {
+                        if (diff > 0) {
+                            // Swipe up - go faster
+                            if (scrollSpeed < (ultraSlowModeControl.checked ? 50 : 300)) {
+                                scrollSpeed += ultraSlowModeControl.checked ? 1 : 10;
+                                speedControl.value = scrollSpeed;
+                                speedValue.textContent = scrollSpeed;
+                                if (isScrolling) {
+                                    pauseScrolling();
+                                    startScrolling();
+                                }
+                                showToast('Speed increased to ' + scrollSpeed + ' WPM');
+                            }
+                        } else {
+                            // Swipe down - go slower
+                            if (scrollSpeed > (ultraSlowModeControl.checked ? 1 : 10)) {
+                                scrollSpeed -= ultraSlowModeControl.checked ? 1 : 10;
+                                speedControl.value = scrollSpeed;
+                                speedValue.textContent = scrollSpeed;
+                                if (isScrolling) {
+                                    pauseScrolling();
+                                    startScrolling();
+                                }
+                                showToast('Speed decreased to ' + scrollSpeed + ' WPM');
+                            }
+                        }
+                        touchStartY = touchY;
+                    }
+                }, { passive: true });
+                
+                // Double tap to play/pause on mobile
+                let lastTap = 0;
+                displayContainer.addEventListener('touchend', function(e) {
+                    const currentTime = new Date().getTime();
+                    const tapLength = currentTime - lastTap;
+                    
+                    if (tapLength < 300 && tapLength > 0) {
+                        // Double tap detected
+                        e.preventDefault();
+                        if (isScrolling) {
+                            pauseScrolling();
+                        } else {
+                            startScrolling();
+                        }
+                    }
+                    lastTap = currentTime;
+                });
+                
+                // New feature: Import text from file
+                importBtn.addEventListener('click', function() {
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = '.txt,.text';
+                    fileInput.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                textInput.value = e.target.result;
+                                display.textContent = textInput.value;
+                                showToast('Text imported successfully');
+                            };
+                            reader.readAsText(file);
+                        }
+                    });
+                    fileInput.click();
+                });
+                
+                // New feature: Export text to file
+                exportBtn.addEventListener('click', function() {
+                    if (textInput.value.trim() === '') {
+                        showToast('No text to export');
+                        return;
+                    }
+                    
+                    const blob = new Blob([textInput.value], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'teleprompter-script.txt';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showToast('Text exported successfully');
+                });
+                
+                // New feature: Remote control modal
+                remoteBtn.addEventListener('click', function() {
+                    // In a real implementation, this would generate a proper URL
+                    remoteUrl.textContent = window.location.href;
+                    // QR code generation would go here in a real implementation
+                    openModal(remoteModal);
+                });
+                
+                // New feature: Voice control
+                voiceBtn.addEventListener('click', function() {
+                    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                        showToast('Voice commands: "Start", "Stop", "Faster", "Slower"');
+                    } else {
+                        showToast('Speech recognition not supported in your browser');
+                    }
+                });
+                
+                // New feature: Timer modal
+                timerBtn.addEventListener('click', function() {
+                    openModal(timerModal);
+                });
+                
+                // New feature: Presets modal
+                presetsBtn.addEventListener('click', function() {
+                    openModal(presetsModal);
+                });
+                
+                // New feature: Text formatting
+                formatBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const tag = this.dataset.tag;
+                        const cmd = this.dataset.cmd;
+                        
+                        if (cmd === 'insertMarker') {
+                            insertTextAtCursor('::marker::New Section');
+                            return;
+                        }
+                        
+                        const start = textInput.selectionStart;
+                        const end = textInput.selectionEnd;
+                        const selectedText = textInput.value.substring(start, end);
+                        
+                        if (selectedText) {
+                            let newText;
+                            if (tag === 'h2') {
+                                newText = `\n## ${selectedText}\n`;
+                            } else {
+                                newText = `<${tag}>${selectedText}</${tag}>`;
+                            }
+                            
+                            textInput.setRangeText(newText, start, end, 'end');
+                            textInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    });
+                });
+                
+                // New feature: Marker navigation
+                markerBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const markerIndex = parseInt(this.dataset.marker);
+                        jumpToMarker(markerIndex);
+                    });
+                });
+                
+                fsNextMarker.addEventListener('click', function() {
+                    if (markers.length > 0) {
+                        const currentMarker = getCurrentMarker();
+                        const nextMarker = currentMarker < markers.length - 1 ? currentMarker + 1 : 0;
+                        jumpToMarker(nextMarker);
+                    }
+                });
+                
+                fsPrevMarker.addEventListener('click', function() {
+                    if (markers.length > 0) {
+                        const currentMarker = getCurrentMarker();
+                        const prevMarker = currentMarker > 0 ? currentMarker - 1 : markers.length - 1;
+                        jumpToMarker(prevMarker);
+                    }
+                });
+                
+                // Modal close buttons
+                closeModalBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        closeModals();
+                    });
+                });
+                
+                // Save preset
+                savePresetBtn.addEventListener('click', function() {
+                    const name = presetNameInput.value.trim();
+                    if (!name) {
+                        showToast('Please enter a preset name');
+                        return;
+                    }
+                    
+                    const preset = {
+                        name: name,
+                        speed: scrollSpeed,
+                        textSize: textSizeControl.value,
+                        bgColor: bgColorControl.value,
+                        textColor: textColorControl.value,
+                        textAlign: textAlignControl.value,
+                        direction: directionControl.value,
+                        mirrorMode: mirrorModeControl.checked,
+                        autoRestart: autoRestartControl.checked,
+                        smoothScroll: smoothScrollControl.checked,
+                        ultraSlowMode: ultraSlowModeControl.checked,
+                        lineByLine: lineByLineControl.checked
+                    };
+                    
+                    // Save to localStorage
+                    let presets = JSON.parse(localStorage.getItem('teleprompterPresets') || '{}');
+                    presets[name] = preset;
+                    localStorage.setItem('teleprompterPresets', JSON.stringify(presets));
+                    
+                    updatePresetList();
+                    presetNameInput.value = '';
+                    showToast(`Preset "${name}" saved`);
+                });
+                
+                // Load preset
+                loadPresetBtn.addEventListener('click', function() {
+                    const name = presetNameInput.value.trim();
+                    if (!name) {
+                        showToast('Please select a preset to load');
+                        return;
+                    }
+                    
+                    const presets = JSON.parse(localStorage.getItem('teleprompterPresets') || '{}');
+                    const preset = presets[name];
+                    
+                    if (preset) {
+                        scrollSpeed = preset.speed;
+                        speedControl.value = scrollSpeed;
+                        speedValue.textContent = scrollSpeed;
+                        
+                        textSizeControl.value = preset.textSize;
+                        textSizeControl.dispatchEvent(new Event('input'));
+                        
+                        bgColorControl.value = preset.bgColor;
+                        bgColorControl.dispatchEvent(new Event('input'));
+                        
+                        textColorControl.value = preset.textColor;
+                        textColorControl.dispatchEvent(new Event('input'));
+                        
+                        textAlignControl.value = preset.textAlign;
+                        textAlignControl.dispatchEvent(new Event('change'));
+                        
+                        directionControl.value = preset.direction;
+                        directionControl.dispatchEvent(new Event('change'));
+                        
+                        mirrorModeControl.checked = preset.mirrorMode;
+                        mirrorModeControl.dispatchEvent(new Event('change'));
+                        
+                        autoRestartControl.checked = preset.autoRestart;
+                        smoothScrollControl.checked = preset.smoothScroll;
+                        ultraSlowModeControl.checked = preset.ultraSlowMode;
+                        lineByLineControl.checked = preset.lineByLine;
+                        
+                        showToast(`Preset "${name}" loaded`);
+                    } else {
+                        showToast(`Preset "${name}" not found`);
+                    }
+                });
+                
+                // Delete preset
+                deletePresetBtn.addEventListener('click', function() {
+                    const name = presetNameInput.value.trim();
+                    if (!name) {
+                        showToast('Please select a preset to delete');
+                        return;
+                    }
+                    
+                    const presets = JSON.parse(localStorage.getItem('teleprompterPresets') || '{}');
+                    if (presets[name]) {
+                        delete presets[name];
+                        localStorage.setItem('teleprompterPresets', JSON.stringify(presets));
+                        updatePresetList();
+                        presetNameInput.value = '';
+                        showToast(`Preset "${name}" deleted`);
+                    } else {
+                        showToast(`Preset "${name}" not found`);
+                    }
+                });
+                
+                // Start timer
+                startTimerBtn.addEventListener('click', function() {
+                    const minutes = parseInt(timerMinutes.value) || 0;
+                    const seconds = parseInt(timerSeconds.value) || 0;
+                    const totalSeconds = minutes * 60 + seconds;
+                    
+                    if (totalSeconds <= 0) {
+                        showToast('Please set a valid timer');
+                        return;
+                    }
+                    
+                    timerEndTime = Date.now() + totalSeconds * 1000;
+                    startTimer();
+                    closeModals();
+                });
+                
+                // Initialize with example text
+                display.textContent = textInput.value;
+                parseMarkers();
+                
+                // Set initial text size
+                textSizeControl.dispatchEvent(new Event('input'));
+                
+                // Initialize speed display
+                scrollSpeed = parseInt(speedControl.value);
+                speedValue.textContent = scrollSpeed;
+                
+                // Load presets
+                updatePresetList();
+            }
             
             // Functions
             function startScrolling() {
@@ -869,6 +1420,7 @@
                 
                 isScrolling = true;
                 display.textContent = textInput.value;
+                parseMarkers();
                 maxPosition = display.scrollHeight;
                 
                 // Calculate scroll speed based on mode
@@ -1057,15 +1609,171 @@
                 }, 2000);
             }
             
-            // Initialize with example text
-            display.textContent = textInput.value;
+            // New function: Parse markers from text
+            function parseMarkers() {
+                markers = [];
+                const text = textInput.value;
+                let match;
+                const markerRegex = /::marker::(.+)/g;
+                
+                while ((match = markerRegex.exec(text)) !== null) {
+                    markers.push({
+                        position: match.index,
+                        name: match[1].trim()
+                    });
+                }
+                
+                // Update marker navigation UI
+                updateMarkerNavigation();
+            }
             
-            // Set initial text size
-            textSizeControl.dispatchEvent(new Event('input'));
+            // New function: Update marker navigation UI
+            function updateMarkerNavigation() {
+                const markerNav = document.querySelector('.marker-nav');
+                markerNav.innerHTML = '';
+                
+                // Add start button
+                const startBtn = document.createElement('button');
+                startBtn.className = 'marker-btn';
+                startBtn.textContent = 'Start';
+                startBtn.dataset.marker = '0';
+                startBtn.addEventListener('click', function() {
+                    jumpToMarker(0);
+                });
+                markerNav.appendChild(startBtn);
+                
+                // Add marker buttons
+                markers.forEach((marker, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'marker-btn';
+                    btn.textContent = marker.name;
+                    btn.dataset.marker = index + 1;
+                    btn.addEventListener('click', function() {
+                        jumpToMarker(index + 1);
+                    });
+                    markerNav.appendChild(btn);
+                });
+            }
             
-            // Initialize speed display
-            scrollSpeed = parseInt(speedControl.value);
-            speedValue.textContent = scrollSpeed;
+            // New function: Jump to a specific marker
+            function jumpToMarker(markerIndex) {
+                pauseScrolling();
+                
+                if (markerIndex === 0) {
+                    // Jump to start
+                    currentPosition = 0;
+                } else if (markerIndex <= markers.length) {
+                    // Jump to marker
+                    const marker = markers[markerIndex - 1];
+                    currentPosition = marker.position / 10; // Rough approximation
+                }
+                
+                display.style.transform = `translateY(-${currentPosition}px)`;
+                updateProgress();
+                
+                if (isScrolling) {
+                    startScrolling();
+                }
+                
+                showToast(`Jumped to marker ${markerIndex}`);
+            }
+            
+            // New function: Get current marker based on position
+            function getCurrentMarker() {
+                for (let i = markers.length - 1; i >= 0; i--) {
+                    if (currentPosition >= markers[i].position / 10) {
+                        return i + 1;
+                    }
+                }
+                return 0;
+            }
+            
+            // New function: Insert text at cursor
+            function insertTextAtCursor(text) {
+                const start = textInput.selectionStart;
+                const end = textInput.selectionEnd;
+                
+                textInput.setRangeText(text, start, end, 'end');
+                textInput.dispatchEvent(new Event('input', { bubbles: true }));
+                textInput.focus();
+            }
+            
+            // New function: Open modal
+            function openModal(modal) {
+                closeModals();
+                modal.style.display = 'flex';
+            }
+            
+            // New function: Close all modals
+            function closeModals() {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            }
+            
+            // New function: Update preset list
+            function updatePresetList() {
+                const presets = JSON.parse(localStorage.getItem('teleprompterPresets') || '{}');
+                presetList.innerHTML = '';
+                
+                for (const name in presets) {
+                    const li = document.createElement('li');
+                    li.className = 'preset-item';
+                    
+                    const span = document.createElement('span');
+                    span.textContent = name;
+                    
+                    const actions = document.createElement('div');
+                    actions.className = 'preset-actions';
+                    
+                    const loadBtn = document.createElement('button');
+                    loadBtn.className = 'preset-btn secondary-btn';
+                    loadBtn.textContent = 'Load';
+                    loadBtn.addEventListener('click', function() {
+                        presetNameInput.value = name;
+                    });
+                    
+                    actions.appendChild(loadBtn);
+                    
+                    li.appendChild(span);
+                    li.appendChild(actions);
+                    
+                    presetList.appendChild(li);
+                }
+            }
+            
+            // New function: Start timer
+            function startTimer() {
+                resetTimer();
+                
+                timerInterval = setInterval(function() {
+                    const now = Date.now();
+                    const remaining = timerEndTime - now;
+                    
+                    if (remaining <= 0) {
+                        resetTimer();
+                        showToast('Time is up!');
+                        return;
+                    }
+                    
+                    const minutes = Math.floor(remaining / 60000);
+                    const seconds = Math.floor((remaining % 60000) / 1000);
+                    
+                    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                }, 1000);
+            }
+            
+            // New function: Reset timer
+            function resetTimer() {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+                timerDisplay.textContent = '00:00';
+            }
+            
+            // Initialize the application
+            init();
         });
     </script>
 </body>
