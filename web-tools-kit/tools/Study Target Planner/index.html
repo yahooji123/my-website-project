@@ -1,0 +1,3085 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Target Planner | Advanced</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --primary-glow: #5d87c7;
+            --secondary: #6b8cae;
+            --accent: #ff9e44;
+            --accent-glow: #ffb366;
+            --light: #f5f7fa;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --success-glow: #36e37c;
+            --warning: #f39c12;
+            --warning-glow: #f9bf3b;
+            --danger: #e74c3c;
+            --danger-glow: #ff6655;
+            --gray: #95a5a6;
+            --border-radius: 16px;
+            --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            --bg-color: #f5f7fa;
+            --text-color: #2c3e50;
+            --card-bg: white;
+            --border-color: #e1e8ed;
+            --glow-primary: 0 0 20px rgba(93, 135, 199, 0.6);
+            --glow-success: 0 0 20px rgba(54, 227, 124, 0.6);
+            --gradient-primary: linear-gradient(135deg, #4a6fa5 0%, #6b8cae 100%);
+            --gradient-primary-glow: linear-gradient(135deg, #5d87c7 0%, #7da2cc 100%);
+            --gradient-success: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            --gradient-warning: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            --gradient-danger: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            --gradient-card: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            --gradient-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --gradient-future: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+            --gradient-neon: linear-gradient(135deg, #00ffcc 0%, #00ccff 100%);
+            --gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --gradient-accent: linear-gradient(135deg, #ff9e44 0%, #ffb366 100%);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0d1117;
+            --text-color: #f0f6fc;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --primary: #58a6ff;
+            --primary-glow: #79b8ff;
+            --secondary: #6e7681;
+            --light: #0d1117;
+            --gray: #8b949e;
+            --glow-primary: 0 0 20px rgba(88, 166, 255, 0.6);
+            --gradient-card: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+            --gradient-bg: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s, opacity 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: var(--gradient-bg);
+            padding: 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .column {
+            flex: 1;
+            min-width: 380px;
+            background: var(--gradient-card);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .column::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            z-index: 1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--primary);
+        }
+
+        input, select, button, textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: var(--glow-primary);
+        }
+
+        button {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 5px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary-glow);
+            transition: 0.5s;
+            z-index: -1;
+        }
+
+        button:hover::before {
+            left: 0;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--box-shadow);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: var(--gradient-primary);
+        }
+
+        button.success {
+            background: var(--gradient-success);
+        }
+
+        button.warning {
+            background: var(--gradient-warning);
+        }
+
+        button.danger {
+            background: var(--gradient-danger);
+        }
+
+        .task-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .task-item {
+            padding: 18px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            background-color: var(--card-bg);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .task-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--box-shadow);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .task-title {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .task-meta {
+            font-size: 0.9em;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .task-actions button {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .progress-container {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 28px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 8px;
+            position: relative;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background-image: linear-gradient(-45deg,
+                    rgba(255, 255, 255, 0.2) 25%,
+                    transparent 25%,
+                    transparent 50%,
+                    rgba(255, 255, 255, 0.2) 50%,
+                    rgba(255, 255, 255, 0.2) 75%,
+                    transparent 75%,
+                    transparent);
+            z-index: 1;
+            background-size: 20px 20px;
+            animation: move 1s linear infinite;
+            border-radius: var(--border-radius);
+        }
+
+        @keyframes move {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 20px 20px;
+            }
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 18px;
+            background: var(--gradient-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .stat-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--primary);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: var(--gradient-card);
+            padding: 35px;
+            border-radius: var(--border-radius);
+            max-width: 700px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            animation: modalAppear 0.3s ease;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: auto;
+            color: var(--text-color);
+            transition: transform 0.3s;
+        }
+
+        .modal-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: var(--accent);
+            opacity: 0;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                opacity: 1;
+                transform: translateY(-100px) rotate(0deg);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        .timetable {
+            margin-top: 20px;
+        }
+
+        .timetable-day {
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .day-header {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .day-progress {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: var(--box-shadow);
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg) scale(1.1);
+        }
+
+        .priority-high {
+            border-left: 4px solid var(--danger);
+        }
+
+        .priority-high::before {
+            background: var(--gradient-danger);
+        }
+
+        .priority-medium {
+            border-left: 4px solid var(--warning);
+        }
+
+        .priority-medium::before {
+            background: var(--gradient-warning);
+        }
+
+        .priority-low {
+            border-left: 4px solid var(--success);
+        }
+
+        .priority-low::before {
+            background: var(--gradient-success);
+        }
+
+        .urgent-task {
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.5);
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 12px rgba(231, 76, 60, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+            }
+        }
+
+        .graph-container {
+            margin-top: 25px;
+            padding: 20px;
+            background: var(--gradient-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .graph {
+            height: 220px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            border-left: 1px solid var(--border-color);
+        }
+
+        .graph-bar {
+            width: 40px;
+            background: var(--gradient-primary);
+            margin: 0 5px;
+            position: relative;
+            border-radius: 8px 8px 0 0;
+            transition: height 0.5s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .graph-bar:hover {
+            filter: brightness(1.2);
+            transform: translateY(-2px);
+        }
+
+        .graph-label {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .upcoming-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .upcoming-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .upcoming-list::-webkit-scrollbar-track {
+            background: var(--card-bg);
+            border-radius: 10px;
+        }
+
+        .upcoming-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .futuristic-card {
+            background: var(--gradient-card);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .futuristic-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-primary);
+        }
+
+        .neon-text {
+            text-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary), 0 0 30px var(--primary);
+            color: white;
+        }
+
+        .cyber-button {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: 0.5s;
+            z-index: -1;
+        }
+
+        .cyber-button:hover::before {
+            left: 0;
+        }
+
+        .cyber-button:hover {
+            color: white;
+        }
+
+        .analog-clock {
+            width: 140px;
+            height: 140px;
+            border: 8px solid var(--primary);
+            border-radius: 50%;
+            position: relative;
+            margin: 20px auto;
+            box-shadow: var(--glow-primary);
+            background: var(--card-bg);
+        }
+
+        .clock-hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            background: var(--text-color);
+            border-radius: 5px;
+        }
+
+        .hour-hand {
+            width: 5px;
+            height: 40px;
+            margin-left: -2.5px;
+        }
+
+        .minute-hand {
+            width: 3px;
+            height: 50px;
+            margin-left: -1.5px;
+        }
+
+        .second-hand {
+            width: 2px;
+            height: 60px;
+            margin-left: -1px;
+            background: var(--danger);
+        }
+
+        .clock-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 14px;
+            height: 14px;
+            background: var(--danger);
+            border-radius: 50%;
+            margin: -7px 0 0 -7px;
+            z-index: 10;
+            box-shadow: 0 0 10px var(--danger);
+        }
+
+        .clock-numbers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .clock-number {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            line-height: 140px;
+        }
+
+        .time-display {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: var(--primary);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .date-display {
+            text-align: center;
+            font-size: 16px;
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+
+        .focus-mode {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .focus-timer {
+            font-size: 52px;
+            font-weight: bold;
+            margin: 15px 0;
+            color: var(--primary);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .focus-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(-100vh) translateX(100vw) rotate(360deg);
+            }
+        }
+
+        .achievement-badge {
+            display: inline-block;
+            width: 70px;
+            height: 70px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 70px;
+            margin: 10px;
+            box-shadow: var(--box-shadow);
+            color: white;
+            font-size: 28px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .achievement-badge:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .badges-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 18px 24px;
+            background: var(--gradient-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border-left: 4px solid var(--success);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .ai-suggestions {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--gradient-card);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+        }
+
+        .suggestion-item {
+            padding: 10px;
+            margin: 8px 0;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .suggestion-item:hover {
+            background: rgba(0, 0, 0, 0.1);
+            transform: translateX(5px);
+        }
+
+        .voice-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .voice-btn {
+            width: auto;
+            padding: 10px 15px;
+            border-radius: 50px;
+        }
+
+        .study-music {
+            margin-top: 20px;
+        }
+
+        .music-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .music-btn {
+            flex: 1;
+        }
+
+        .holographic-effect {
+            position: relative;
+        }
+
+        .holographic-effect::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+            transform: skewX(-25deg);
+            animation: holographic 3s infinite;
+        }
+
+        @keyframes holographic {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 200%;
+            }
+        }
+
+        .floating-elements {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 90;
+        }
+
+        .floating-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: var(--box-shadow);
+            animation: floatUpDown 3s infinite ease-in-out;
+        }
+
+        @keyframes floatUpDown {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .floating-btn:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        .floating-btn:nth-child(3) {
+            animation-delay: 1s;
+        }
+
+        .typewriter {
+            overflow: hidden;
+            border-right: 3px solid var(--primary);
+            white-space: nowrap;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--primary) }
+        }
+
+        .smart-input {
+            position: relative;
+        }
+
+        .smart-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+
+        .smart-suggestion {
+            padding: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .smart-suggestion:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        input:focus + .smart-suggestions,
+        .smart-suggestions:hover {
+            display: block;
+        }
+
+        .energy-bar {
+            height: 10px;
+            background: var(--gradient-card);
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .energy-fill {
+            height: 100%;
+            background: var(--gradient-success);
+            width: 70%;
+            transition: width 0.5s;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+
+            .focus-controls {
+                flex-direction: column;
+            }
+
+            .task-actions {
+                flex-direction: column;
+            }
+
+            .floating-elements {
+                bottom: 10px;
+                left: 10px;
+            }
+
+            .floating-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="particles-container" id="particles-container"></div>
+    <button class="theme-toggle" id="theme-toggle">🌙</button>
+
+    <div class="floating-elements">
+        <button class="floating-btn success" id="quick-add" title="Quick Add"><i class="fas fa-plus"></i></button>
+        <button class="floating-btn primary" id="quick-timer" title="Quick Timer"><i class="fas fa-clock"></i></button>
+        <button class="floating-btn warning" id="quick-stats" title="Quick Stats"><i class="fas fa-chart-line"></i></button>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i> <span id="notification-text"></span>
+    </div>
+
+    <div class="container">
+        <div class="column">
+            <h1 class="typewriter"><i class="fas fa-bullseye"></i> Study Target Planner | Advanced</h1>
+
+            <div class="futuristic-card holographic-effect">
+                <h2><i class="fas fa-plus-circle"></i> Add New Target</h2>
+                <div class="form-group smart-input">
+                    <label for="subject"><i class="fas fa-book"></i> Subject</label>
+                    <input type="text" id="subject" placeholder="e.g., Mathematics">
+                    <div class="smart-suggestions">
+                        <div class="smart-suggestion">Mathematics</div>
+                        <div class="smart-suggestion">Science</div>
+                        <div class="smart-suggestion">English</div>
+                        <div class="smart-suggestion">History</div>
+                        <div class="smart-suggestion">Physics</div>
+                        <div class="smart-suggestion">Chemistry</div>
+                    </div>
+                </div>
+
+                <div class="form-group smart-input">
+                    <label for="topic"><i class="fas fa-file-alt"></i> Topic</label>
+                    <input type="text" id="topic" placeholder="e.g., Calculus">
+                    <div class="smart-suggestions">
+                        <div class="smart-suggestion">Calculus</div>
+                        <div class="smart-suggestion">Algebra</div>
+                        <div class="smart-suggestion">Geometry</div>
+                        <div class="smart-suggestion">Trigonometry</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="date"><i class="fas fa-calendar"></i> Date</label>
+                    <input type="date" id="date">
+                </div>
+
+                <div class="form-group">
+                    <label for="mins"><i class="fas fa-clock"></i> Minutes</label>
+                    <input type="number" id="mins" min="1" placeholder="e.g., 30">
+                </div>
+
+                <div class="form-group">
+                    <label for="priority"><i class="fas fa-exclamation-circle"></i> Priority</label>
+                    <select id="priority">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="repeat"><i class="fas fa-repeat"></i> Repeat</label>
+                    <select id="repeat">
+                        <option value="none">None</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                    </select>
+                </div>
+
+                <div class="voice-control">
+                    <button id="voice-input" class="voice-btn secondary"><i class="fas fa-microphone"></i> Voice Input</button>
+                    <span id="voice-status">Ready</span>
+                </div>
+
+                <button id="add-target"><i class="fas fa-plus"></i> Add Target</button>
+            </div>
+
+            <div class="futuristic-card">
+                <h2><i class="fas fa-tasks"></i> Today's Tasks</h2>
+                <div class="energy-bar">
+                    <div class="energy-fill" id="energy-level"></div>
+                </div>
+                <ul id="today-list" class="task-list"></ul>
+            </div>
+
+            <div class="futuristic-card">
+                <h2><i class="fas fa-history"></i> Pending/Overdue</h2>
+                <ul id="pending-list" class="task-list"></ul>
+            </div>
+
+            <div class="futuristic-card">
+                <h2><i class="fas fa-calendar-week"></i> Upcoming Tasks (Next 7 Days)</h2>
+                <ul id="upcoming-list" class="task-list upcoming-list"></ul>
+            </div>
+
+            <div class="futuristic-card">
+                <h2><i class="fas fa-robot"></i> AI Suggestions</h2>
+                <div class="ai-suggestions" id="ai-suggestions">
+                    <p>Complete your tasks to get personalized study suggestions!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="futuristic-card">
+                <h2><i class="fas fa-chart-line"></i> Progress Overview</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Daily</div>
+                        <div class="stat-value" id="daily-percent">0%</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Weekly</div>
+                        <div class="stat-value" id="weekly-percent">0%</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Monthly</div>
+                        <div class="stat-value" id="monthly-percent">0%</div>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <h3><i class="fas fa-calendar-day"></i> Daily Progress</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="daily-progress" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-info">
+                        <span id="daily-count">0/0 done</span>
+                        <span id="daily-total">0 total</span>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <h3><i class="fas fa-calendar-week"></i> Weekly Progress</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="weekly-progress" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-info">
+                        <span id="weekly-count">0/0 done</span>
+                        <span id="weekly-total">0 total</span>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <h3><i class="fas fa-calendar-alt"></i> Monthly Progress</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="monthly-progress" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-info">
+                        <span id="monthly-count">0/0 done</span>
+                        <span id="monthly-total">0 total</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="futuristic-card">
+                <h2><i class="fas fa-chart-bar"></i> Progress Graph (Last 7 Days)</h2>
+                <div class="graph-container">
+                    <div class="graph" id="progress-graph">
+                        <!-- Graph bars will be generated here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="futuristic-card">
+                <h2><i class="fas fa-trophy"></i> Motivation & Achievements</h2>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Current Streak</div>
+                        <div class="stat-value" id="streak">0 days</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Gifts Earned</div>
+                        <div class="stat-value" id="gifts">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Total Hours</div>
+                        <div class="stat-value" id="total-hours">0</div>
+                    </div>
+                </div>
+
+                <div class="badges-container" id="badges-container">
+                    <!-- Achievement badges will appear here -->
+                </div>
+
+                <button id="claim-treat" class="success"><i class="fas fa-gift"></i> Claim Treat</button>
+            </div>
+
+            <div class="futuristic-card">
+                <h2><i class="fas fa-clock"></i> Focus Timer</h2>
+                <div class="focus-mode">
+                    <div class="time-display" id="current-time">00:00:00</div>
+                    <div class="date-display" id="current-date">Loading...</div>
+
+                    <div class="analog-clock">
+                        <div class="clock-hand hour-hand" id="hour-hand"></div>
+                        <div class="clock-hand minute-hand" id="minute-hand"></div>
+                        <div class="clock-hand second-hand" id="second-hand"></div>
+                        <div class="clock-center"></div>
+                    </div>
+
+                    <div class="focus-timer" id="focus-timer">25:00</div>
+                    <div class="focus-controls">
+                        <button id="start-focus" class="success"><i class="fas fa-play"></i> Start</button>
+                        <button id="pause-focus" class="warning"><i class="fas fa-pause"></i> Pause</button>
+                        <button id="reset-focus" class="secondary"><i class="fas fa-redo"></i> Reset</button>
+                    </div>
+                </div>
+
+                <div class="study-music">
+                    <h3><i class="fas fa-music"></i> Study Music</h3>
+                    <div class="music-controls">
+                        <button id="play-music" class="music-btn secondary"><i class="fas fa-play"></i> Play</button>
+                        <button id="stop-music" class="music-btn warning"><i class="fas fa-stop"></i> Stop</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="futuristic-card">
+                <h2><i class="fas fa-cog"></i> Quick Controls</h2>
+                <div class="controls">
+                    <button id="clear-all" class="danger"><i class="fas fa-trash"></i> Clear All</button>
+                    <button id="generate-timetable" class="secondary"><i class="fas fa-table"></i> Generate 30-day
+                        Timetable</button>
+                    <button id="show-all" class="secondary"><i class="fas fa-list"></i> Show All Targets</button>
+                    <button id="export-json" class="secondary"><i class="fas fa-file-export"></i> Export JSON</button>
+                    <button id="import-json" class="secondary"><i class="fas fa-file-import"></i> Import JSON</button>
+                    <button id="reset-demo" class="warning"><i class="fas fa-sync"></i> Reset Demo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for rewards -->
+    <div id="reward-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Congratulations! 🎉</h2>
+            <p>You've completed all your tasks for today!</p>
+            <p>You've earned a gift! Total gifts: <span id="modal-gifts">0</span></p>
+            <p>Current streak: <span id="modal-streak">0</span> days</p>
+            <div class="task-actions">
+                <button id="share-reward" class="success">Share</button>
+                <button id="close-reward" class="secondary">Okay</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for 30-day timetable -->
+    <div id="timetable-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>30-Day Timetable</h2>
+            <div id="timetable-content" class="timetable"></div>
+        </div>
+    </div>
+
+    <!-- Modal for all targets -->
+    <div id="all-targets-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>All Study Targets</h2>
+            <div id="all-targets-content"></div>
+        </div>
+    </div>
+
+    <!-- Modal for quick add -->
+    <div id="quick-add-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Quick Add Task</h2>
+            <div class="form-group">
+                <input type="text" id="quick-subject" placeholder="Subject">
+            </div>
+            <div class="form-group">
+                <input type="text" id="quick-topic" placeholder="Topic">
+            </div>
+            <div class="form-group">
+                <input type="number" id="quick-mins" placeholder="Minutes" min="1">
+            </div>
+            <button id="quick-add-btn" class="success">Add</button>
+        </div>
+    </div>
+
+    <!-- Confetti container -->
+    <div id="confetti-container" class="confetti"></div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="file-input" style="display: none;" accept=".json">
+
+    <!-- Audio element for study music -->
+    <audio id="study-music" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d1708ab41b.mp3?filename=relaxing-study-music-135822.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // State management
+        let state = {
+            targets: [],
+            gifts: 0,
+            lastRewardDate: null,
+            streak: 0,
+            theme: 'light',
+            totalStudyTime: 0,
+            achievements: [],
+            focusTimer: {
+                running: false,
+                timeLeft: 25 * 60, // 25 minutes in seconds
+                interval: null
+            },
+            studyMusic: {
+                playing: false
+            },
+            voiceRecognition: null
+        };
+
+        // DOM elements
+        const elements = {
+            subject: document.getElementById('subject'),
+            topic: document.getElementById('topic'),
+            date: document.getElementById('date'),
+            mins: document.getElementById('mins'),
+            priority: document.getElementById('priority'),
+            repeat: document.getElementById('repeat'),
+            addTarget: document.getElementById('add-target'),
+            todayList: document.getElementById('today-list'),
+            pendingList: document.getElementById('pending-list'),
+            upcomingList: document.getElementById('upcoming-list'),
+            dailyPercent: document.getElementById('daily-percent'),
+            weeklyPercent: document.getElementById('weekly-percent'),
+            monthlyPercent: document.getElementById('monthly-percent'),
+            dailyProgress: document.getElementById('daily-progress'),
+            weeklyProgress: document.getElementById('weekly-progress'),
+            monthlyProgress: document.getElementById('monthly-progress'),
+            dailyCount: document.getElementById('daily-count'),
+            weeklyCount: document.getElementById('weekly-count'),
+            monthlyCount: document.getElementById('monthly-count'),
+            dailyTotal: document.getElementById('daily-total'),
+            weeklyTotal: document.getElementById('weekly-total'),
+            monthlyTotal: document.getElementById('monthly-total'),
+            streak: document.getElementById('streak'),
+            gifts: document.getElementById('gifts'),
+            totalHours: document.getElementById('total-hours'),
+            claimTreat: document.getElementById('claim-treat'),
+            clearAll: document.getElementById('clear-all'),
+            generateTimetable: document.getElementById('generate-timetable'),
+            showAll: document.getElementById('show-all'),
+            exportJson: document.getElementById('export-json'),
+            importJson: document.getElementById('import-json'),
+            resetDemo: document.getElementById('reset-demo'),
+            rewardModal: document.getElementById('reward-modal'),
+            timetableModal: document.getElementById('timetable-modal'),
+            allTargetsModal: document.getElementById('all-targets-modal'),
+            timetableContent: document.getElementById('timetable-content'),
+            allTargetsContent: document.getElementById('all-targets-content'),
+            modalGifts: document.getElementById('modal-gifts'),
+            modalStreak: document.getElementById('modal-streak'),
+            shareReward: document.getElementById('share-reward'),
+            closeReward: document.getElementById('close-reward'),
+            fileInput: document.getElementById('file-input'),
+            confettiContainer: document.getElementById('confetti-container'),
+            themeToggle: document.getElementById('theme-toggle'),
+            progressGraph: document.getElementById('progress-graph'),
+            badgesContainer: document.getElementById('badges-container'),
+            notification: document.getElementById('notification'),
+            notificationText: document.getElementById('notification-text'),
+            currentTime: document.getElementById('current-time'),
+            currentDate: document.getElementById('current-date'),
+            hourHand: document.getElementById('hour-hand'),
+            minuteHand: document.getElementById('minute-hand'),
+            secondHand: document.getElementById('second-hand'),
+            focusTimer: document.getElementById('focus-timer'),
+            startFocus: document.getElementById('start-focus'),
+            pauseFocus: document.getElementById('pause-focus'),
+            resetFocus: document.getElementById('reset-focus'),
+            voiceInput: document.getElementById('voice-input'),
+            voiceStatus: document.getElementById('voice-status'),
+            playMusic: document.getElementById('play-music'),
+            stopMusic: document.getElementById('stop-music'),
+            studyMusic: document.getElementById('study-music'),
+            aiSuggestions: document.getElementById('ai-suggestions'),
+            energyLevel: document.getElementById('energy-level'),
+            quickAdd: document.getElementById('quick-add'),
+            quickTimer: document.getElementById('quick-timer'),
+            quickStats: document.getElementById('quick-stats'),
+            quickAddModal: document.getElementById('quick-add-modal'),
+            quickSubject: document.getElementById('quick-subject'),
+            quickTopic: document.getElementById('quick-topic'),
+            quickMins: document.getElementById('quick-mins'),
+            quickAddBtn: document.getElementById('quick-add-btn')
+        };
+
+        // Initialize the app
+        function init() {
+            // Set today's date as default for the date input
+            elements.date.value = getToday();
+
+            // Load state from localStorage or initialize with demo data
+            loadState();
+
+            // Set up event listeners
+            setupEventListeners();
+
+            // Render the UI
+            render();
+
+            // Apply saved theme
+            applyTheme();
+
+            // Start clock
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            // Create background particles
+            createParticles();
+
+            // Check for achievements
+            checkAchievements();
+
+            // Initialize voice recognition if available
+            initVoiceRecognition();
+
+            // Generate AI suggestions
+            generateAISuggestions();
+        }
+
+        // Load state from localStorage or initialize with demo data
+        function loadState() {
+            const savedState = localStorage.getItem('study_planner_advanced');
+
+            if (savedState) {
+                try {
+                    const parsed = JSON.parse(savedState);
+                    state = parsed;
+
+                    // Backward compatibility for older saved data
+                    if (!state.theme) state.theme = 'light';
+                    if (!state.totalStudyTime) state.totalStudyTime = 0;
+                    if (!state.achievements) state.achievements = [];
+                    if (!state.focusTimer) state.focusTimer = {
+                        running: false,
+                        timeLeft: 25 * 60,
+                        interval: null
+                    };
+                    if (!state.studyMusic) state.studyMusic = { playing: false };
+                } catch (e) {
+                    console.error('Error parsing saved state:', e);
+                    createDemoData();
+                }
+            } else {
+                createDemoData();
+            }
+
+            // Ensure all targets have the required properties
+            state.targets = state.targets.map(target => {
+                if (!target.id) target.id = generateId();
+                if (!target.createdAt) target.createdAt = getToday();
+                if (!target.doneDates) target.doneDates = [];
+                if (!target.skippedDates) target.skippedDates = [];
+                if (!target.priority) target.priority = 'medium';
+                return target;
+            });
+        }
+
+        // Create demo data if no saved state exists
+        function createDemoData() {
+            const today = getToday();
+
+            state = {
+                targets: [
+                    {
+                        id: generateId(),
+                        subject: 'Mathematics',
+                        topic: 'Calculus - Derivatives',
+                        date: today,
+                        mins: 45,
+                        priority: 'high',
+                        repeat: 'none',
+                        createdAt: today,
+                        doneDates: [],
+                        skippedDates: []
+                    },
+                    {
+                        id: generateId(),
+                        subject: 'English',
+                        topic: 'Reading Comprehension',
+                        date: today,
+                        mins: 30,
+                        priority: 'medium',
+                        repeat: 'daily',
+                        createdAt: today,
+                        doneDates: [],
+                        skippedDates: []
+                    },
+                    {
+                        id: generateId(),
+                        subject: 'Science',
+                        topic: 'Physics - Newton\'s Laws',
+                        date: getPreviousMonday(),
+                        mins: 60,
+                        priority: 'medium',
+                        repeat: 'weekly',
+                        createdAt: today,
+                        doneDates: [],
+                        skippedDates: []
+                    },
+                    {
+                        id: generateId(),
+                        subject: 'History',
+                        topic: 'World War II',
+                        date: getDateDaysFromToday(2),
+                        mins: 40,
+                        priority: 'low',
+                        repeat: 'none',
+                        createdAt: today,
+                        doneDates: [],
+                        skippedDates: []
+                    }
+                ],
+                gifts: 0,
+                lastRewardDate: null,
+                streak: 0,
+                theme: 'light',
+                totalStudyTime: 0,
+                achievements: [],
+                focusTimer: {
+                    running: false,
+                    timeLeft: 25 * 60,
+                    interval: null
+                },
+                studyMusic: {
+                    playing: false
+                }
+            };
+
+            saveState();
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            localStorage.setItem('study_planner_advanced', JSON.stringify(state));
+        }
+
+        // Toggle theme between light and dark
+        function toggleTheme() {
+            state.theme = state.theme === 'light' ? 'dark' : 'light';
+            applyTheme();
+            saveState();
+        }
+
+        // Apply the current theme
+        function applyTheme() {
+            document.documentElement.setAttribute('data-theme', state.theme);
+            elements.themeToggle.textContent = state.theme === 'light' ? '🌙' : '☀️';
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Add target button
+            elements.addTarget.addEventListener('click', addTarget);
+
+            // Control buttons
+            elements.clearAll.addEventListener('click', confirmClearAll);
+            elements.generateTimetable.addEventListener('click', generateTimetable);
+            elements.showAll.addEventListener('click', showAllTargets);
+            elements.exportJson.addEventListener('click', exportJson);
+            elements.importJson.addEventListener('click', triggerImport);
+            elements.resetDemo.addEventListener('click', resetDemo);
+
+            // Theme toggle
+            elements.themeToggle.addEventListener('click', toggleTheme);
+
+            // Reward modal buttons
+            elements.claimTreat.addEventListener('click', claimTreat);
+            elements.shareReward.addEventListener('click', shareReward);
+            elements.closeReward.addEventListener('click', closeRewardModal);
+
+            // Modal close buttons
+            document.querySelectorAll('.modal-close').forEach(closeBtn => {
+                closeBtn.addEventListener('click', () => {
+                    closeAllModals();
+                });
+            });
+
+            // File input change (for import)
+            elements.fileInput.addEventListener('change', importJson);
+
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    closeAllModals();
+                }
+            });
+
+            // Focus timer controls
+            elements.startFocus.addEventListener('click', startFocusTimer);
+            elements.pauseFocus.addEventListener('click', pauseFocusTimer);
+            elements.resetFocus.addEventListener('click', resetFocusTimer);
+
+            // Music controls
+            elements.playMusic.addEventListener('click', playStudyMusic);
+            elements.stopMusic.addEventListener('click', stopStudyMusic);
+
+            // Voice input
+            elements.voiceInput.addEventListener('click', toggleVoiceRecognition);
+
+            // Quick action buttons
+            elements.quickAdd.addEventListener('click', showQuickAddModal);
+            elements.quickTimer.addEventListener('click', quickStartTimer);
+            elements.quickStats.addEventListener('click', showQuickStats);
+            elements.quickAddBtn.addEventListener('click', addQuickTask);
+
+            // Smart input suggestions
+            document.querySelectorAll('.smart-suggestion').forEach(suggestion => {
+                suggestion.addEventListener('click', () => {
+                    const input = suggestion.closest('.smart-input').querySelector('input');
+                    input.value = suggestion.textContent;
+                    document.querySelectorAll('.smart-suggestions').forEach(s => {
+                        s.style.display = 'none';
+                    });
+                });
+            });
+
+            // Input focus for smart suggestions
+            document.querySelectorAll('.smart-input input').forEach(input => {
+                input.addEventListener('focus', () => {
+                    const suggestions = input.nextElementSibling;
+                    suggestions.style.display = 'block';
+                });
+                
+                input.addEventListener('blur', () => {
+                    // Hide suggestions after a short delay to allow clicking
+                    setTimeout(() => {
+                        document.querySelectorAll('.smart-suggestions').forEach(s => {
+                            s.style.display = 'none';
+                        });
+                    }, 200);
+                });
+            });
+        }
+
+        // Initialize voice recognition
+        function initVoiceRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                state.voiceRecognition = new SpeechRecognition();
+                state.voiceRecognition.continuous = false;
+                state.voiceRecognition.interimResults = false;
+                state.voiceRecognition.lang = 'en-US';
+
+                state.voiceRecognition.onstart = () => {
+                    elements.voiceStatus.textContent = 'Listening...';
+                    elements.voiceInput.classList.add('recording');
+                };
+
+                state.voiceRecognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    processVoiceCommand(transcript);
+                };
+
+                state.voiceRecognition.onerror = (event) => {
+                    elements.voiceStatus.textContent = 'Error: ' + event.error;
+                    elements.voiceInput.classList.remove('recording');
+                };
+
+                state.voiceRecognition.onend = () => {
+                    elements.voiceStatus.textContent = 'Ready';
+                    elements.voiceInput.classList.remove('recording');
+                };
+            } else {
+                elements.voiceInput.disabled = true;
+                elements.voiceStatus.textContent = 'Not supported';
+            }
+        }
+
+        // Toggle voice recognition
+        function toggleVoiceRecognition() {
+            if (state.voiceRecognition) {
+                try {
+                    state.voiceRecognition.start();
+                } catch (error) {
+                    elements.voiceStatus.textContent = 'Error: ' + error.message;
+                }
+            }
+        }
+
+        // Process voice command
+        function processVoiceCommand(transcript) {
+            showNotification('Voice command: ' + transcript);
+            
+            // Simple command processing
+            const lowerTranscript = transcript.toLowerCase();
+            
+            if (lowerTranscript.includes('add task')) {
+                // Extract subject and topic
+                const parts = transcript.split('add task');
+                if (parts.length > 1) {
+                    const taskDesc = parts[1].trim();
+                    const subjectMatch = taskDesc.match(/(math|science|english|history|physics|chemistry)/i);
+                    const subject = subjectMatch ? subjectMatch[0] : 'General';
+                    const topic = taskDesc.replace(subject, '').trim();
+                    
+                    elements.subject.value = subject;
+                    elements.topic.value = topic || 'Study session';
+                    elements.mins.value = 30;
+                    
+                    showNotification(`Added task: ${subject} - ${topic}`);
+                }
+            } else if (lowerTranscript.includes('start timer')) {
+                startFocusTimer();
+            } else if (lowerTranscript.includes('play music')) {
+                playStudyMusic();
+            } else if (lowerTranscript.includes('stop music')) {
+                stopStudyMusic();
+            } else if (lowerTranscript.includes('show stats')) {
+                showQuickStats();
+            }
+        }
+
+        // Play study music
+        function playStudyMusic() {
+            elements.studyMusic.play();
+            state.studyMusic.playing = true;
+            elements.playMusic.disabled = true;
+            elements.stopMusic.disabled = false;
+            showNotification('Study music started');
+        }
+
+        // Stop study music
+        function stopStudyMusic() {
+            elements.studyMusic.pause();
+            elements.studyMusic.currentTime = 0;
+            state.studyMusic.playing = false;
+            elements.playMusic.disabled = false;
+            elements.stopMusic.disabled = true;
+            showNotification('Study music stopped');
+        }
+
+        // Show quick add modal
+        function showQuickAddModal() {
+            elements.quickAddModal.style.display = 'flex';
+        }
+
+        // Add quick task
+        function addQuickTask() {
+            const subject = elements.quickSubject.value.trim();
+            const topic = elements.quickTopic.value.trim();
+            const mins = parseInt(elements.quickMins.value);
+
+            if (!subject || !topic || isNaN(mins) || mins <= 0) {
+                showNotification('Please fill in all fields with valid values.');
+                return;
+            }
+
+            const newTarget = {
+                id: generateId(),
+                subject,
+                topic,
+                date: getToday(),
+                mins,
+                priority: 'medium',
+                repeat: 'none',
+                createdAt: getToday(),
+                doneDates: [],
+                skippedDates: []
+            };
+
+            state.targets.push(newTarget);
+            saveState();
+            render();
+            
+            // Reset form
+            elements.quickSubject.value = '';
+            elements.quickTopic.value = '';
+            elements.quickMins.value = '';
+            
+            elements.quickAddModal.style.display = 'none';
+            showNotification('Quick task added successfully!');
+        }
+
+        // Quick start timer
+        function quickStartTimer() {
+            startFocusTimer();
+            showNotification('Focus timer started');
+        }
+
+        // Show quick stats
+        function showQuickStats() {
+            const progress = calculateProgress();
+            showNotification(`Today: ${progress.daily.percent}% completed | Streak: ${state.streak} days`);
+        }
+
+        // Generate AI suggestions
+        function generateAISuggestions() {
+            const today = getToday();
+            const todayOccurrences = generateOccurrencesForDate(today);
+            const doneCount = todayOccurrences.filter(o => o.isDone).length;
+            const totalCount = todayOccurrences.length;
+            
+            let suggestionsHTML = '';
+            
+            if (totalCount === 0) {
+                suggestionsHTML = `
+                    <div class="suggestion-item" onclick="elements.subject.value='Mathematics'; elements.topic.value='Algebra basics'">
+                        <i class="fas fa-lightbulb"></i> Start with Mathematics: Algebra basics
+                    </div>
+                    <div class="suggestion-item" onclick="elements.subject.value='English'; elements.topic.value='Vocabulary building'">
+                        <i class="fas fa-lightbulb"></i> Try English: Vocabulary building
+                    </div>
+                `;
+            } else if (doneCount === totalCount) {
+                suggestionsHTML = `
+                    <div class="suggestion-item">
+                        <i class="fas fa-trophy"></i> Great job! All tasks completed today!
+                    </div>
+                    <div class="suggestion-item" onclick="elements.subject.value='General'; elements.topic.value='Review yesterday\\'s materials'">
+                        <i class="fas fa-lightbulb"></i> Consider reviewing yesterday's materials
+                    </div>
+                `;
+            } else {
+                const nextSubject = todayOccurrences.find(o => !o.isDone && !o.isSkipped)?.subject || 'Mathematics';
+                
+                suggestionsHTML = `
+                    <div class="suggestion-item" onclick="markNextTaskDone()">
+                        <i class="fas fa-star"></i> Focus on completing your next task: ${nextSubject}
+                    </div>
+                    <div class="suggestion-item" onclick="startFocusTimer()">
+                        <i class="fas fa-clock"></i> Start a 25-minute focus timer for better concentration
+                    </div>
+                `;
+            }
+            
+            elements.aiSuggestions.innerHTML = suggestionsHTML;
+        }
+
+        // Mark next task as done
+        function markNextTaskDone() {
+            const today = getToday();
+            const todayOccurrences = generateOccurrencesForDate(today);
+            const nextTask = todayOccurrences.find(o => !o.isDone && !o.isSkipped);
+            
+            if (nextTask) {
+                markDone(nextTask.targetId, today);
+                showNotification(`Completed: ${nextTask.subject} - ${nextTask.topic}`);
+            }
+        }
+
+        // Add a new target
+        function addTarget() {
+            const subject = elements.subject.value.trim();
+            const topic = elements.topic.value.trim();
+            const date = elements.date.value;
+            const mins = parseInt(elements.mins.value);
+            const priority = elements.priority.value;
+            const repeat = elements.repeat.value;
+
+            if (!subject || !topic || !date || isNaN(mins) || mins <= 0) {
+                showNotification('Please fill in all fields with valid values.');
+                return;
+            }
+
+            const newTarget = {
+                id: generateId(),
+                subject,
+                topic,
+                date,
+                mins,
+                priority,
+                repeat,
+                createdAt: getToday(),
+                doneDates: [],
+                skippedDates: []
+            };
+
+            state.targets.push(newTarget);
+            saveState();
+            render();
+
+            // Reset form
+            elements.subject.value = '';
+            elements.topic.value = '';
+            elements.date.value = getToday();
+            elements.mins.value = '';
+            elements.priority.value = 'medium';
+            elements.repeat.value = 'none';
+
+            showNotification('New study target added successfully!');
+        }
+
+        // Generate occurrences for a specific date
+        function generateOccurrencesForDate(dateStr) {
+            const occurrences = [];
+            const date = new Date(dateStr);
+            const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
+
+            state.targets.forEach(target => {
+                // Check if target should occur on this date
+                let shouldOccur = false;
+
+                if (target.repeat === 'daily') {
+                    shouldOccur = true;
+                } else if (target.repeat === 'weekly') {
+                    const targetDate = new Date(target.date);
+                    shouldOccur = targetDate.getDay() === dayOfWeek;
+                } else if (target.repeat === 'none') {
+                    shouldOccur = target.date === dateStr;
+                }
+
+                if (shouldOccur) {
+                    // Check if this occurrence is done or skipped
+                    const isDone = target.doneDates.includes(dateStr);
+                    const isSkipped = target.skippedDates.includes(dateStr);
+
+                    occurrences.push({
+                        targetId: target.id,
+                        subject: target.subject,
+                        topic: target.topic,
+                        date: dateStr,
+                        mins: target.mins,
+                        priority: target.priority,
+                        isDone,
+                        isSkipped
+                    });
+                }
+            });
+
+            return occurrences;
+        }
+
+        // Mark an occurrence as done
+        function markDone(targetId, dateStr) {
+            const target = state.targets.find(t => t.id === targetId);
+            if (!target) return;
+
+            // Remove from skipped dates if it was skipped
+            target.skippedDates = target.skippedDates.filter(d => d !== dateStr);
+
+            // Add to done dates if not already there
+            if (!target.doneDates.includes(dateStr)) {
+                target.doneDates.push(dateStr);
+                state.totalStudyTime += target.mins;
+            }
+
+            saveState();
+            render();
+            checkForReward();
+            checkAchievements();
+            generateAISuggestions();
+        }
+
+        // Mark an occurrence as skipped
+        function markSkipped(targetId, dateStr) {
+            const target = state.targets.find(t => t.id === targetId);
+            if (!target) return;
+
+            // Remove from done dates if it was done
+            target.doneDates = target.doneDates.filter(d => d !== dateStr);
+
+            // Add to skipped dates if not already there
+            if (!target.skippedDates.includes(dateStr)) {
+                target.skippedDates.push(dateStr);
+            }
+
+            saveState();
+            render();
+            generateAISuggestions();
+        }
+
+        // Undo a done or skipped status
+        function undoStatus(targetId, dateStr) {
+            const target = state.targets.find(t => t.id === targetId);
+            if (!target) return;
+
+            // Remove from both done and skipped dates
+            const wasDone = target.doneDates.includes(dateStr);
+            target.doneDates = target.doneDates.filter(d => d !== dateStr);
+            target.skippedDates = target.skippedDates.filter(d => d !== dateStr);
+
+            if (wasDone) {
+                state.totalStudyTime -= target.mins;
+            }
+
+            saveState();
+            render();
+            checkAchievements();
+            generateAISuggestions();
+        }
+
+        // Resume a skipped task (mark it as not skipped)
+        function resumeTask(targetId, dateStr) {
+            const target = state.targets.find(t => t.id === targetId);
+            if (!target) return;
+
+            // Remove from skipped dates
+            target.skippedDates = target.skippedDates.filter(d => d !== dateStr);
+
+            saveState();
+            render();
+            generateAISuggestions();
+        }
+
+        // Delete a target
+        function deleteTarget(targetId) {
+            const target = state.targets.find(t => t.id === targetId);
+            if (target) {
+                // Subtract time from total study time for all done dates
+                target.doneDates.forEach(date => {
+                    state.totalStudyTime -= target.mins;
+                });
+            }
+
+            state.targets = state.targets.filter(t => t.id !== targetId);
+            saveState();
+            render();
+            checkAchievements();
+            generateAISuggestions();
+        }
+
+        // Calculate progress statistics
+        function calculateProgress() {
+            const today = getToday();
+            const todayOccurrences = generateOccurrencesForDate(today);
+
+            // Daily progress
+            const dailyDone = todayOccurrences.filter(o => o.isDone).length;
+            const dailyTotal = todayOccurrences.length;
+            const dailyPercent = dailyTotal > 0 ? Math.round((dailyDone / dailyTotal) * 100) : 0;
+
+            // Weekly progress (current week, Monday to Sunday)
+            const weekDates = getWeekDates(today);
+            let weeklyDone = 0;
+            let weeklyTotal = 0;
+
+            weekDates.forEach(date => {
+                const occurrences = generateOccurrencesForDate(date);
+                weeklyTotal += occurrences.length;
+                weeklyDone += occurrences.filter(o => o.isDone).length;
+            });
+
+            const weeklyPercent = weeklyTotal > 0 ? Math.round((weeklyDone / weeklyTotal) * 100) : 0;
+
+            // Monthly progress (current month)
+            const monthDates = getMonthDates(today);
+            let monthlyDone = 0;
+            let monthlyTotal = 0;
+
+            monthDates.forEach(date => {
+                const occurrences = generateOccurrencesForDate(date);
+                monthlyTotal += occurrences.length;
+                monthlyDone += occurrences.filter(o => o.isDone).length;
+            });
+
+            const monthlyPercent = monthlyTotal > 0 ? Math.round((monthlyDone / monthlyTotal) * 100) : 0;
+
+            return {
+                daily: {
+                    done: dailyDone,
+                    total: dailyTotal,
+                    percent: dailyPercent
+                },
+                weekly: {
+                    done: weeklyDone,
+                    total: weeklyTotal,
+                    percent: weeklyPercent
+                },
+                monthly: {
+                    done: monthlyDone,
+                    total: monthlyTotal,
+                    percent: monthlyPercent
+                }
+            };
+        }
+
+        // Check if user deserves a reward
+        function checkForReward() {
+            const today = getToday();
+            const progress = calculateProgress();
+
+            // Check if all today's tasks are done and reward hasn't been given today
+            if (progress.daily.done > 0 &&
+                progress.daily.done === progress.daily.total &&
+                state.lastRewardDate !== today) {
+
+                // Update state
+                state.gifts += 1;
+                state.lastRewardDate = today;
+
+                // Update streak
+                const yesterday = getDateDaysFromToday(-1);
+                if (state.lastRewardDate === yesterday) {
+                    state.streak += 1;
+                } else {
+                    state.streak = 1;
+                }
+
+                saveState();
+                showRewardModal();
+            }
+        }
+
+        // Check and award achievements
+        function checkAchievements() {
+            const newAchievements = [];
+            const totalHours = Math.floor(state.totalStudyTime / 60);
+
+            // Study time achievements
+            if (totalHours >= 1 && !state.achievements.includes('1_hour')) {
+                newAchievements.push('1_hour');
+                state.achievements.push('1_hour');
+            }
+
+            if (totalHours >= 10 && !state.achievements.includes('10_hours')) {
+                newAchievements.push('10_hours');
+                state.achievements.push('10_hours');
+            }
+
+            if (totalHours >= 50 && !state.achievements.includes('50_hours')) {
+                newAchievements.push('50_hours');
+                state.achievements.push('50_hours');
+            }
+
+            // Streak achievements
+            if (state.streak >= 3 && !state.achievements.includes('3_day_streak')) {
+                newAchievements.push('3_day_streak');
+                state.achievements.push('3_day_streak');
+            }
+
+            if (state.streak >= 7 && !state.achievements.includes('7_day_streak')) {
+                newAchievements.push('7_day_streak');
+                state.achievements.push('7_day_streak');
+            }
+
+            // Task completion achievements
+            const totalTasks = state.targets.reduce((sum, target) => sum + target.doneDates.length, 0);
+
+            if (totalTasks >= 10 && !state.achievements.includes('10_tasks')) {
+                newAchievements.push('10_tasks');
+                state.achievements.push('10_tasks');
+            }
+
+            if (totalTasks >= 50 && !state.achievements.includes('50_tasks')) {
+                newAchievements.push('50_tasks');
+                state.achievements.push('50_tasks');
+            }
+
+            // Show notification for new achievements
+            newAchievements.forEach(achievement => {
+                let message = '';
+                switch (achievement) {
+                    case '1_hour':
+                        message = 'Achievement unlocked: 1 Hour of Study!';
+                        break;
+                    case '10_hours':
+                        message = 'Achievement unlocked: 10 Hours of Study!';
+                        break;
+                    case '50_hours':
+                        message = 'Achievement unlocked: 50 Hours of Study!';
+                        break;
+                    case '3_day_streak':
+                        message = 'Achievement unlocked: 3-Day Streak!';
+                        break;
+                    case '7_day_streak':
+                        message = 'Achievement unlocked: 7-Day Streak!';
+                        break;
+                    case '10_tasks':
+                        message = 'Achievement unlocked: 10 Tasks Completed!';
+                        break;
+                    case '50_tasks':
+                        message = 'Achievement unlocked: 50 Tasks Completed!';
+                        break;
+                }
+                showNotification(message);
+            });
+
+            if (newAchievements.length > 0) {
+                saveState();
+                renderAchievements();
+            }
+        }
+
+        // Render achievement badges
+        function renderAchievements() {
+            elements.badgesContainer.innerHTML = '';
+
+            state.achievements.forEach(achievement => {
+                const badge = document.createElement('div');
+                badge.className = 'achievement-badge';
+
+                switch (achievement) {
+                    case '1_hour':
+                        badge.innerHTML = '⏰';
+                        badge.title = '1 Hour of Study';
+                        break;
+                    case '10_hours':
+                        badge.innerHTML = '📚';
+                        badge.title = '10 Hours of Study';
+                        break;
+                    case '50_hours':
+                        badge.innerHTML = '🎓';
+                        badge.title = '50 Hours of Study';
+                        break;
+                    case '3_day_streak':
+                        badge.innerHTML = '🔥';
+                        badge.title = '3-Day Streak';
+                        break;
+                    case '7_day_streak':
+                        badge.innerHTML = '🌟';
+                        badge.title = '7-Day Streak';
+                        break;
+                    case '10_tasks':
+                        badge.innerHTML = '✅';
+                        badge.title = '10 Tasks Completed';
+                        break;
+                    case '50_tasks':
+                        badge.innerHTML = '🏆';
+                        badge.title = '50 Tasks Completed';
+                        break;
+                }
+
+                elements.badgesContainer.appendChild(badge);
+            });
+        }
+
+        // Show reward modal with confetti
+        function showRewardModal() {
+            elements.modalGifts.textContent = state.gifts;
+            elements.modalStreak.textContent = state.streak;
+            elements.rewardModal.style.display = 'flex';
+            createConfetti();
+        }
+
+        // Close reward modal
+        function closeRewardModal() {
+            elements.rewardModal.style.display = 'none';
+        }
+
+        // Claim treat manually
+        function claimTreat() {
+            const today = getToday();
+            const progress = calculateProgress();
+
+            if (progress.daily.done === progress.daily.total && progress.daily.total > 0) {
+                if (state.lastRewardDate !== today) {
+                    // User completed tasks but didn't get reward yet
+                    state.gifts += 1;
+                    state.lastRewardDate = today;
+
+                    // Update streak
+                    const yesterday = getDateDaysFromToday(-1);
+                    if (state.lastRewardDate === yesterday) {
+                        state.streak += 1;
+                    } else {
+                        state.streak = 1;
+                    }
+
+                    saveState();
+                }
+                showRewardModal();
+            } else {
+                showNotification('You need to complete all your tasks for today to claim a treat!');
+            }
+        }
+
+        // Share reward
+        function shareReward() {
+            const text = `I just completed all my study tasks for today using Study Target Planner! 🎉 I've earned ${state.gifts} gifts and am on a ${state.streak}-day streak!`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Study Target Planner Achievement',
+                    text: text,
+                    url: window.location.href
+                }).catch(err => {
+                    console.error('Error sharing:', err);
+                    copyToClipboard(text);
+                });
+            } else {
+                copyToClipboard(text);
+            }
+        }
+
+        // Copy text to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Celebration text copied to clipboard!');
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                showNotification('Could not copy text to clipboard. Please try again.');
+            });
+        }
+
+        // Clear all targets with confirmation
+        function confirmClearAll() {
+            if (confirm('Are you sure you want to delete all targets? This cannot be undone.')) {
+                state.targets = [];
+                state.totalStudyTime = 0;
+                saveState();
+                render();
+                showNotification('All targets have been cleared.');
+            }
+        }
+
+        // Generate 30-day timetable
+        function generateTimetable() {
+            const today = getToday();
+            const timetable = [];
+
+            // Generate next 30 days
+            for (let i = 0; i < 30; i++) {
+                const dateStr = getDateDaysFromToday(i);
+                const occurrences = generateOccurrencesForDate(dateStr);
+
+                if (occurrences.length > 0) {
+                    timetable.push({
+                        date: dateStr,
+                        occurrences
+                    });
+                }
+            }
+
+            // Render timetable
+            elements.timetableContent.innerHTML = '';
+
+            if (timetable.length === 0) {
+                elements.timetableContent.innerHTML = '<p>No tasks scheduled for the next 30 days.</p>';
+            } else {
+                timetable.forEach(day => {
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'timetable-day';
+
+                    const header = document.createElement('div');
+                    header.className = 'day-header';
+                    header.innerHTML = `
+                        <span>${formatDateDisplay(day.date)}</span>
+                        <span class="day-progress">${day.occurrences.filter(o => o.isDone).length}/${day.occurrences.length} done</span>
+                    `;
+                    dayElement.appendChild(header);
+
+                    day.occurrences.forEach(occurrence => {
+                        const occurrenceElement = document.createElement('div');
+                        occurrenceElement.className = `task-item priority-${occurrence.priority}`;
+
+                        const headerDiv = document.createElement('div');
+                        headerDiv.className = 'task-header';
+
+                        const title = document.createElement('div');
+                        title.className = 'task-title';
+                        title.textContent = `${occurrence.subject}: ${occurrence.topic}`;
+                        headerDiv.appendChild(title);
+
+                        const meta = document.createElement('div');
+                        meta.className = 'task-meta';
+                        meta.textContent = `${occurrence.mins} minutes`;
+                        headerDiv.appendChild(meta);
+
+                        occurrenceElement.appendChild(headerDiv);
+
+                        const actions = document.createElement('div');
+                        actions.className = 'task-actions';
+
+                        if (occurrence.isDone) {
+                            const undoBtn = document.createElement('button');
+                            undoBtn.className = 'secondary';
+                            undoBtn.textContent = 'Undo';
+                            undoBtn.addEventListener('click', () => undoStatus(occurrence.targetId, day.date));
+                            actions.appendChild(undoBtn);
+                        } else if (occurrence.isSkipped) {
+                            const status = document.createElement('span');
+                            status.textContent = 'Skipped';
+                            actions.appendChild(status);
+
+                            const undoBtn = document.createElement('button');
+                            undoBtn.className = 'secondary';
+                            undoBtn.textContent = 'Undo';
+                            undoBtn.addEventListener('click', () => undoStatus(occurrence.targetId, day.date));
+                            actions.appendChild(undoBtn);
+                        } else {
+                            const doneBtn = document.createElement('button');
+                            doneBtn.className = 'success';
+                            doneBtn.textContent = 'Done';
+                            doneBtn.addEventListener('click', () => markDone(occurrence.targetId, day.date));
+                            actions.appendChild(doneBtn);
+
+                            const skipBtn = document.createElement('button');
+                            skipBtn.className = 'warning';
+                            skipBtn.textContent = 'Skip';
+                            skipBtn.addEventListener('click', () => markSkipped(occurrence.targetId, day.date));
+                            actions.appendChild(skipBtn);
+                        }
+
+                        occurrenceElement.appendChild(actions);
+                        dayElement.appendChild(occurrenceElement);
+                    });
+
+                    elements.timetableContent.appendChild(dayElement);
+                });
+            }
+
+            elements.timetableModal.style.display = 'flex';
+        }
+
+        // Show all targets with edit/delete options
+        function showAllTargets() {
+            elements.allTargetsContent.innerHTML = '';
+
+            if (state.targets.length === 0) {
+                elements.allTargetsContent.innerHTML = '<p>No targets yet. Add some using the form!</p>';
+            } else {
+                state.targets.forEach(target => {
+                    const targetElement = document.createElement('div');
+                    targetElement.className = `task-item priority-${target.priority}`;
+                    targetElement.innerHTML = `
+                        <div class="task-header">
+                            <div class="task-title">${target.subject}: ${target.topic}</div>
+                            <div class="task-meta">${target.mins} minutes</div>
+                        </div>
+                        <div class="task-meta">
+                            Date: ${target.date} | Repeat: ${target.repeat} | Priority: ${target.priority}
+                        </div>
+                        <div class="task-meta">
+                            Created: ${target.createdAt} | Done: ${target.doneDates.length} times
+                        </div>
+                        <div class="task-actions">
+                            <button class="danger delete-target" data-id="${target.id}">Delete</button>
+                        </div>
+                    `;
+
+                    elements.allTargetsContent.appendChild(targetElement);
+                });
+
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-target').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const targetId = e.target.getAttribute('data-id');
+                        if (confirm('Are you sure you want to delete this target?')) {
+                            deleteTarget(targetId);
+                            showAllTargets(); // Refresh the list
+                        }
+                    });
+                });
+            }
+
+            elements.allTargetsModal.style.display = 'flex';
+        }
+
+        // Export state as JSON file
+        function exportJson() {
+            const dataStr = JSON.stringify(state, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+            const exportFileDefaultName = 'study_planner_export.json';
+
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+
+            showNotification('Data exported successfully!');
+        }
+
+        // Trigger import by clicking hidden file input
+        function triggerImport() {
+            elements.fileInput.click();
+        }
+
+        // Import state from JSON file
+        function importJson(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const importedState = JSON.parse(e.target.result);
+
+                    if (confirm('Importing will replace your current data. Continue?')) {
+                        state = importedState;
+                        saveState();
+                        render();
+                        showNotification('Data imported successfully!');
+                    }
+                } catch (error) {
+                    showNotification('Error importing file: Invalid JSON format');
+                    console.error('Import error:', error);
+                }
+            };
+            reader.readAsText(file);
+
+            // Reset file input
+            elements.fileInput.value = '';
+        }
+
+        // Reset to demo data
+        function resetDemo() {
+            if (confirm('This will replace your current data with demo data. Continue?')) {
+                createDemoData();
+                render();
+                showNotification('Demo data has been reset.');
+            }
+        }
+
+        // Close all modals
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+
+        // Create confetti animation
+        function createConfetti() {
+            elements.confettiContainer.innerHTML = '';
+
+            const colors = ['#ff9e44', '#4a6fa5', '#2ecc71', '#e74c3c', '#9b59b6', '#f39c12'];
+            const confettiCount = 150;
+
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti-piece';
+
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const size = Math.floor(Math.random() * 12) + 5;
+                const left = Math.floor(Math.random() * 100);
+                const animationDelay = Math.floor(Math.random() * 1000);
+                const animationDuration = Math.floor(Math.random() * 3000) + 3000;
+
+                confetti.style.backgroundColor = color;
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.left = `${left}%`;
+                confetti.style.animationDelay = `${animationDelay}ms`;
+                confetti.style.animationDuration = `${animationDuration}ms`;
+                confetti.style.animationName = 'confetti-fall';
+
+                elements.confettiContainer.appendChild(confetti);
+
+                // Remove confetti piece after animation completes
+                setTimeout(() => {
+                    if (confetti.parentNode) {
+                        confetti.parentNode.removeChild(confetti);
+                    }
+                }, animationDuration + animationDelay);
+            }
+        }
+
+        // Create background particles
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            const particleCount = 40;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+
+                const size = Math.random() * 12 + 2;
+                const left = Math.random() * 100;
+                const animationDuration = Math.random() * 30 + 20;
+                const animationDelay = Math.random() * 5;
+
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${left}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animationDuration = `${animationDuration}s`;
+                particle.style.animationDelay = `${animationDelay}s`;
+
+                container.appendChild(particle);
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            elements.notificationText.textContent = message;
+            elements.notification.classList.add('show');
+
+            setTimeout(() => {
+                elements.notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Update clock
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+
+            elements.currentTime.textContent = `${hours}:${minutes}:${seconds}`;
+            elements.currentDate.textContent = now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            // Update analog clock
+            const secondDegrees = (seconds / 60) * 360;
+            const minuteDegrees = (minutes / 60) * 360 + (seconds / 60) * 6;
+            const hourDegrees = (hours % 12) / 12 * 360 + (minutes / 60) * 30;
+
+            elements.secondHand.style.transform = `translateX(-50%) rotate(${secondDegrees}deg)`;
+            elements.minuteHand.style.transform = `translateX(-50%) rotate(${minuteDegrees}deg)`;
+            elements.hourHand.style.transform = `translateX(-50%) rotate(${hourDegrees}deg)`;
+        }
+
+        // Start focus timer
+        function startFocusTimer() {
+            if (!state.focusTimer.running) {
+                state.focusTimer.running = true;
+                state.focusTimer.interval = setInterval(updateFocusTimer, 1000);
+                elements.startFocus.disabled = true;
+                elements.pauseFocus.disabled = false;
+            }
+        }
+
+        // Pause focus timer
+        function pauseFocusTimer() {
+            if (state.focusTimer.running) {
+                state.focusTimer.running = false;
+                clearInterval(state.focusTimer.interval);
+                elements.startFocus.disabled = false;
+                elements.pauseFocus.disabled = true;
+            }
+        }
+
+        // Reset focus timer
+        function resetFocusTimer() {
+            state.focusTimer.running = false;
+            clearInterval(state.focusTimer.interval);
+            state.focusTimer.timeLeft = 25 * 60;
+            updateFocusTimerDisplay();
+            elements.startFocus.disabled = false;
+            elements.pauseFocus.disabled = false;
+        }
+
+        // Update focus timer
+        function updateFocusTimer() {
+            if (state.focusTimer.timeLeft > 0) {
+                state.focusTimer.timeLeft--;
+                updateFocusTimerDisplay();
+            } else {
+                // Timer completed
+                clearInterval(state.focusTimer.interval);
+                state.focusTimer.running = false;
+                showNotification('Focus timer completed! Take a break.');
+                createConfetti();
+            }
+        }
+
+        // Update focus timer display
+        function updateFocusTimerDisplay() {
+            const minutes = Math.floor(state.focusTimer.timeLeft / 60);
+            const seconds = state.focusTimer.timeLeft % 60;
+            elements.focusTimer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Render the UI
+        function render() {
+            const today = getToday();
+            const todayOccurrences = generateOccurrencesForDate(today);
+            const pendingOccurrences = getPendingOccurrences();
+            const upcomingOccurrences = getUpcomingOccurrences();
+            const progress = calculateProgress();
+
+            // Render today's tasks
+            renderOccurrences(elements.todayList, todayOccurrences, today);
+
+            // Render pending/overdue tasks
+            renderOccurrences(elements.pendingList, pendingOccurrences, null, true);
+
+            // Render upcoming tasks
+            renderOccurrences(elements.upcomingList, upcomingOccurrences, null, false, true);
+
+            // Update progress displays
+            elements.dailyPercent.textContent = `${progress.daily.percent}%`;
+            elements.weeklyPercent.textContent = `${progress.weekly.percent}%`;
+            elements.monthlyPercent.textContent = `${progress.monthly.percent}%`;
+
+            elements.dailyProgress.style.width = `${progress.daily.percent}%`;
+            elements.weeklyProgress.style.width = `${progress.weekly.percent}%`;
+            elements.monthlyProgress.style.width = `${progress.monthly.percent}%`;
+
+            elements.dailyCount.textContent = `${progress.daily.done}/${progress.daily.total} done`;
+            elements.weeklyCount.textContent = `${progress.weekly.done}/${progress.weekly.total} done`;
+            elements.monthlyCount.textContent = `${progress.monthly.done}/${progress.monthly.total} done`;
+
+            elements.dailyTotal.textContent = `${progress.daily.total} total`;
+            elements.weeklyTotal.textContent = `${progress.weekly.total} total`;
+            elements.monthlyTotal.textContent = `${progress.monthly.total} total`;
+
+            // Update motivation displays
+            elements.streak.textContent = `${state.streak} days`;
+            elements.gifts.textContent = state.gifts;
+            elements.totalHours.textContent = Math.floor(state.totalStudyTime / 60);
+
+            // Update energy level
+            elements.energyLevel.style.width = `${progress.daily.percent}%`;
+
+            // Render progress graph
+            renderProgressGraph();
+
+            // Render achievements
+            renderAchievements();
+        }
+
+        // Render a list of occurrences
+        function renderOccurrences(container, occurrences, date = null, isPending = false, isUpcoming = false) {
+            container.innerHTML = '';
+
+            if (occurrences.length === 0) {
+                const message = isPending ?
+                    'No pending or overdue tasks.' :
+                    (isUpcoming ? 'No upcoming tasks in the next 7 days.' : 'No tasks for today. Add some using the form!');
+                container.innerHTML = `<li class="task-item">${message}</li>`;
+                return;
+            }
+
+            occurrences.forEach(occurrence => {
+                const li = document.createElement('li');
+                li.className = `task-item priority-${occurrence.priority}`;
+
+                // Add urgent class for high priority tasks that are not done
+                if (occurrence.priority === 'high' && !occurrence.isDone && !occurrence.isSkipped) {
+                    li.classList.add('urgent-task');
+                }
+
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'task-header';
+
+                const title = document.createElement('div');
+                title.className = 'task-title';
+                title.textContent = `${occurrence.subject}: ${occurrence.topic}`;
+                headerDiv.appendChild(title);
+
+                const meta = document.createElement('div');
+                meta.className = 'task-meta';
+                meta.textContent = `${occurrence.mins} minutes`;
+                headerDiv.appendChild(meta);
+
+                li.appendChild(headerDiv);
+
+                if (date) {
+                    const dateMeta = document.createElement('div');
+                    dateMeta.className = 'task-meta';
+                    dateMeta.textContent = formatDateDisplay(date);
+                    li.appendChild(dateMeta);
+                } else if (isUpcoming) {
+                    const dateMeta = document.createElement('div');
+                    dateMeta.className = 'task-meta';
+                    dateMeta.textContent = `Scheduled: ${formatDateDisplay(occurrence.date)}`;
+                    li.appendChild(dateMeta);
+                }
+
+                const priorityBadge = document.createElement('div');
+                priorityBadge.className = 'task-meta';
+                priorityBadge.textContent = `Priority: ${occurrence.priority}`;
+                li.appendChild(priorityBadge);
+
+                const actions = document.createElement('div');
+                actions.className = 'task-actions';
+
+                if (occurrence.isDone) {
+                    const status = document.createElement('span');
+                    status.textContent = 'Completed';
+                    actions.appendChild(status);
+
+                    const undoBtn = document.createElement('button');
+                    undoBtn.className = 'secondary';
+                    undoBtn.textContent = 'Undo';
+                    undoBtn.addEventListener('click', () => undoStatus(occurrence.targetId, occurrence.date));
+                    actions.appendChild(undoBtn);
+                } else if (occurrence.isSkipped) {
+                    const status = document.createElement('span');
+                    status.textContent = 'Skipped';
+                    actions.appendChild(status);
+
+                    if (isPending) {
+                        const resumeBtn = document.createElement('button');
+                        resumeBtn.className = 'success';
+                        resumeBtn.textContent = 'Resume';
+                        resumeBtn.addEventListener('click', () => resumeTask(occurrence.targetId, occurrence.date));
+                        actions.appendChild(resumeBtn);
+                    } else {
+                        const undoBtn = document.createElement('button');
+                        undoBtn.className = 'secondary';
+                        undoBtn.textContent = 'Undo';
+                        undoBtn.addEventListener('click', () => undoStatus(occurrence.targetId, occurrence.date));
+                        actions.appendChild(undoBtn);
+                    }
+                } else {
+                    const doneBtn = document.createElement('button');
+                    doneBtn.className = 'success';
+                    doneBtn.textContent = 'Done';
+                    doneBtn.addEventListener('click', () => markDone(occurrence.targetId, occurrence.date));
+                    actions.appendChild(doneBtn);
+
+                    const skipBtn = document.createElement('button');
+                    skipBtn.className = 'warning';
+                    skipBtn.textContent = 'Skip';
+                    skipBtn.addEventListener('click', () => markSkipped(occurrence.targetId, occurrence.date));
+                    actions.appendChild(skipBtn);
+                }
+
+                li.appendChild(actions);
+                container.appendChild(li);
+            });
+        }
+
+        // Get pending/overdue occurrences (skipped tasks from previous dates)
+        function getPendingOccurrences() {
+            const today = getToday();
+            const pending = [];
+
+            // Check last 7 days for skipped tasks
+            for (let i = 1; i <= 7; i++) {
+                const dateStr = getDateDaysFromToday(-i);
+                const occurrences = generateOccurrencesForDate(dateStr);
+
+                occurrences.forEach(occurrence => {
+                    if (occurrence.isSkipped && !occurrence.isDone) {
+                        pending.push(occurrence);
+                    }
+                });
+            }
+
+            return pending;
+        }
+
+        // Get upcoming occurrences (next 7 days)
+        function getUpcomingOccurrences() {
+            const today = getToday();
+            const upcoming = [];
+
+            // Check next 7 days for tasks
+            for (let i = 1; i <= 7; i++) {
+                const dateStr = getDateDaysFromToday(i);
+                const occurrences = generateOccurrencesForDate(dateStr);
+
+                occurrences.forEach(occurrence => {
+                    if (!occurrence.isDone && !occurrence.isSkipped) {
+                        upcoming.push(occurrence);
+                    }
+                });
+            }
+
+            return upcoming;
+        }
+
+        // Render progress graph for last 7 days
+        function renderProgressGraph() {
+            elements.progressGraph.innerHTML = '';
+
+            const today = new Date();
+            const last7Days = [];
+
+            // Get dates for last 7 days
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(today.getDate() - i);
+                last7Days.push(formatDate(date));
+            }
+
+            // Calculate completion percentages for each day
+            const data = last7Days.map(date => {
+                const occurrences = generateOccurrencesForDate(date);
+                const total = occurrences.length;
+                const done = occurrences.filter(o => o.isDone).length;
+                const percent = total > 0 ? (done / total) * 100 : 0;
+
+                return {
+                    date,
+                    percent,
+                    label: formatDateShort(date)
+                };
+            });
+
+            // Find maximum value for scaling
+            const maxPercent = Math.max(...data.map(d => d.percent), 100);
+
+            // Create bars for each day
+            data.forEach(day => {
+                const barHeight = maxPercent > 0 ? (day.percent / maxPercent) * 100 : 0;
+
+                // Container for bar + label
+                const barContainer = document.createElement('div');
+                barContainer.style.display = 'flex';
+                barContainer.style.flexDirection = 'column';
+                barContainer.style.alignItems = 'center';
+                barContainer.style.height = '100%';
+
+                // Bar element
+                const bar = document.createElement('div');
+                bar.className = 'graph-bar';
+                bar.style.height = `${barHeight}%`;
+                bar.style.backgroundColor = day.percent > 0
+                    ? (day.percent === 100 ? 'var(--success)' : 'var(--primary)')
+                    : '#eee';
+                bar.title = `${day.label}: ${Math.round(day.percent)}%`;
+
+                // Label element
+                const label = document.createElement('div');
+                label.className = 'graph-label';
+                label.textContent = day.label;
+
+                // Append bar + label inside container
+                barContainer.appendChild(bar);
+                barContainer.appendChild(label);
+
+                // Add container to graph
+                elements.progressGraph.appendChild(barContainer);
+            });
+        }
+
+        // Utility function to generate a unique ID
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // Utility function to get today's date in YYYY-MM-DD format
+        function getToday() {
+            const today = new Date();
+            return formatDate(today);
+        }
+
+        // Utility function to format a date as YYYY-MM-DD
+        function formatDate(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Utility function to format a date for display
+        function formatDateDisplay(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // Utility function to format a date as short string (e.g., Mon 15)
+        function formatDateShort(dateStr) {
+            const date = new Date(dateStr);
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            return `${days[date.getDay()]} ${date.getDate()}`;
+        }
+
+        // Utility function to get a date relative to today
+        function getDateDaysFromToday(days) {
+            const date = new Date();
+            date.setDate(date.getDate() + days);
+            return formatDate(date);
+        }
+
+        // Utility function to get the previous Monday
+        function getPreviousMonday() {
+            const today = new Date();
+            const day = today.getDay();
+            const diff = today.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is Sunday
+            const monday = new Date(today.setDate(diff));
+            return formatDate(monday);
+        }
+
+        // Utility function to get all dates in the week containing the given date
+        function getWeekDates(dateStr) {
+            const date = new Date(dateStr);
+            const day = date.getDay();
+            const startDate = new Date(date);
+            startDate.setDate(date.getDate() - day + (day === 0 ? -6 : 1)); // adjust to Monday
+
+            const weekDates = [];
+            for (let i = 0; i < 7; i++) {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(startDate.getDate() + i);
+                weekDates.push(formatDate(currentDate));
+            }
+
+            return weekDates;
+        }
+
+        // Utility function to get all dates in the month containing the given date
+        function getMonthDates(dateStr) {
+            const date = new Date(dateStr);
+            const year = date.getFullYear();
+            const month = date.getMonth();
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+
+            const monthDates = [];
+            for (let d = new Date(firstDay); d <= lastDay; d.setDate(d.getDate() + 1)) {
+                monthDates.push(formatDate(d));
+            }
+
+            return monthDates;
+        }
+
+        // Initialize the app when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>
