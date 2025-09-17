@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Thinking Quiz - NPTEL Examination</title>
+    <style>
+        :root {
+            --primary: #1a4f8c;
+            --primary-dark: #0d3b66;
+            --secondary: #28a745;
+            --danger: #dc3545;
+            --warning: #fd7e14;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #dee2e6;
+            --exam-bg: #f5f5f5;
+            --paper-bg: #fff;
+            --border-color: #ccc;
+            --correct-light: #e6f7eb;
+            --correct-dark: #28a745;
+            --incorrect-light: #fde8e8;
+            --incorrect-dark: #dc3545;
+            --partial-light: #fff3cd;
+            --partial-dark: #ffc107;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        
+        body {
+            background-color: var(--exam-bg);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--paper-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .watermark {
+            position: absolute;
+            opacity: 0.03;
+            font-size: 120px;
+            transform: rotate(-45deg);
+            top: 30%;
+            left: 10%;
+            z-index: 0;
+            pointer-events: none;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        
+        header {
+            text-align: center;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary);
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: var(--dark);
+            font-weight: normal;
+        }
+        
+        .exam-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: var(--light);
+            border: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+        
+        .quiz-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        @media (min-width: 992px) {
+            .quiz-container {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+        
+        .sidebar {
+            background-color: var(--light);
+            border-radius: 5px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            order: 2;
+        }
+        
+        @media (min-width: 992px) {
+            .sidebar {
+                order: 1;
+            }
+        }
+        
+        .main-content {
+            background-color: var(--paper-bg);
+            border-radius: 5px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            z-index: 1;
+            order: 1;
+        }
+        
+        @media (min-width: 992px) {
+            .main-content {
+                order: 2;
+            }
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--primary);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-box {
+            background-color: var(--paper-bg);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: var(--light-gray);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+        
+        .timer {
+            background-color: var(--paper-bg);
+            padding: 12px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .timer-display {
+            font-size: 24px;
+            font-weight: bold;
+            font-family: monospace;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+        
+        .timer-label {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background-color: var(--paper-bg);
+            color: var(--dark);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--light);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));
+            gap: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--paper-bg);
+        }
+        
+        .question-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--paper-bg);
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .question-btn:hover {
+            background-color: var(--light);
+        }
+        
+        .question-btn.current {
+            border-color: var(--primary);
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .question-btn.answered {
+            border-color: var(--secondary);
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .question-btn.correct {
+            border-color: var(--correct-dark);
+            background-color: var(--correct-dark);
+            color: white;
+        }
+        
+        .question-btn.incorrect {
+            border-color: var(--incorrect-dark);
+            background-color: var(--incorrect-dark);
+            color: white;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .question-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .question-status {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .question-text {
+            font-size: 16px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-weight: bold;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .options-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .option {
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .option:hover {
+            background-color: var(--light);
+        }
+        
+        .option.selected {
+            border-color: var(--primary);
+            background-color: #e8f4fd;
+        }
+        
+        .option.correct {
+            border-color: var(--correct-dark);
+            background-color: var(--correct-light);
+        }
+        
+        .option.incorrect {
+            border-color: var(--incorrect-dark);
+            background-color: var(--incorrect-light);
+        }
+        
+        .option-letter {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .selected .option-letter {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .correct .option-letter {
+            background-color: var(--correct-dark);
+            color: white;
+        }
+        
+        .incorrect .option-letter {
+            background-color: var(--incorrect-dark);
+            color: white;
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--paper-bg);
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-btn:hover {
+            background-color: var(--light);
+        }
+        
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .review-item {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--light);
+        }
+        
+        .review-answered {
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        
+        .review-correct {
+            color: var(--correct-dark);
+            font-weight: bold;
+        }
+        
+        .review-incorrect {
+            color: var(--incorrect-dark);
+            font-weight: bold;
+        }
+        
+        .result-container {
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .result-score {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .result-text {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        
+        .correct-answer {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: var(--correct-light);
+            border-radius: 5px;
+            font-weight: bold;
+            border: 1px solid var(--correct-dark);
+        }
+        
+        .answer-feedback {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .feedback-correct {
+            background-color: var(--correct-light);
+            border: 1px solid var(--correct-dark);
+            color: var(--correct-dark);
+        }
+        
+        .feedback-incorrect {
+            background-color: var(--incorrect-light);
+            border: 1px solid var(--incorrect-dark);
+            color: var(--incorrect-dark);
+        }
+        
+        .score-breakdown {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .score-box {
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .score-correct {
+            background-color: var(--correct-light);
+            border: 1px solid var(--correct-dark);
+        }
+        
+        .score-incorrect {
+            background-color: var(--incorrect-light);
+            border: 1px solid var(--incorrect-dark);
+        }
+        
+        .score-unanswered {
+            background-color: var(--light);
+            border: 1px solid var(--border-color);
+        }
+        
+        .score-value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .score-label {
+            font-size: 12px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            color: var(--gray);
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .instructions {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        .answer-status {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        
+        .status-correct {
+            background-color: var(--correct-light);
+            color: var(--correct-dark);
+            border: 1px solid var(--correct-dark);
+        }
+        
+        .status-incorrect {
+            background-color: var(--incorrect-light);
+            color: var(--incorrect-dark);
+            border: 1px solid var(--incorrect-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="watermark">NPTEL EXAMINATION</div>
+        
+        <header>
+            <h1>NPTEL Online Certification Examination</h1>
+            <p class="subtitle">Design Thinking - Practice Test (100 MCQs)</p>
+        </header>
+        
+        <div class="exam-info">
+            <div><strong>Time:</strong> 30 Minutes</div>
+            <div><strong>Maximum Marks:</strong> 100</div>
+            <div><strong>Date:</strong> <span id="current-date"></span></div>
+        </div>
+        
+        <div class="instructions">
+            <h3>General Instructions:</h3>
+            <ul>
+                <li>All questions are compulsory</li>
+                <li>Each question carries 1 mark</li>
+                <li>There is no negative marking</li>
+                <li>Timer will auto-submit your exam when time ends</li>
+                <li>You can navigate between questions using Next/Previous buttons or question grid</li>
+                <li>After submission, correct answers will be shown in green and incorrect in red</li>
+            </ul>
+        </div>
+        
+        <div class="quiz-container">
+            <aside class="sidebar">
+                <h2 class="section-title">Exam Controls</h2>
+                
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="total-questions">100</div>
+                        <div class="stat-label">Questions</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="answered-count">0</div>
+                        <div class="stat-label">Answered</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="score-display">0</div>
+                        <div class="stat-label">Score (live)</div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="progress-text">0% answered</div>
+                </div>
+                
+                <div class="timer">
+                    <div class="timer-display" id="timer">30:00</div>
+                    <div class="timer-label">Time Remaining</div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" id="submit-btn">Submit Exam</button>
+                    <button class="btn btn-secondary" id="show-answers-btn" disabled>Show Answers</button>
+                    <button class="btn btn-danger" id="reset-btn">Reset Exam</button>
+                </div>
+                
+                <h3 class="section-title">Question Navigation</h3>
+                <div class="question-grid" id="question-grid">
+                    <!-- Question buttons will be inserted here -->
+                </div>
+            </aside>
+            
+            <main class="main-content">
+                <div class="question-header">
+                    <div class="question-number" id="current-question">Question 1</div>
+                    <div class="question-status" id="question-status">Answered: 0</div>
+                </div>
+                
+                <div id="answer-feedback-container"></div>
+                
+                <div class="question-text" id="question-text">
+                    Which of the following is the first stage in the Design Thinking process?
+                </div>
+                
+                <div class="options-grid" id="options-container">
+                    <!-- Options will be inserted here -->
+                </div>
+                
+                <div class="navigation-buttons">
+                    <button class="nav-btn" id="prev-btn">Previous</button>
+                    <button class="nav-btn" id="next-btn">Next</button>
+                </div>
+                
+                <div class="review-grid" id="review-grid">
+                    <!-- Review items will be inserted here -->
+                </div>
+                
+                <div class="result-container" id="result-container" style="display: none;">
+                    <div class="result-score" id="final-score">0/100 (0%)</div>
+                    <div class="result-text" id="result-text">Exam completed!</div>
+                    
+                    <div class="score-breakdown">
+                        <div class="score-box score-correct">
+                            <div class="score-value" id="correct-count">0</div>
+                            <div class="score-label">Correct</div>
+                        </div>
+                        <div class="score-box score-incorrect">
+                            <div class="score-value" id="incorrect-count">0</div>
+                            <div class="score-label">Incorrect</div>
+                        </div>
+                        <div class="score-box score-unanswered">
+                            <div class="score-value" id="unanswered-count">100</div>
+                            <div class="score-label">Unanswered</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="review-btn">Review Answers</button>
+                </div>
+            </main>
+        </div>
+        
+        <footer>
+            <p>© 2023 NPTEL - Design Thinking Examination. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Set current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString();
+        
+        // Quiz data with more varied answer distribution
+        const QUESTIONS = [
+            { id: 1, q: "Which of the following is the first stage in the Design Thinking process?", options: ["Ideate", "Empathize", "Prototype", "Test"], a: 1 },
+            { id: 2, q: "Design Thinking is primarily a ________ approach.", options: ["Linear", "Iterative", "Random", "Fixed"], a: 1 },
+            { id: 3, q: "Which mindset is essential for Design Thinking?", options: ["Competitive mindset", "Growth mindset", "Fixed mindset", "Negative mindset"], a: 1 },
+            { id: 4, q: "The focus of Design Thinking is on:", options: ["Cost reduction", "Human-centered solutions", "Market expansion", "Industrial automation"], a: 1 },
+            { id: 5, q: "Which company popularized Design Thinking globally?", options: ["IDEO", "Microsoft", "Samsung", "IBM"], a: 0 },
+            { id: 6, q: "In the empathy phase, the key activity is:", options: ["Building prototypes", "Understanding users", "Marketing strategy", "Cost analysis"], a: 1 },
+            { id: 7, q: "Which of these is NOT a stage of Design Thinking?", options: ["Define", "Ideate", "Execute", "Test"], a: 2 },
+            { id: 8, q: "Divergent thinking is mainly used in which stage?", options: ["Define", "Ideate", "Prototype", "Test"], a: 1 },
+            { id: 9, q: "The term 'wicked problems' in Design Thinking refers to:", options: ["Problems with only one solution", "Problems that are easy to solve", "Problems that are complex and undefined", "Problems related to evil motives"], a: 2 },
+            { id: 10, q: "Which of the following is an example of empathy in Design Thinking?", options: ["Studying customer complaints", "Preparing a business plan", "Brainstorming in a team", "Marketing products"], a: 0 },
+            { id: 11, q: "Which stage converts ideas into tangible solutions?", options: ["Prototype", "Define", "Empathize", "Test"], a: 0 },
+            { id: 12, q: "The main outcome of the 'Define' stage is:", options: ["Problem statement", "Prototype", "Empathy map", "Market report"], a: 0 },
+            { id: 13, q: "Brainstorming sessions should encourage:", options: ["Criticism", "Wild ideas", "Limited participation", "Silence"], a: 1 },
+            { id: 14, q: "Fail fast, learn fast is related to:", options: ["Empathizing", "Prototyping", "Defining", "Divergent thinking"], a: 1 },
+            { id: 15, q: "Human-centered design means focusing on:", options: ["Profit first", "User needs", "Technology advancement", "Cost cutting"], a: 1 },
+            { id: 16, q: "Which tool is most commonly used in empathy phase?", options: ["SWOT analysis", "Interview and observation", "Gantt chart", "Fishbone diagram"], a: 1 },
+            { id: 17, q: "Which is an example of convergent thinking?", options: ["Generating as many ideas as possible", "Narrowing down to best solution", "Brainstorming", "Mind mapping"], a: 1 },
+            { id: 18, q: "The prototype stage should be:", options: ["Expensive and perfect", "Quick and low cost", "Long and detailed", "Formal and final"], a: 1 },
+            { id: 19, q: "Empathy maps are divided into:", options: ["Think, Feel, Say, Do", "SWOT, PEST, Porter's", "Inputs, Outputs, Process", "Cost, Benefit, Value"], a: 0 },
+            { id: 20, q: "The aim of Design Thinking is to find:", options: ["Any solution", "Feasible, viable, desirable solution", "Cheapest solution", "Easiest solution"], a: 1 },
+            { id: 21, q: "Which method is NOT used in Ideation phase?", options: ["Brainstorming", "SCAMPER", "Rapid prototyping", "Mind mapping"], a: 2 },
+            { id: 22, q: "SCAMPER stands for:", options: ["Substitute, Combine, Adapt, Modify, Put to other use, Eliminate, Reverse", "Solve, Combine, Adjust, Make, Plan, Execute, Report", "Simplify, Combine, Apply, Manage, Plan, Enhance, Resolve", "Substitute, Compare, Adjust, Manage, Plan, Execute, Reverse"], a: 0 },
+            { id: 23, q: "Role of storytelling in design thinking is to:", options: ["Entertain audience", "Communicate user needs and insights", "Replace prototyping", "Reduce cost"], a: 1 },
+            { id: 24, q: "The Double Diamond model has how many stages?", options: ["Two", "Four", "Five", "Six"], a: 1 },
+            { id: 25, q: "Personas are created to represent:", options: ["Random customers", "Real users with key traits", "Employees", "Competitors"], a: 1 },
+            { id: 26, q: "Which of these is NOT a benefit of prototyping?", options: ["Early feedback", "Saving time", "Avoiding all failures", "Improving design iteratively"], a: 2 },
+            { id: 27, q: "Divergent thinking encourages:", options: ["Exploring multiple ideas", "Selecting only one idea", "Reducing creativity", "Avoiding experiments"], a: 0 },
+            { id: 28, q: "A prototype should be:", options: ["User-tested", "Hidden from users", "Fully perfect", "Only internal document"], a: 0 },
+            { id: 29, q: "Affinity diagrams are used to:", options: ["Organize data and insights", "Build prototypes", "Calculate costs", "Measure performance"], a: 0 },
+            { id: 30, q: "How Might We questions are created during:", options: ["Define phase", "Test phase", "Prototype phase", "Empathize phase"], a: 0 },
+            { id: 31, q: "Low-fidelity prototypes are usually:", options: ["Digital, interactive models", "Rough sketches or paper models", "Fully functional products", "Market-ready solutions"], a: 1 },
+            { id: 32, q: "Which is an example of a physical prototype?", options: ["Wireframe", "3D-printed model", "Storyboard", "Flowchart"], a: 1 },
+            { id: 33, q: "Empathy requires:", options: ["Understanding and sharing feelings of users", "Only data analysis", "Ignoring user perspective", "Focusing on technology only"], a: 0 },
+            { id: 34, q: "Design Thinking is best used for:", options: ["Well-defined problems", "Ill-defined, complex problems", "Simple calculations", "Repetitive work"], a: 1 },
+            { id: 35, q: "Which of the following is NOT a part of Human-Centered Design?", options: ["Desirability", "Feasibility", "Viability", "Profitability only"], a: 3 },
+            { id: 36, q: "Which activity comes first?", options: ["Ideate", "Define", "Prototype", "Test"], a: 1 },
+            { id: 37, q: "Which type of research is used to understand user emotions?", options: ["Quantitative", "Qualitative", "Statistical", "Computational"], a: 1 },
+            { id: 38, q: "MVP in design thinking stands for:", options: ["Minimum Viable Product", "Most Valuable Product", "Maximum Value Prototype", "Main Visual Plan"], a: 0 },
+            { id: 39, q: "Testing phase helps in:", options: ["Understanding if solution works for users", "Avoiding feedback", "Finalizing design without changes", "Reducing empathy"], a: 0 },
+            { id: 40, q: "Which mindset helps generate new possibilities?", options: ["Beginner's mindset", "Critical mindset", "Negative mindset", "Mechanical mindset"], a: 0 },
+            { id: 41, q: "A company redesigns its website after interviewing users. Which phase is this?", options: ["Prototype", "Empathize", "Test", "Define"], a: 1 },
+            { id: 42, q: "When a designer asks What is the real problem we are solving? he is in:", options: ["Ideate", "Define", "Prototype", "Test"], a: 1 },
+            { id: 43, q: "Rapid prototyping saves:", options: ["Cost & time", "Only money", "Only user effort", "None"], a: 0 },
+            { id: 44, q: "Fail early principle encourages:", options: ["Experimenting and learning quickly", "Avoiding mistakes", "Avoiding user feedback", "Avoiding risk"], a: 0 },
+            { id: 45, q: "Which is an empathy-building activity?", options: ["Online surveys", "Financial analysis", "Competitor analysis", "Project budgeting"], a: 0 },
+            { id: 46, q: "Empathy maps help in:", options: ["Understanding user perspective", "Deciding budget", "Defining competition", "Writing code"], a: 0 },
+            { id: 47, q: "Double diamond model phases: Discover, Define, ____, Deliver", options: ["Develop", "Design", "Discuss", "Determine"], a: 0 },
+            { id: 48, q: "Testing prototypes with users provides:", options: ["Validation and insights", "Final approval only", "No value", "Only cost data"], a: 0 },
+            { id: 49, q: "Who benefits most from design thinking approach?", options: ["Users and businesses", "Only designers", "Only management", "None"], a: 0 },
+            { id: 50, q: "Design thinking encourages:", options: ["Collaboration", "Working alone", "Avoiding teamwork", "Competition only"], a: 0 },
+            { id: 51, q: "The main advantage of co-creation workshops is:", options: ["More hierarchy", "Involving stakeholders early", "Reducing collaboration", "Avoiding feedback"], a: 1 },
+            { id: 52, q: "Which of these is NOT a common brainstorming rule?", options: ["Defer judgment", "Encourage wild ideas", "Build on others ideas", "Criticize ideas immediately"], a: 3 },
+            { id: 53, q: "Human-centered design focuses on three overlapping lenses:", options: ["Technology, Cost, Time", "Desirability, Feasibility, Viability", "Design, Development, Delivery", "Product, Price, Place"], a: 1 },
+            { id: 54, q: "A journey map helps to:", options: ["Visualize user's experience step by step", "Calculate budget", "Test prototype", "Recruit participants"], a: 0 },
+            { id: 55, q: "Which is a characteristic of wicked problems?", options: ["Easy to define", "No clear solution", "Always technical", "Quickly solved"], a: 1 },
+            { id: 56, q: "Which method is used for clustering ideas?", options: ["Affinity mapping", "SWOT analysis", "Brain dump", "Fishbone diagram"], a: 0 },
+            { id: 57, q: "Stakeholder mapping is used to:", options: ["Identify key people affected by design", "Create product prototype", "Define cost", "Market the product"], a: 0 },
+            { id: 58, q: "Which type of prototype tests functionality best?", options: ["High fidelity", "Low fidelity", "Paper sketches", "Mind map"], a: 0 },
+            { id: 59, q: "Which is an empathy-building technique?", options: ["Immersion (experiencing as user)", "Financial projection", "Competitor pricing", "Product roadmapping"], a: 0 },
+            { id: 60, q: "Ideation phase is about:", options: ["Generating as many ideas as possible", "Finalizing one idea immediately", "Avoiding creativity", "Reducing possibilities"], a: 0 },
+            { id: 61, q: "Which is NOT a part of Double Diamond model?", options: ["Discover", "Define", "Deliver", "Deploy software"], a: 3 },
+            { id: 62, q: "Which phase validates problem understanding?", options: ["Define", "Test", "Prototype", "Ideate"], a: 0 },
+            { id: 63, q: "Design Thinking helps organizations be more:", options: ["User-centered", "Technology-driven only", "Profit-focused only", "Rule-based"], a: 0 },
+            { id: 64, q: "Role of feedback in testing is to:", options: ["Improve solution iteratively", "Reject all ideas", "End process", "Reduce innovation"], a: 0 },
+            { id: 65, q: "Which is an example of divergent thinking activity?", options: ["Brainstorming", "Selecting best idea", "Prioritization matrix", "Final testing"], a: 0 },
+            { id: 66, q: "Which method compares multiple solutions based on impact vs. effort?", options: ["Impact-effort matrix", "Affinity diagram", "Empathy map", "Journey map"], a: 0 },
+            { id: 67, q: "The term 'prototype' means:", options: ["Early sample or model of product", "Final production model", "Marketing brochure", "Software release note"], a: 0 },
+            { id: 68, q: "What is 'co-creation'?", options: ["Designing with users and stakeholders", "Designing alone", "Copying competitor ideas", "Avoiding user input"], a: 0 },
+            { id: 69, q: "Which phase allows re-framing of problem statement?", options: ["Define", "Test", "Prototype", "Implement"], a: 0 },
+            { id: 70, q: "When a team uses role-play to understand user perspective, they are:", options: ["Building empathy", "Testing cost", "Finalizing design", "Measuring performance"], a: 0 },
+            { id: 71, q: "Which thinking mode is used during Ideate?", options: ["Divergent thinking", "Convergent thinking only", "Linear thinking", "Critical thinking only"], a: 0 },
+            { id: 72, q: "Which design principle ensures everyone's ideas are heard?", options: ["Radical collaboration", "Expert-only discussion", "Silent decision-making", "Fixed hierarchy"], a: 0 },
+            { id: 73, q: "Minimum Viable Product (MVP) helps to:", options: ["Test assumptions early", "Delay feedback", "Spend maximum resources", "Avoid users"], a: 0 },
+            { id: 74, q: "Which tool converts insights into problem statements?", options: ["POV (Point of View) statement", "Gantt chart", "Kanban board", "SWOT analysis"], a: 0 },
+            { id: 75, q: "Storyboarding is used to:", options: ["Visualize user scenarios step by step", "Track project deadlines", "Build final prototype", "Analyze costs"], a: 0 },
+            { id: 76, q: "Rapid experimentation helps teams:", options: ["Learn quickly and pivot", "Avoid user testing", "Delay solution", "Work in isolation"], a: 0 },
+            { id: 77, q: "Which phase may repeat multiple times until a good solution emerges?", options: ["All phases", "Empathize only", "Prototype only", "Test only"], a: 0 },
+            { id: 78, q: "The term iteration in design thinking means:", options: ["Repeating process to refine solutions", "Ending process after first try", "Making only one version", "Avoiding feedback"], a: 0 },
+            { id: 79, q: "Which of these is a key mindset of design thinkers?", options: ["Bias toward action", "Fear of failure", "Focus only on theory", "Rigid thinking"], a: 0 },
+            { id: 80, q: "Which method uses six colored hats to explore perspectives?", options: ["Six Thinking Hats", "SCAMPER", "Fishbone diagram", "Affinity mapping"], a: 0 },
+            { id: 81, q: "Prototype testing should involve:", options: ["Real users", "Only design team", "Only management", "No participants"], a: 0 },
+            { id: 82, q: "Which activity is NOT part of empathy phase?", options: ["Observation", "Interview", "Persona creation", "Budget approval"], a: 3 },
+            { id: 83, q: "In Double Diamond model, second diamond focuses on:", options: ["Solution space", "Problem space", "Cost space", "Technology space"], a: 0 },
+            { id: 84, q: "Which is an example of convergent thinking?", options: ["Voting for top 3 ideas", "Generating 50 ideas", "Brainstorming", "Mind mapping"], a: 0 },
+            { id: 85, q: "Which prototype is used to test interface flow?", options: ["Wireframe", "Storyboard", "Journey map", "Mind map"], a: 0 },
+            { id: 86, q: "The Test phase can lead to:", options: ["Redefining problem", "Final production only", "Ending design process", "Ignoring feedback"], a: 0 },
+            { id: 87, q: "Design Thinking is best described as:", options: ["Non-linear, iterative process", "One-time linear process", "Manufacturing method", "Marketing strategy"], a: 0 },
+            { id: 88, q: "Empathy maps answer questions like:", options: ["What does user think, feel, say, do", "What is project cost", "What is company revenue", "What is competitor doing"], a: 0 },
+            { id: 89, q: "The IDEO approach to innovation focuses on:", options: ["People, not technology first", "Technology first", "Cost cutting", "Competition only"], a: 0 },
+            { id: 90, q: "Which factor is NOT part of human-centered innovation?", options: ["Desirability", "Feasibility", "Viability", "Profitability only"], a: 3 },
+            { id: 91, q: "The main goal of empathy research is:", options: ["Deep understanding of user needs", "Product marketing", "Cost optimization", "Technical specification"], a: 0 },
+            { id: 92, q: "POV statement combines:", options: ["User, need, insight", "Technology, cost, time", "Product, price, place", "Idea, prototype, test"], a: 0 },
+            { id: 93, q: "Which approach works best in brainstorming?", options: ["Quantity over quality first", "Quality over quantity first", "No participation", "Limited ideas only"], a: 0 },
+            { id: 94, q: "Which method explores what if we change X?", options: ["SCAMPER", "SWOT", "Kanban", "Benchmarking"], a: 0 },
+            { id: 95, q: "Design thinking framework is:", options: ["Human-centered and iterative", "Linear and fixed", "Only for designers", "Technology-only process"], a: 0 },
+            { id: 96, q: "Radical collaboration involves:", options: ["Interdisciplinary teamwork", "Single person decisions", "No communication", "Only expert opinions"], a: 0 },
+            { id: 97, q: "Prototype should fail:", options: ["Early so learning is fast", "Late to save money", "Never", "After final product launch"], a: 0 },
+            { id: 98, q: "Which of these is a creative constraint?", options: ["Limited resources inspiring innovation", "Unlimited time", "Unlimited budget", "No deadline"], a: 0 },
+            { id: 99, q: "The primary benefit of iteration is:", options: ["Continuous improvement", "Avoiding mistakes", "Saving all costs", "Working only once"], a: 0 },
+            { id: 100, q: "Design Thinking ultimately leads to:", options: ["Innovative, user-centered solutions", "Technology for its own sake", "Only cost saving", "Avoiding experiments"], a: 0 }
+        ];
+
+        // Randomize answer positions to make it more realistic
+        function randomizeAnswers() {
+            QUESTIONS.forEach(question => {
+                // Store the correct answer
+                const correctAnswer = question.options[question.a];
+                
+                // Shuffle the options array
+                for (let i = question.options.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [question.options[i], question.options[j]] = [question.options[j], question.options[i]];
+                }
+                
+                // Find the new position of the correct answer
+                question.a = question.options.indexOf(correctAnswer);
+            });
+        }
+
+        // Call this function to randomize answers
+        randomizeAnswers();
+
+        // State variables
+        let currentQuestion = 1;
+        let answers = {};
+        let submitted = false;
+        let showAnswers = false;
+        let timeLeft = 30 * 60; // 30 minutes in seconds
+        let timerInterval = null;
+
+        // DOM elements
+        const questionGrid = document.getElementById('question-grid');
+        const optionsContainer = document.getElementById('options-container');
+        const questionText = document.getElementById('question-text');
+        const currentQuestionElement = document.getElementById('current-question');
+        const questionStatus = document.getElementById('question-status');
+        const answeredCountElement = document.getElementById('answered-count');
+        const scoreDisplay = document.getElementById('score-display');
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+        const timerElement = document.getElementById('timer');
+        const submitBtn = document.getElementById('submit-btn');
+        const showAnswersBtn = document.getElementById('show-answers-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const reviewGrid = document.getElementById('review-grid');
+        const resultContainer = document.getElementById('result-container');
+        const finalScore = document.getElementById('final-score');
+        const reviewBtn = document.getElementById('review-btn');
+        const correctCountElement = document.getElementById('correct-count');
+        const incorrectCountElement = document.getElementById('incorrect-count');
+        const unansweredCountElement = document.getElementById('unanswered-count');
+        const answerFeedbackContainer = document.getElementById('answer-feedback-container');
+
+        // Initialize the quiz
+        function initQuiz() {
+            // Create question grid buttons
+            QUESTIONS.forEach(question => {
+                const button = document.createElement('button');
+                button.className = 'question-btn';
+                button.textContent = question.id;
+                button.addEventListener('click', () => jumpToQuestion(question.id));
+                questionGrid.appendChild(button);
+            });
+
+            // Create review grid items
+            QUESTIONS.forEach(question => {
+                const item = document.createElement('div');
+                item.className = 'review-item';
+                item.innerHTML = `Q${question.id} <span class="review-answered" id="review-${question.id}">—</span>`;
+                reviewGrid.appendChild(item);
+            });
+
+            // Set up event listeners
+            submitBtn.addEventListener('click', handleSubmit);
+            showAnswersBtn.addEventListener('click', toggleShowAnswers);
+            resetBtn.addEventListener('click', resetQuiz);
+            prevBtn.addEventListener('click', goToPrevQuestion);
+            nextBtn.addEventListener('click', goToNextQuestion);
+            reviewBtn.addEventListener('click', () => toggleShowAnswers(true));
+
+            // Start the timer
+            startTimer();
+
+            // Load the first question
+            loadQuestion(currentQuestion);
+            updateStats();
+        }
+
+        // Load a specific question
+        function loadQuestion(id) {
+            currentQuestion = id;
+            const question = QUESTIONS.find(q => q.id === id);
+            
+            if (!question) return;
+            
+            // Update question text and number
+            currentQuestionElement.textContent = `Question ${id}`;
+            questionText.textContent = question.q;
+            
+            // Clear options container
+            optionsContainer.innerHTML = '';
+            answerFeedbackContainer.innerHTML = '';
+            
+            // Add answer feedback if submitted and showing answers
+            if (submitted && showAnswers) {
+                const userAnswer = answers[id];
+                const isCorrect = userAnswer === question.a;
+                
+                const feedbackElement = document.createElement('div');
+                feedbackElement.className = `answer-feedback ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}`;
+                
+                if (userAnswer !== undefined) {
+                    feedbackElement.innerHTML = isCorrect 
+                        ? '✓ Correct answer! Well done.' 
+                        : '✗ Incorrect. The correct answer is highlighted in green.';
+                } else {
+                    feedbackElement.className = 'answer-feedback feedback-incorrect';
+                    feedbackElement.innerHTML = '✗ Not answered. The correct answer is highlighted in green.';
+                }
+                
+                answerFeedbackContainer.appendChild(feedbackElement);
+            }
+            
+            // Create option elements
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                let className = 'option';
+                
+                if (answers[id] === index) {
+                    className += ' selected';
+                }
+                
+                if (submitted && showAnswers) {
+                    if (index === question.a) {
+                        className += ' correct';
+                    } else if (answers[id] === index && index !== question.a) {
+                        className += ' incorrect';
+                    }
+                }
+                
+                optionElement.className = className;
+                optionElement.innerHTML = `
+                    <div class="option-letter">${String.fromCharCode(65 + index)}</div>
+                    <div class="option-text">${option}</div>
+                `;
+                
+                optionElement.addEventListener('click', () => selectOption(id, index));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Update question buttons
+            document.querySelectorAll('.question-btn').forEach(btn => {
+                btn.classList.remove('current', 'correct', 'incorrect');
+                if (parseInt(btn.textContent) === id) {
+                    btn.classList.add('current');
+                }
+                
+                // Add correct/incorrect classes to question buttons after submission
+                if (submitted && showAnswers) {
+                    const qid = parseInt(btn.textContent);
+                    const question = QUESTIONS.find(q => q.id === qid);
+                    const userAnswer = answers[qid];
+                    
+                    if (userAnswer !== undefined) {
+                        if (userAnswer === question.a) {
+                            btn.classList.add('correct');
+                        } else {
+                            btn.classList.add('incorrect');
+                        }
+                    }
+                }
+            });
+            
+            // Update navigation buttons
+            prevBtn.disabled = id === 1;
+            nextBtn.disabled = id === QUESTIONS.length;
+        }
+
+        // Select an option
+        function selectOption(qid, idx) {
+            if (submitted) return;
+            
+            answers[qid] = idx;
+            updateStats();
+            loadQuestion(qid);
+        }
+
+        // Update statistics
+        function updateStats() {
+            const answeredCount = Object.keys(answers).length;
+            const score = calculateScore();
+            const percent = Math.round((answeredCount / QUESTIONS.length) * 100);
+            
+            answeredCountElement.textContent = answeredCount;
+            scoreDisplay.textContent = score;
+            progressFill.style.width = `${percent}%`;
+            progressText.textContent = `${percent}% answered`;
+            questionStatus.textContent = `Answered: ${answeredCount}`;
+            
+            // Update question grid
+            document.querySelectorAll('.question-btn').forEach(btn => {
+                const qid = parseInt(btn.textContent);
+                btn.classList.remove('answered');
+                if (answers[qid] !== undefined) {
+                    btn.classList.add('answered');
+                }
+            });
+            
+            // Update review grid
+            QUESTIONS.forEach(question => {
+                const reviewElement = document.getElementById(`review-${question.id}`);
+                if (answers[question.id] !== undefined) {
+                    if (submitted && showAnswers) {
+                        if (answers[question.id] === question.a) {
+                            reviewElement.textContent = '✓';
+                            reviewElement.className = 'review-correct';
+                        } else {
+                            reviewElement.textContent = '✗';
+                            reviewElement.className = 'review-incorrect';
+                        }
+                    } else {
+                        reviewElement.textContent = '✓';
+                        reviewElement.className = 'review-answered';
+                    }
+                } else {
+                    reviewElement.textContent = '—';
+                    reviewElement.className = 'review-answered';
+                }
+            });
+        }
+
+        // Calculate score
+        function calculateScore() {
+            let score = 0;
+            QUESTIONS.forEach(question => {
+                if (answers[question.id] === question.a) {
+                    score += 1;
+                }
+            });
+            return score;
+        }
+
+        // Calculate score breakdown
+        function calculateScoreBreakdown() {
+            let correct = 0;
+            let incorrect = 0;
+            let unanswered = 0;
+            
+            QUESTIONS.forEach(question => {
+                if (answers[question.id] === undefined) {
+                    unanswered++;
+                } else if (answers[question.id] === question.a) {
+                    correct++;
+                } else {
+                    incorrect++;
+                }
+            });
+            
+            return { correct, incorrect, unanswered };
+        }
+
+        // Handle submit
+        function handleSubmit() {
+            submitted = true;
+            showAnswersBtn.disabled = false;
+            
+            // Stop the timer
+            clearInterval(timerInterval);
+            
+            // Calculate final score
+            const score = calculateScore();
+            const percent = Math.round((score / QUESTIONS.length) * 100);
+            
+            // Calculate score breakdown
+            const { correct, incorrect, unanswered } = calculateScoreBreakdown();
+            
+            // Show result
+            finalScore.textContent = `${score}/${QUESTIONS.length} (${percent}%)`;
+            correctCountElement.textContent = correct;
+            incorrectCountElement.textContent = incorrect;
+            unansweredCountElement.textContent = unanswered;
+            
+            // Set result text based on performance
+            let resultText = '';
+            if (percent >= 80) {
+                resultText = 'Excellent performance! You have a strong understanding of Design Thinking.';
+            } else if (percent >= 60) {
+                resultText = 'Good job! You have a solid grasp of Design Thinking concepts.';
+            } else if (percent >= 40) {
+                resultText = 'Fair performance. Consider reviewing the Design Thinking concepts again.';
+            } else {
+                resultText = 'You may need to study Design Thinking concepts more thoroughly.';
+            }
+            
+            document.getElementById('result-text').textContent = resultText;
+            resultContainer.style.display = 'block';
+            
+            // Scroll to result
+            resultContainer.scrollIntoView({ behavior: 'smooth' });
+            
+            // Update question grid to show correct/incorrect
+            updateStats();
+        }
+
+        // Toggle show answers
+        function toggleShowAnswers(forceShow = false) {
+            if (forceShow || !showAnswers) {
+                showAnswers = true;
+                showAnswersBtn.textContent = 'Hide Answers';
+            } else {
+                showAnswers = false;
+                showAnswersBtn.textContent = 'Show Answers';
+            }
+            
+            loadQuestion(currentQuestion);
+            updateStats();
+        }
+
+        // Reset quiz
+        function resetQuiz() {
+            currentQuestion = 1;
+            answers = {};
+            submitted = false;
+            showAnswers = false;
+            timeLeft = 30 * 60;
+            
+            // Reset UI
+            showAnswersBtn.textContent = 'Show Answers';
+            showAnswersBtn.disabled = true;
+            resultContainer.style.display = 'none';
+            
+            // Restart timer
+            clearInterval(timerInterval);
+            startTimer();
+            
+            // Reload question and stats
+            loadQuestion(currentQuestion);
+            updateStats();
+        }
+
+        // Navigate to previous question
+        function goToPrevQuestion() {
+            if (currentQuestion > 1) {
+                loadQuestion(currentQuestion - 1);
+            }
+        }
+
+        // Navigate to next question
+        function goToNextQuestion() {
+            if (currentQuestion < QUESTIONS.length) {
+                loadQuestion(currentQuestion + 1);
+            }
+        }
+
+        // Jump to a specific question
+        function jumpToQuestion(id) {
+            loadQuestion(id);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Start timer
+        function startTimer() {
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleSubmit();
+                }
+            }, 1000);
+        }
+
+        // Update timer display
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Change color when time is running out
+            if (timeLeft < 60) {
+                timerElement.style.color = 'var(--danger)';
+            }
+        }
+
+        // Initialize the quiz when the page loads
+        window.addEventListener('load', initQuiz);
+    </script>
+</body>
+</html>
