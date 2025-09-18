@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Thinking Quiz (100 MCQs)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #f9f9f9; 
+      margin: 0; 
+      padding: 20px; 
+      line-height: 1.6;
+    }
+    
+    .container { 
+      max-width: 1000px; 
+      margin: auto; 
+      background: white; 
+      padding: 20px; 
+      border-radius: 10px; 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }    
+    
+    h1 { 
+      text-align: center; 
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
+    
+    .question { 
+      margin: 20px 0; 
+      padding: 15px; 
+      border: 1px solid #ddd; 
+      border-radius: 6px; 
+      background: #fafafa; 
+    }
+    
+    .hint { 
+      color: #555; 
+      font-size: 13px; 
+      margin-top: 6px; 
+      font-style: italic;
+    }
+    
+    .options { 
+      margin-top: 15px;
+    }
+    
+    .options button { 
+      display: block; 
+      margin: 8px 0; 
+      padding: 12px 15px; 
+      border: 1px solid #ccc; 
+      border-radius: 6px; 
+      background: #fff; 
+      width: 100%; 
+      text-align: left; 
+      cursor: pointer; 
+      transition: all 0.2s ease;
+    }
+    
+    .options button:hover {
+      background: #f0f8ff;
+      border-color: #007bff;
+    }
+    
+    .options button.selected { 
+      border: 2px solid #007bff; 
+      background: #e6f0ff; 
+    }
+    
+    .options button.correct { 
+      border: 2px solid green; 
+      background: #e6ffe6; 
+    }
+    
+    .options button.incorrect { 
+      border: 2px solid red; 
+      background: #ffe6e6; 
+    }
+    
+    .controls { 
+      display: flex; 
+      justify-content: space-between; 
+      margin: 20px 0; 
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .controls button {
+      padding: 10px 15px;
+      border: 1px solid #007bff;
+      background: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      flex: 1;
+      min-width: 100px;
+    }
+    
+    .controls button:hover {
+      background: #0069d9;
+      border-color: #0062cc;
+    }
+    
+    .controls button:active {
+      transform: translateY(1px);
+    }
+    
+    .sidebar { 
+      margin-top: 20px; 
+      padding: 15px; 
+      background: #f1f1f1; 
+      border-radius: 6px; 
+    }
+    
+    .attempts { 
+      margin-top: 20px; 
+      background: #f9f9f9; 
+      border: 1px solid #ddd; 
+      padding: 15px; 
+      border-radius: 6px; 
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .progress { 
+      height: 10px; 
+      background: #eee; 
+      border-radius: 6px; 
+      overflow: hidden; 
+      margin-top: 8px;
+    }
+    
+    .progress > div { 
+      height: 100%; 
+      background: #4caf50; 
+      transition: width 0.3s ease;
+    }
+    
+    footer { 
+      text-align: center; 
+      margin-top: 20px; 
+      color: #666; 
+      font-size: 13px; 
+      padding: 10px;
+    }
+    
+    .question-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 15px;
+      justify-content: center;
+    }
+    
+    .question-nav button {
+      width: 35px;
+      height: 35px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .question-nav button.current {
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+    
+    .question-nav button.answered {
+      background: #e6f0ff;
+      border-color: #007bff;
+    }
+    
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .question-counter {
+      font-weight: bold;
+      color: #555;
+    }
+    
+    /* Mobile-specific styles */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      
+      .container {
+        padding: 15px;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .question {
+        padding: 12px;
+      }
+      
+      .options button {
+        padding: 10px;
+        font-size: 14px;
+      }
+      
+      .controls {
+        flex-direction: column;
+      }
+      
+      .controls button {
+        width: 100%;
+      }
+      
+      .question-nav button {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.3rem;
+      }
+      
+      .question {
+        font-size: 15px;
+      }
+      
+      .question-nav button {
+        width: 25px;
+        height: 25px;
+        font-size: 11px;
+      }
+      
+      .quiz-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="quiz-header">
+      <h1>Design Thinking Quiz (100 MCQs)</h1>
+      <div class="question-counter">Question: <span id="currentQuestion">1</span>/100</div>
+    </div>
+    
+    <div id="quiz"></div>
+
+    <div class="question-nav" id="questionNav"></div>
+
+    <div class="controls">
+      <button onclick="prevQuestion()">Previous</button>
+      <div style="display:flex; gap:8px; flex:1; justify-content:center;">
+        <button onclick="resetQuiz()" style="background: #dc3545; border-color: #dc3545;">Reset</button>
+        <button onclick="submitQuiz()" style="background: #28a745; border-color: #28a745;">Submit</button>
+      </div>
+      <button onclick="nextQuestion()">Next</button>
+    </div>
+
+    <div id="result" class="sidebar"></div>
+    <div id="attempts" class="attempts"></div>
+    <div class="sidebar" style="margin-top:12px">
+      <div>Answered: <span id="answeredCount">0</span> / 100</div>
+      <div class="progress" style="margin-top:8px"><div id="progressBar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+<footer>Save this file as <code>design_thinking_quiz.html</code> and open in your browser. Your attempts are stored locally in this browser.</footer>
+
+<script>
+  // Full 100 Questions with Hindi meanings in question & options
+  const QUESTIONS = [
+    { id: 1, q: "Which of the following is the first stage in the Design Thinking process? (डिज़ाइन थिंकिंग प्रक्रिया का पहला चरण कौन सा है?)", options: ["Ideate (विचार उत्पन्न करना)", "Empathize (सहानुभूति)", "Prototype (नमूना)", "Test (परीक्षण)"], a: 1 },
+    { id: 2, q: "Design Thinking is primarily a ________ approach. (डिज़ाइन थिंकिंग मुख्य रूप से एक ________ दृष्टिकोण है।)", options: ["Linear (रेखीय)", "Iterative (दोहराव वाला)", "Random (अनियमित)", "Fixed (निश्चित)"], a: 1 },
+    { id: 3, q: "Which mindset is essential for Design Thinking? (डिज़ाइन थिंकिंग के लिए कौन सा मानसिक दृष्टिकोण आवश्यक है?)", options: ["Competitive mindset (प्रतिस्पर्धी)", "Growth mindset (विकास मानसिकता)", "Fixed mindset (स्थिर)", "Negative mindset (नकारात्मक)"], a: 1 },
+    { id: 4, q: "The focus of Design Thinking is on: (डिज़ाइन थिंकिंग का फोकस किस पर है?)", options: ["Cost reduction (लागत घटाना)", "Human-centered solutions (मानव-केंद्रित समाधान)", "Market expansion (बाजार विस्तार)", "Industrial automation (औद्योगिक स्वचालन)"], a: 1 },
+    { id: 5, q: "Which company popularized Design Thinking globally? (किस कंपनी ने डिज़ाइन थिंकिंग को वैश्विक रूप से लोकप्रिय बनाया?)", options: ["IDEO", "Microsoft", "Samsung", "IBM"], a: 0 },
+    { id: 6, q: "In the empathy phase, the key activity is: (सहानुभूति चरण में मुख्य गतिविधि क्या है?)", options: ["Building prototypes (प्रोटोटाइप बनाना)", "Understanding users (उपयोगकर्ताओं को समझना)", "Marketing strategy (मार्केटिंग रणनीति)", "Cost analysis (लागत विश्लेषण)"], a: 1 },
+    { id: 7, q: "Which of these is NOT a stage of Design Thinking? (इनमें से कौन डिज़ाइन थिंकिंग का चरण नहीं है?)", options: ["Define (परिभाषित)", "Ideate (विचार उत्पन्न)", "Execute (कार्यान्वयन)", "Test (परीक्षण)"], a: 2 },
+    { id: 8, q: "Divergent thinking is mainly used in which stage? (विचलित/विस्तारित सोच मुख्य रूप से किस चरण में उपयोग होती है?)", options: ["Define (परिभाषित)", "Ideate (विचार उत्पन्न)", "Prototype (प्रोटोटाइप)", "Test (परीक्षण)"], a: 1 },
+    { id: 9, q: "The term 'wicked problems' in Design Thinking refers to: ('विकेड प्रॉब्लम्स' से क्या मतलब है?)", options: ["Problems with only one solution (एक समाधान वाले)", "Problems that are easy to solve (आसान)", "Problems that are complex and undefined (जटिल और अस्पष्ट)", "Problems related to evil motives (दुष्ट उद्देश्य)"], a: 2 },
+    { id: 10, q: "Which of the following is an example of empathy in Design Thinking? (निम्न में से कौन सहानुभूति का उदाहरण है?)", options: ["Studying customer complaints (ग्राहक शिकायतें पढ़ना)", "Preparing a business plan (बिजनेस प्लान बनाना)", "Brainstorming in a team (टीम में विचार-मंथन)", "Marketing products (उत्पाद का विपणन)"], a: 0 },
+
+    { id: 11, q: "Which stage converts ideas into tangible solutions? (कौन सा चरण विचारों को ठोस समाधान में बदलता है?)", options: ["Prototype (प्रोटोटाइप)", "Define (परिभाषित)", "Empathize (सहानुभूति)", "Test (परीक्षण)"], a: 0 },
+    { id: 12, q: "The main outcome of the 'Define' stage is: ('Define' चरण का मुख्य निष्कर्ष क्या है?)", options: ["Problem statement (समस्या का विवरण)", "Prototype (प्रोटोटाइप)", "Empathy map (सहानुभूति मानचित्र)", "Market report (बाज़ार रिपोर्ट)"], a: 0 },
+    { id: 13, q: "Brainstorming sessions should encourage: (ब्रेनस्टॉर्मिंग सत्र क्या प्रोत्साहित करना चाहिए?)", options: ["Criticism (आलोचना)", "Wild ideas (वाइल्ड/अनोखी सोच)", "Limited participation (सीमित भागीदारी)", "Silence (चुप्पी)"], a: 1 },
+    { id: 14, q: "Fail fast, learn fast is related to: (Fail fast, learn fast किससे संबंधित है?)", options: ["Empathizing (सहानुभूति)", "Prototyping (प्रोटोटाइप बनाना)", "Defining (परिभाषित करना)", "Divergent thinking (विस्तारित सोच)"], a: 1 },
+    { id: 15, q: "Human-centered design means focusing on: (मानव-केंद्रित डिज़ाइन का मतलब है ध्यान किस पर?)", options: ["Profit first (पहले लाभ)", "User needs (उपयोगकर्ता की ज़रूरतें)", "Technology advancement (प्रौद्योगिकी उन्नति)", "Cost cutting (लागत कटौती)"], a: 1 },
+    { id: 16, q: "Which tool is most commonly used in empathy phase? (सहानुभूति चरण में सबसे सामान्य उपकरण कौन सा है?)", options: ["SWOT analysis (SWOT विश्लेषण)", "Interview and observation (साक्षात्कार और अवलोकन)", "Gantt chart (गैंट चार्ट)", "Fishbone diagram (फिशबोन डायग्राम)"], a: 1 },
+    { id: 17, q: "Which is an example of convergent thinking? (किसे convergent thinking का उदाहरण कहेंगे?)", options: ["Generating as many ideas as possible (अधिकतम विचार उत्पन्न करना)", "Narrowing down to best solution (सर्वोत्तम समाधान चुनना)", "Brainstorming (ब्रेनस्टॉर्मिंग)", "Mind mapping (माइंड मैपिंग)"], a: 1 },
+    { id: 18, q: "The prototype stage should be: (प्रोटोटाइप चरण कैसा होना चाहिए?)", options: ["Expensive and perfect (महंगा और परिपूर्ण)", "Quick and low cost (तेज़ और कम लागत)", "Long and detailed (लंबा और विस्तृत)", "Formal and final (औपचारिक और अंतिम)"], a: 1 },
+    { id: 19, q: "Empathy maps are divided into: (Empathy map किसमें विभाजित होते हैं?)", options: ["Think, Feel, Say, Do (सोचो, महसूस करो, कहो, करो)", "SWOT, PEST, Porter's", "Inputs, Outputs, Process (इनपुट, आउटपुट, प्रक्रिया)", "Cost, Benefit, Value (लागत, लाभ, मूल्य)"], a: 0 },
+    { id: 20, q: "The aim of Design Thinking is to find: (डिज़ाइन थिंकिंग का उद्देश्य क्या है?)", options: ["Any solution (कोई भी समाधान)", "Feasible, viable, desirable solution (व्यवहार्य, टिकाऊ, वांछनीय समाधान)", "Cheapest solution (सबसे सस्ता)", "Easiest solution (सबसे आसान)"], a: 1 },
+
+    { id: 21, q: "Which method is NOT used in Ideation phase? (Ideation चरण में कौन सा तरीका उपयोग नहीं होता?)", options: ["Brainstorming (ब्रेनस्टॉर्मिंग)", "SCAMPER", "Rapid prototyping (त्वरित प्रोटोटाइप)", "Mind mapping (माइंड मैपिंग)"], a: 2 },
+    { id: 22, q: "SCAMPER stands for: (SCAMPER का मतलब क्या है?)", options: ["Substitute, Combine, Adapt, Modify, Put to other use, Eliminate, Reverse", "Solve, Combine, Adjust, Make, Plan, Execute, Report", "Simplify, Combine, Apply, Manage, Plan, Enhance, Resolve", "Substitute, Compare, Adjust, Manage, Plan, Execute, Reverse"], a: 0 },
+    { id: 23, q: "Role of storytelling in design thinking is to: (डिज़ाइन थिंकिंग में कहानी कहने की भूमिका क्या है?)", options: ["Entertain audience (दर्शकों का मनोरंजन)", "Communicate user needs and insights (उपयोगकर्ता आवश्यकताएँ और अंतर्दृष्टि साझा करना)", "Replace prototyping (प्रोटोटाइप बदलना)", "Reduce cost (लागत कम करना)"], a: 1 },
+    { id: 24, q: "The Double Diamond model has how many stages? (Double Diamond मॉडल में कितने चरण होते हैं?)", options: ["Two (दो)", "Four (चार)", "Five (पांच)", "Six (छह)"], a: 1 },
+    { id: 25, q: "Personas are created to represent: (Personas किसे प्रतिनिधित्व करने के लिए बनाये जाते हैं?)", options: ["Random customers (यादृच्छिक ग्राहक)", "Real users with key traits (प्रमुख लक्षणों वाले वास्तविक उपयोगकर्ता)", "Employees (कर्मचारी)", "Competitors (प्रतिद्वंदी)"], a: 1 },
+    { id: 26, q: "Which of these is NOT a benefit of prototyping? (इनमें से कौन प्रोटोटाइप के लाभों में नहीं है?)", options: ["Early feedback (प्रारंभिक फीडबैक)", "Saving time (समय बचाना)", "Avoiding all failures (सभी विफलताओं से बचना)", "Improving design iteratively (डिज़ाइन में सुधार)"], a: 2 },
+    { id: 27, q: "Divergent thinking encourages: (Divergent thinking क्या प्रोत्साहित करती है?)", options: ["Exploring multiple ideas (कई विचारों का अन्वेषण)", "Selecting only one idea (केवल एक विचार चुनना)", "Reducing creativity (रचनात्मकता कम करना)", "Avoiding experiments (प्रयोगों से बचना)"], a: 0 },
+    { id: 28, q: "A prototype should be: (एक प्रोटोटाइप कैसा होना चाहिए?)", options: ["User-tested (उपयोगकर्ता-परीक्षित)", "Hidden from users (उपयोगकर्ताओं से छिपा हुआ)", "Fully perfect (पूर्णतः परिपूर्ण)", "Only internal document (केवल आंतरिक दस्तावेज़)"], a: 0 },
+    { id: 29, q: "Affinity diagrams are used to: (Affinity diagrams का उपयोग किस लिए होता है?)", options: ["Organize data and insights (डेटा और अंतर्दृष्टि व्यवस्थित करना)", "Build prototypes (प्रोटोटाइप बनाना)", "Calculate costs (लागत गणना)", "Measure performance (प्रदर्शन मापना)"], a: 0 },
+    { id: 30, q: "How Might We questions are created during: (How Might We प्रश्न कब बनते हैं?)", options: ["Define phase (परिभाषा चरण)", "Test phase (परीक्षण चरण)", "Prototype phase (प्रोटोटाइप चरण)", "Empathize phase (सहानुभूति चरण)"], a: 0 },
+
+    { id: 31, q: "Low-fidelity prototypes are usually: (Low-fidelity प्रोटोटाइप आमतौर पर कैसे होते हैं?)", options: ["Digital, interactive models (डिजिटल, इंटरएक्टिव मॉडल)", "Rough sketches or paper models (रफ़ स्केच या कागज़ के मॉडल)", "Fully functional products (पूर्णतः कार्यात्मक उत्पाद)", "Market-ready solutions (बाज़ार-तैयार समाधान)"], a: 1 },
+    { id: 32, q: "Which is an example of a physical prototype? (फिजिकल प्रोटोटाइप का उदाहरण कौन सा है?)", options: ["Wireframe (वायरफ्रेम)", "3D-printed model (3D प्रिंटेड मॉडल)", "Storyboard (स्टोरीबोर्ड)", "Flowchart (फ़्लोचार्ट)"], a: 1 },
+    { id: 33, q: "Empathy requires: (Empathy में क्या ज़रूरी है?)", options: ["Understanding and sharing feelings of users (उपयोगकर्ता की भावनाओं को समझना और साझा करना)", "Only data analysis (केवल डेटा विश्लेषण)", "Ignoring user perspective (उपयोगकर्ता दृष्टिकोण को अनदेखा करना)", "Focusing on technology only (केवल तकनीक पर ध्यान)"], a: 0 },
+    { id: 34, q: "Design Thinking is best used for: (डिज़ाइन थिंकिंग किस लिए सबसे अच्छा है?)", options: ["Well-defined problems (सुस्पष्ट समस्याएँ)", "Ill-defined, complex problems (अस्पष्ट, जटिल समस्याएँ)", "Simple calculations (सरल गणनाएँ)", "Repetitive work (दोहराव वाला काम)"], a: 1 },
+    { id: 35, q: "Which of the following is NOT a part of Human-Centered Design? (मानव-केंद्रित डिजाइन का कौन सा हिस्सा नहीं है?)", options: ["Desirability (इच्छनीयता)", "Feasibility (संभवता)", "Viability (टिकाऊपन)", "Profitability only (केवल लाभदायकता)"], a: 3 },
+    { id: 36, q: "Which activity comes first? (कौन सी गतिविधि पहले आती है?)", options: ["Ideate (विचार उत्पन्न)", "Define (परिभाषित)", "Prototype (प्रोटोटाइप)", "Test (परीक्षण)"], a: 1 },
+    { id: 37, q: "Which type of research is used to understand user emotions? (उपयोगकर्ता की भावनाओं को समझने के लिए किस प्रकार का अनुसंधान किया जाता है?)", options: ["Quantitative (मात्रात्मक)", "Qualitative (गुणात्मक)", "Statistical (सांख्यिकीय)", "Computational (गणनात्मक)"], a: 1 },
+    { id: 38, q: "MVP in design thinking stands for: (MVP का क्या अर्थ है?)", options: ["Minimum Viable Product (न्यूनतम व्यवहार्य उत्पाद)", "Most Valuable Product (सबसे मूल्यवान उत्पाद)", "Maximum Value Prototype (अधिकतम मूल्य प्रोटोटाइप)", "Main Visual Plan (मुख्य दृश्य योजना)"], a: 0 },
+    { id: 39, q: "Testing phase helps in: (परीक्षण चरण किसमें मदद करता है?)", options: ["Understanding if solution works for users (समाधान उपयोगकर्ताओं के लिए काम करता है या नहीं)", "Avoiding feedback (फीडबैक से बचना)", "Finalizing design without changes (बिना बदलाव के डिज़ाइन को अंतिम रूप देना)", "Reducing empathy (सहानुभूति घटाना)"], a: 0 },
+    { id: 40, q: "Which mindset helps generate new possibilities? (कौन सा mindset नई संभावनाएँ उत्पन्न करने में मदद करता है?)", options: ["Beginner's mindset (शुरुआती की मानसिकता)", "Critical mindset (आलोचनात्मक)", "Negative mindset (नकारात्मक)", "Mechanical mindset (यांत्रिक)"], a: 0 },
+
+    { id: 41, q: "A company redesigns its website after interviewing users. Which phase is this? (एक कंपनी उपयोगकर्ताओं का साक्षात्कार करने के बाद अपनी वेबसाइट का पुन: डिज़ाइन करती है। यह कौन सा चरण है?)", options: ["Prototype (प्रोटोटाइप)", "Empathize (सहानुभूति)", "Test (परीक्षण)", "Define (परिभाषित)"], a: 1 },
+    { id: 42, q: "When a designer asks 'What is the real problem we are solving?' he is in: (जब डिज़ाइनर पूछता है 'हम कौन सी वास्तविक समस्या हल कर रहे हैं?' तो वह किस चरण में है?)", options: ["Ideate (विचार उत्पन्न)", "Define (परिभाषित)", "Prototype (प्रोटोटाइप)", "Test (परीक्षण)"], a: 1 },
+    { id: 43, q: "Rapid prototyping saves: (Rapid prototyping क्या बचाता है?)", options: ["Cost & time (लागत और समय)", "Only money (केवल पैसा)", "Only user effort (केवल उपयोगकर्ता प्रयास)", "None (कोई नहीं)"], a: 0 },
+    { id: 44, q: "Fail early principle encourages: (Fail early सिद्धांत क्या प्रोत्साहित करता है?)", options: ["Experimenting and learning quickly (तेजी से प्रयोग और सीखना)", "Avoiding mistakes (त्रुटियों से बचना)", "Avoiding user feedback (उपयोगकर्ता फीडबैक से बचना)", "Avoiding risk (जोखिम से बचना)"], a: 0 },
+    { id: 45, q: "Which is an empathy-building activity? (सहानुभूति निर्माण की कौन सी गतिविधि है?)", options: ["Online surveys (ऑनलाइन सर्वे)", "Financial analysis (वित्तीय विश्लेषण)", "Competitor analysis (प्रतिद्वंदी विश्लेषण)", "Project budgeting (परियोजना बजट)"], a: 0 },
+    { id: 46, q: "Empathy maps help in: (Empathy maps किसमें मदद करते हैं?)", options: ["Understanding user perspective (उपयोगकर्ता दृष्टिकोण समझना)", "Deciding budget (बजट तय करना)", "Defining competition (प्रतिस्पर्धा परिभाषित करना)", "Writing code (कोड लिखना)"], a: 0 },
+    { id: 47, q: "Double diamond model phases: Discover, Define, ____, Deliver (Double Diamond मॉडल चरण)", options: ["Develop (विकसित)", "Design (डिज़ाइन)", "Discuss (चर्चा)", "Determine (निर्धारित)"], a: 0 },
+    { id: 48, q: "Testing prototypes with users provides: (उपयोगकर्ताओं के साथ प्रोटोटाइप का परीक्षण क्या देता है?)", options: ["Validation and insights (मान्यता और अंतर्दृष्टि)", "Final approval only (केवल अंतिम अनुमोदन)", "No value (कोई मूल्य नहीं)", "Only cost data (केवल लागत डेटा)"], a: 0 },
+    { id: 49, q: "Who benefits most from design thinking approach? (डिज़ाइन थिंकिंग से सबसे अधिक किसे लाभ होता है?)", options: ["Users and businesses (उपयोगकर्ता और व्यवसाय)", "Only designers (केवल डिज़ाइनर)", "Only management (केवल प्रबंधन)", "None (कोई नहीं)"], a: 0 },
+    { id: 50, q: "Design thinking encourages: (डिज़ाइन थिंकिंग किसे प्रोत्साहित करती है?)", options: ["Collaboration (सहयोग)", "Working alone (अकेला काम)", "Avoiding teamwork (टीमवर्क से बचना)", "Competition only (केवल प्रतिस्पर्धा)"], a: 0 },
+
+    { id: 51, q: "The main advantage of co-creation workshops is: (को-क्रिएशन कार्यशालाओं का मुख्य लाभ क्या है?)", options: ["More hierarchy (अधिक पदानुक्रम)", "Involving stakeholders early (हितधारकों को जल्दी शामिल करना)", "Reducing collaboration (सहयोग घटाना)", "Avoiding feedback (फीडबैक से बचना)"], a: 1 },
+    { id: 52, q: "Which of these is NOT a common brainstorming rule? (इनमें से कौन सा आम ब्रेनस्टॉर्मिंग नियम नहीं है?)", options: ["Defer judgment (न्याय को टालो)", "Encourage wild ideas (वाइल्ड विचारों को प्रोत्साहित करो)", "Build on others ideas (दूसरों के विचारों का निर्माण करो)", "Criticize ideas immediately (तुरंत आलोचना करो)"], a: 3 },
+    { id: 53, q: "Human-centered design focuses on three overlapping lenses: (मानव-केंद्रित डिजाइन किन तीन पहलुओं पर केंद्रित है?)", options: ["Technology, Cost, Time (तकनीक, लागत, समय)", "Desirability, Feasibility, Viability (इच्छनीयता, सम्भवता, टिकाऊपन)", "Design, Development, Delivery (डिज़ाइन, विकास, वितरण)", "Product, Price, Place (उत्पाद, कीमत, स्थान)"], a: 1 },
+    { id: 54, q: "A journey map helps to: (Journey map किसमें मदद करता है?)", options: ["Visualize user's experience step by step (उपयोगकर्ता के अनुभव को कदम-दर-कदम दिखाना)", "Calculate budget (बजट गणना)", "Test prototype (प्रोटोटाइप परीक्षण)", "Recruit participants (प्रतिभागियों की भर्ती)"], a: 0 },
+    { id: 55, q: "Which is a characteristic of wicked problems? (Wicked problems की विशेषता क्या है?)", options: ["Easy to define (परिभाषित करना आसान)", "No clear solution (कोई स्पष्ट समाधान नहीं)", "Always technical (हमेशा तकनीकी)", "Quickly solved (जल्दी हल)"], a: 1 },
+    { id: 56, q: "Which method is used for clustering ideas? (विचारों को क्लस्टर करने के लिए कौन सा तरीका उपयोग होता है?)", options: ["Affinity mapping (एफिनिटी मैपिंग)", "SWOT analysis (SWOT)", "Brain dump (ब्रेन डम्प)", "Fishbone diagram (फिशबोन)"], a: 0 },
+    { id: 57, q: "Stakeholder mapping is used to: (Stakeholder mapping किसके लिए उपयोग किया जाता है?)", options: ["Identify key people affected by design (डिज़ाइन से प्रभावित प्रमुख लोगों की पहचान)", "Create product prototype (उत्पाद प्रोटोटाइप बनाना)", "Define cost (लागत परिभाषित करना)", "Market the product (उत्पाद का विपणन)"], a: 0 },
+    { id: 58, q: "Which type of prototype tests functionality best? (किस प्रकार का प्रोटोटाइप कार्यक्षमता सबसे अच्छा परखता है?)", options: ["High fidelity (उच्च निष्ठा)", "Low fidelity (निम्न निष्ठा)", "Paper sketches (कागज़ के स्केच)", "Mind map (माइंड मैप)"], a: 0 },
+    { id: 59, q: "Which is an empathy-building technique? (सहानुभूति बढ़ाने की तकनीक कौन सी है?)", options: ["Immersion (experiencing as user) (इमर्शन)", "Financial projection (वितीय प्रोजेक्शन)", "Competitor pricing (प्रतिद्वंदी मूल्य निर्धारण)", "Product roadmapping (उत्पाद रोडमैप)"], a: 0 },
+    { id: 60, q: "Ideation phase is about: (Ideation चरण किस बारे में है?)", options: ["Generating as many ideas as possible (अधिकतम विचार उत्पन्न करना)", "Finalizing one idea immediately (तुरंत एक विचार को अंतिम रूप देना)", "Avoiding creativity (रचनात्मकता से बचना)", "Reducing possibilities (संभावनाओं को कम करना)"], a: 0 },
+
+    { id: 61, q: "Which is NOT a part of Double Diamond model? (Double Diamond मॉडल का कौन सा हिस्सा नहीं है?)", options: ["Discover (खोज)", "Define (परिभाषित)", "Deliver (प्रदान)", "Deploy software (सॉफ़्टवेयर परिनियोजित)"], a: 3 },
+    { id: 62, q: "Which phase validates problem understanding? (कौन सा चरण समस्या की समझ को मान्य करता है?)", options: ["Define (परिभाषित)", "Test (परीक्षण)", "Prototype (प्रोटोटाइप)", "Ideate (विचार उत्पन्न)"], a: 0 },
+    { id: 63, q: "Design Thinking helps organizations be more: (डिज़ाइन थिंकिंग संगठनों को और अधिक क्या बनाती है?)", options: ["User-centered (उपयोगकर्ता-केंद्रित)", "Technology-driven only (केवल तकनीक-चालित)", "Profit-focused only (केवल लाभ-केंद्रित)", "Rule-based (नियम-आधारित)"], a: 0 },
+    { id: 64, q: "Role of feedback in testing is to: (परीक्षण में फीडबैक की भूमिका क्या है?)", options: ["Improve solution iteratively (समाधान को दोहराव से सुधारना)", "Reject all ideas (सभी विचारों को खारिज करना)", "End process (प्रक्रिया समाप्त करना)", "Reduce innovation (नवाचार घटाना)"], a: 0 },
+    { id: 65, q: "Which is an example of divergent thinking activity? (Divergent thinking गतिविधि का उदाहरण क्या है?)", options: ["Brainstorming (ब्रेनस्टॉर्मिंग)", "Selecting best idea (सर्वश्रेष्ठ विचार चुनना)", "Prioritization matrix (प्राथमिकता मैट्रिक्स)", "Final testing (अंतिम परीक्षण)"], a: 0 },
+    { id: 66, q: "Which method compares multiple solutions based on impact vs. effort? (कौन सा तरीका प्रभाव बनाम प्रयास के आधार पर समाधान की तुलना करता है?)", options: ["Impact-effort matrix (प्रभाव-प्रयास मैट्रिक्स)", "Affinity diagram (एफिनिटी डायग्राम)", "Empathy map (सहानुभूति मानचित्र)", "Journey map (जर्नी मैप)"], a: 0 },
+    { id: 67, q: "The term 'prototype' means: ('प्रोटोटाइप' शब्द का अर्थ क्या है?)", options: ["Early sample or model of product (उत्पाद का आरंभिक नमूना)", "Final production model (अंतिम उत्पादन मॉडल)", "Marketing brochure (विपणन ब्रोशर)", "Software release note (सॉफ़्टवेयर रिलीज नोट)"], a: 0 },
+    { id: 68, q: "What is 'co-creation'? (को-क्रिएशन क्या है?)", options: ["Designing with users and stakeholders (उपयोगकर्ताओं और हितधारकों के साथ डिजाइन करना)", "Designing alone (अकेले डिजाइन करना)", "Copying competitor ideas (प्रतिद्वंदी के विचार नकल करना)", "Avoiding user input (उपयोगकर्ता इनपुट से बचना)"], a: 0 },
+    { id: 69, q: "Which phase allows re-framing of problem statement? (कौन सा चरण समस्या कथन को फिर से ढालने की अनुमति देता है?)", options: ["Define (परिभाषित)", "Test (परीक्षण)", "Prototype (प्रोटोटाइप)", "Implement (लागू करना)"], a: 0 },
+    { id: 70, q: "When a team uses role-play to understand user perspective, they are: (जब टीम उपयोगकर्ता दृष्टिकोण समझने के लिए रोल-प्ले करती है, तो वे क्या कर रहे होते हैं?)", options: ["Building empathy (सहानुभूति बनाना)", "Testing cost (लागत परीक्षण)", "Finalizing design (डिज़ाइन को अंतिम रूप देना)", "Measuring performance (प्रदर्शन मापना)"], a: 0 },
+
+    { id: 71, q: "Which thinking mode is used during Ideate? (Ideate के दौरान किस तरह की सोच प्रयोग होती है?)", options: ["Divergent thinking (विस्तारित सोच)", "Convergent thinking only (केवल बंद होने वाली सोच)", "Linear thinking (रेखीय)", "Critical thinking only (केवल आलोचनात्मक)"], a: 0 },
+    { id: 72, q: "Which design principle ensures everyone's ideas are heard? (कौन सा डिज़ाइन सिद्धांत यह सुनिश्चित करता है कि सभी के विचार सुने जाएँ?)", options: ["Radical collaboration (रैडिकल सहयोग)", "Expert-only discussion (केवल विशेषज्ञ चर्चा)", "Silent decision-making (मौन निर्णय लेना)", "Fixed hierarchy (नियत पदानुक्रम)"], a: 0 },
+    { id: 73, q: "Minimum Viable Product (MVP) helps to: (MVP किसमें मदद करता है?)", options: ["Test assumptions early (अनुमानों का जल्द परीक्षण)", "Delay feedback (फीडबैक में देरी)", "Spend maximum resources (अधिकतम संसाधन खर्च करना)", "Avoid users (उपयोगकर्ताओं से बचना)"], a: 0 },
+    { id: 74, q: "Which tool converts insights into problem statements? (कौन सा उपकरण अंतर्दृष्टि को समस्या कथन में बदलता है?)", options: ["POV (Point of View) statement (दृष्टिकोण कथन)", "Gantt chart (गैंट चार्ट)", "Kanban board (कानबन बोर्ड)", "SWOT analysis (SWOT)"], a: 0 },
+    { id: 75, q: "Storyboarding is used to: (स्टोरीबोर्डिंग किसलिए उपयोग होती है?)", options: ["Visualize user scenarios step by step (उपयोगकर्ता परिदृश्यों को कदम-दर-कदम दर्शाना)", "Track project deadlines (परियोजना समय-सीमा ट्रैक करना)", "Build final prototype (अंतिम प्रोटोटाइप बनाना)", "Analyze costs (लागत विश्लेषण)"], a: 0 },
+
+    { id: 76, q: "Rapid experimentation helps teams: (त्वरित प्रयोग टीमों की किस तरह मदद करते हैं?)", options: ["Learn quickly and pivot (तेज़ी से सीखना और दिशा बदलना)", "Avoid user testing (उपयोगकर्ता परीक्षण से बचना)", "Delay solution (समाधान में देरी)", "Work in isolation (अलग-थलग काम करना)"], a: 0 },
+    { id: 77, q: "Which phase may repeat multiple times until a good solution emerges? (कौन सा चरण बार-बार दोहराया जा सकता है?)", options: ["All phases (सभी चरण)", "Empathize only (केवल सहानुभूति)", "Prototype only (केवल प्रोटोटाइप)", "Test only (केवल परीक्षण)"], a: 0 },
+    { id: 78, q: "The term iteration in design thinking means: (डिज़ाइन थिंकिंग में iteration का क्या मतलब है?)", options: ["Repeating process to refine solutions (समाधान सुधारने के लिए प्रक्रिया दोहराना)", "Ending process after first try (पहली कोशिश के बाद प्रक्रिया समाप्त करना)", "Making only one version (केवल एक संस्करण बनाना)", "Avoiding feedback (फीडबैक से बचना)"], a: 0 },
+    { id: 79, q: "Which of these is a key mindset of design thinkers? (डिज़ाइन चिंतकों का मुख्य मानसिकता कौन सा है?)", options: ["Bias toward action (कार्रवाई की ओर झुकाव)", "Fear of failure (असफलता का डर)", "Focus only on theory (केवल सिद्धांत पर ध्यान)", "Rigid thinking (कठोर सोच)"], a: 0 },
+    { id: 80, q: "Which method uses six colored hats to explore perspectives? (कौन सा तरीका 6 रंगीन टोपियों का उपयोग करता है?)", options: ["Six Thinking Hats (सिक्स थिंकिंग हैट्स)", "SCAMPER", "Fishbone diagram (फिशबोन डायग्राम)", "Affinity mapping (एफिनिटी मैपिंग)"], a: 0 },
+    { id: 81, q: "Prototype testing should involve: (प्रोटोटाइप परीक्षण में किसे शामिल करना चाहिए?)", options: ["Real users (वास्तविक उपयोगकर्ता)", "Only design team (केवल डिज़ाइन टीम)", "Only management (केवल प्रबंधन)", "No participants (कोई प्रतिभागी नहीं)"], a: 0 },
+    { id: 82, q: "Which activity is NOT part of empathy phase? (कौन सी गतिविधि सहानुभूति चरण का हिस्सा नहीं है?)", options: ["Observation ( अवलोकन)", "Interview (साक्षात्कार)", "Persona creation (पर्सोना निर्माण)", "Budget approval (बजट अनुमोदन)"], a: 3 },
+    { id: 83, q: "In Double Diamond model, second diamond focuses on: (Double Diamond में दूसरा डायमंड किस पर केंद्रित है?)", options: ["Solution space (समाधान क्षेत्र)", "Problem space (समस्या क्षेत्र)", "Cost space (लागत क्षेत्र)", "Technology space (प्रौद्योगिकी क्षेत्र)"], a: 0 },
+    { id: 84, q: "Which is an example of convergent thinking? (Convergent thinking का उदाहरण क्या है?)", options: ["Voting for top 3 ideas (शीर्ष 3 विचारों के लिए मतदान)", "Generating 50 ideas (50 विचार उत्पन्न करना)", "Brainstorming (ब्रेनस्टॉर्मिंग)", "Mind mapping (माइंड मैपिंग)"], a: 0 },
+    { id: 85, q: "Which prototype is used to test interface flow? (किस प्रोटोटाइप का उपयोग इंटरफ़ेस प्रवाह परीक्षण के लिए किया जाता है?)", options: ["Wireframe (वायरफ्रेम)", "Storyboard (स्टोरीबोर्ड)", "Journey map (जर्नी मैप)", "Mind map (माइंड मैप)"], a: 0 },
+
+    { id: 86, q: "The Test phase can lead to: (परीक्षण चरण किस चीज़ का कारण बन सकता है?)", options: ["Redefining problem (समस्या को पुनर्परिभाषित करना)", "Final production only (केवल अंतिम उत्पादन)", "Ending design process (डिज़ाइन प्रक्रिया समाप्त करना)", "Ignoring feedback (फीडबैक की अनदेखी)"], a: 0 },
+    { id: 87, q: "Design Thinking is best described as: (डिज़ाइन थिंकिंग को सबसे अच्छा कैसे वर्णित किया जाता है?)", options: ["Non-linear, iterative process (गैर-रेखीय, दोहराव प्रक्रिया)", "One-time linear process (एक बार की रेखीय प्रक्रिया)", "Manufacturing method (निर्माण विधि)", "Marketing strategy (विपणन रणनीति)"], a: 0 },
+    { id: 88, q: "Empathy maps answer questions like: (Empathy maps किस तरह के प्रश्नों का उत्तर देते हैं?)", options: ["What does user think, feel, say, do (उपयोगकर्ता क्या सोचता/महसूस/कहता/करता है)", "What is project cost (परियोजना लागत)", "What is company revenue (कंपनी राजस्व)", "What is competitor doing (प्रतिद्वंदी क्या कर रहा है)"], a: 0 },
+    { id: 89, q: "The IDEO approach to innovation focuses on: (IDEO का नवाचार के लिए दृष्टिकोण किस पर जोर देता है?)", options: ["People, not technology first (लोग, पहले तकनीक नहीं)", "Technology first (पहले तकनीक)", "Cost cutting (लागत कटौती)", "Competition only (केवल प्रतियोगिता)"], a: 0 },
+    { id: 90, q: "Which factor is NOT part of human-centered innovation? (मानव-केंद्रित नवाचार का कौन सा पहलू नहीं है?)", options: ["Desirability (इच्छनीयता)", "Feasibility (संभवता)", "Viability (टिकाऊपन)", "Profitability only (केवल लाभ)"], a: 3 },
+    { id: 91, q: "The main goal of empathy research is: (सहानुभूति अनुसंधान का मुख्य लक्ष्य क्या है?)", options: ["Deep understanding of user needs (उपयोगकर्ता जरूरतों की गहरी समझ)", "Product marketing (उत्पाद विपणन)", "Cost optimization (लागत अनुकूलन)", "Technical specification (तकनीकी विशिष्टता)"], a: 0 },
+    { id: 92, q: "POV statement combines: (POV कथन क्या मिलाता है?)", options: ["User, need, insight (उपयोगकर्ता, आवश्यकता, अंतर्दृष्टि)", "Technology, cost, time (तकनीक, लागत, समय)", "Product, price, place (उत्पाद, कीमत, स्थान)", "Idea, prototype, test (विचार, प्रोटोटाइप, परीक्षण)"], a: 0 },
+    { id: 93, q: "Which approach works best in brainstorming? (ब्रेनस्टॉर्मिंग में कौन सा तरीका सबसे अच्छा काम करता है?)", options: ["Quantity over quality first (प्रथम मात्रा फिर गुणवत्ता)", "Quality over quantity first (प्रथम गुणवत्ता)", "No participation (कोई भागीदारी नहीं)", "Limited ideas only (केवल सीमित विचार)"], a: 0 },
+    { id: 94, q: "Which method explores what if we change X? (कौन सा तरीका यह जांचता है कि अगर हम X बदल दें तो क्या होगा?)", options: ["SCAMPER", "SWOT", "Kanban", "Benchmarking"], a: 0 },
+    { id: 95, q: "Design thinking framework is: (डिज़ाइन थिंकिंग फ्रेमवर्क कैसा है?)", options: ["Human-centered and iterative (मानव-केंद्रित और दोहराव)", "Linear and fixed (रेखीय और निश्चित)", "Only for designers (केवल डिजाइनरों के लिए)", "Technology-only process (केवल तकनीक प्रक्रिया)"], a: 0 },
+    { id: 96, q: "Radical collaboration involves: (रैडिकल सहयोग में क्या शामिल है?)", options: ["Interdisciplinary teamwork (अंतर-विषय वस्तु टीमवर्क)", "Single person decisions (एक व्यक्ति के निर्णय)", "No communication (कोई संचार नहीं)", "Only expert opinions (केवल विशेषज्ञ राय)"], a: 0 },
+    { id: 97, q: "Prototype should fail: (प्रोटोटाइप को कब फेल होना चाहिए?)", options: ["Early so learning is fast (जल्दी ताकि सीख तेजी से हो)", "Late to save money (देर से ताकि पैसा बचे)", "Never (कभी नहीं)", "After final product launch (अंतिम लॉन्च के बाद)"], a: 0 },
+    { id: 98, q: "Which of these is a creative constraint? (इनमें से कौन सा रचनात्मक प्रतिबंध है?)", options: ["Limited resources inspiring innovation (सीमित संसाधन नवाचार को प्रेरित करते हैं)", "Unlimited time (असीमित समय)", "Unlimited budget (असीमित बजट)", "No deadline (कोई समय-सीमा नहीं)"], a: 0 },
+    { id: 99, q: "The primary benefit of iteration is: (iteration का मुख्य लाभ क्या है?)", options: ["Continuous improvement (लगातार सुधार)", "Avoiding mistakes (त्रुटियों से बचना)", "Saving all costs (सभी लागत बचाना)", "Working only once (केवल एक बार काम करना)"], a: 0 },
+    { id: 100, q: "Design Thinking ultimately leads to: (अंततः डिज़ाइन थिंकिंग किसकी ओर ले जाता है?)", options: ["Innovative, user-centered solutions (नवोन्मेषी, उपयोगकर्ता-केंद्रित समाधान)", "Technology for its own sake (केवल तकनीक के लिए तकनीक)", "Only cost saving (केवल लागत बचत)", "Avoiding experiments (प्रयोगों से बचना)"], a: 0 },
+  ];
+
+  let current = 0;
+  let answers = {};
+  let submitted = false;
+
+  const quizDiv = document.getElementById("quiz");
+  const resultDiv = document.getElementById("result");
+  const attemptsDiv = document.getElementById("attempts");
+  const answeredCountSpan = document.getElementById("answeredCount");
+  const progressBar = document.getElementById("progressBar");
+  const currentQuestionSpan = document.getElementById("currentQuestion");
+  const questionNavDiv = document.getElementById("questionNav");
+
+  function renderQuestion() {
+    const q = QUESTIONS[current];
+    currentQuestionSpan.textContent = current + 1;
+    
+    quizDiv.innerHTML = `
+      <div class="question">
+        <div><strong>Q${q.id}:</strong> ${q.q}</div>
+        <div class="hint">(Options are shown with Hindi meaning)</div>
+        <div class="options">
+          ${q.options.map((opt, idx) => `
+            <button onclick="selectOption(${q.id},${idx})" 
+              class="${answers[q.id] === idx ? 'selected' : ''}">
+              ${String.fromCharCode(65+idx)}. ${opt}
+            </button>`).join("")}
+        </div>
+      </div>
+    `;
+    
+    updateProgress();
+    renderQuestionNavigation();
+    
+    if (submitted) showAnswers();
+  }
+
+  function renderQuestionNavigation() {
+    questionNavDiv.innerHTML = "";
+    for (let i = 0; i < QUESTIONS.length; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i + 1;
+      btn.addEventListener("click", () => {
+        current = i;
+        renderQuestion();
+      });
+      
+      if (i === current) {
+        btn.classList.add("current");
+      } else if (answers[i + 1] !== undefined) {
+        btn.classList.add("answered");
+      }
+      
+      questionNavDiv.appendChild(btn);
+    }
+  }
+
+  function selectOption(qid, idx) {
+    if (submitted) return;
+    answers[qid] = idx;
+    renderQuestion();
+  }
+
+  function prevQuestion() {
+    if (current > 0) current--;
+    renderQuestion();
+  }
+
+  function nextQuestion() {
+    if (current < QUESTIONS.length-1) current++;
+    renderQuestion();
+  }
+
+  function submitQuiz() {
+    if (submitted) return;
+    submitted = true;
+    let score = 0;
+    QUESTIONS.forEach(q => {
+      if (answers[q.id] === q.a) score++;
+    });
+
+    // Save attempt in localStorage
+    let history = JSON.parse(localStorage.getItem("quizAttempts") || "[]");
+    history.push({ date: new Date().toLocaleString(), score: score, total: QUESTIONS.length });
+    localStorage.setItem("quizAttempts", JSON.stringify(history));
+
+    resultDiv.innerHTML = `<h3>Result</h3>
+      <p>Score: <strong>${score} / ${QUESTIONS.length}</strong> (${Math.round((score/QUESTIONS.length)*100)}%)</p>`;
+
+    renderAttempts();
+    renderQuestion();
+    alert('Quiz submitted. Scroll down to see attempt history.');
+  }
+
+  function showAnswers() {
+    const q = QUESTIONS[current];
+    const buttons = quizDiv.querySelectorAll(".options button");
+    buttons.forEach((btn, idx) => {
+      btn.classList.remove('correct','incorrect');
+      if (idx === q.a) btn.classList.add("correct");
+      if (answers[q.id] === idx && idx !== q.a) btn.classList.add("incorrect");
+    });
+  }
+
+  function renderAttempts() {
+    let history = JSON.parse(localStorage.getItem("quizAttempts") || "[]");
+    if (history.length === 0) {
+      attemptsDiv.innerHTML = "<p>No attempts yet.</p>";
+      return;
+    }
+    attemptsDiv.innerHTML = "<h3>Attempt History</h3>" + history.map((h,i) =>
+      `<div>Attempt ${i+1} (${h.date}) → Score: ${h.score}/${h.total} (${Math.round((h.score/h.total)*100)}%)</div>`
+    ).join("");
+  }
+
+  function updateProgress() {
+    const answeredCount = Object.keys(answers).length;
+    answeredCountSpan.textContent = answeredCount;
+    progressBar.style.width = Math.round((answeredCount / QUESTIONS.length) * 100) + '%';
+  }
+
+  function resetQuiz() {
+    if (!confirm('Are you sure you want to reset your current answers?')) return;
+    answers = {};
+    submitted = false;
+    current = 0;
+    resultDiv.innerHTML = '';
+    renderQuestion();
+  }
+
+  // Initialize the quiz
+  renderQuestion();
+  renderAttempts();
+</script>
+</body>
+</html>
