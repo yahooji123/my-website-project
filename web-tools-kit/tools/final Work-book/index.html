@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C++ Coding Workbook Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --cpp-blue: #659ad2;
+            --cpp-blue-light: #8ab6d6;
+            --cpp-blue-dark: #4a7cb0;
+            --bg-gradient: linear-gradient(135deg, #6366f1 0%, #659ad2 100%);
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: var(--bg-gradient);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(30deg);
+            animation: shimmer 3s infinite linear;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        
+        .btn-cpp {
+            background-color: var(--cpp-blue);
+            color: white;
+        }
+        
+        .btn-cpp:hover {
+            background-color: var(--cpp-blue-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 24px;
+        }
+        
+        .panel {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .panel:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-hover-shadow);
+        }
+        
+        h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .problem-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .problem-item {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .problem-item:hover {
+            border-color: var(--primary);
+            transform: translateX(2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        
+        .problem-item.active {
+            border-color: var(--primary);
+            background-color: #eef2ff;
+        }
+        
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .problem-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            flex: 1;
+        }
+        
+        .problem-meta {
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 8px;
+        }
+        
+        .problem-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        
+        .problem-actions button {
+            font-size: 12px;
+            padding: 4px 8px;
+        }
+        
+        .editor-section {
+            margin-bottom: 16px;
+        }
+        
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--dark);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        textarea {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            min-height: 200px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .preview-content {
+            padding: 24px;
+            background-color: white;
+        }
+        
+        .preview-header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: var(--bg-gradient);
+            color: white;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .preview-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23659ad2' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+        
+        .preview-problem {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            page-break-inside: avoid;
+            break-inside: avoid;
+            transition: all 0.3s ease;
+        }
+        
+        .preview-problem:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .preview-title {
+            font-size: 22px;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+        }
+        
+        .preview-meta {
+            color: var(--gray);
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .code-block {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin-top: 12px;
+            position: relative;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #cbd5e1;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .workbook-manager {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .workbook-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .workbook-selector select {
+            flex: 1;
+        }
+        
+        .language-selector {
+            margin-bottom: 16px;
+        }
+        
+        .language-selector label {
+            margin-bottom: 8px;
+        }
+        
+        .language-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .language-buttons button {
+            padding: 8px 12px;
+        }
+        
+        .language-buttons button.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* Enhanced UI elements */
+        .quick-add-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .quick-add-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .quick-add-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        
+        .quick-add-buttons button {
+            padding: 8px;
+            font-size: 13px;
+        }
+        
+        .problem-count {
+            background-color: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background-color: var(--success);
+            color: white;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* C++ specific styling */
+        .cpp-header {
+            background: linear-gradient(135deg, #659ad2 0%, #4a7cb0 100%);
+        }
+        
+        .cpp-tag {
+            background-color: var(--cpp-blue);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        
+        /* Enhanced Prism styling for C++ */
+        .language-cpp .token.keyword {
+            color: #ff7b72; /* Red-pink for keywords */
+        }
+        
+        .language-cpp .token.string {
+            color: #a5d6ff; /* Light blue for strings */
+        }
+        
+        .language-cpp .token.function {
+            color: #d2a8ff; /* Purple for functions */
+        }
+        
+        .language-cpp .token.comment {
+            color: #8b949e; /* Gray for comments */
+            font-style: italic;
+        }
+        
+        .language-cpp .token.number {
+            color: #79c0ff; /* Blue for numbers */
+        }
+        
+        .language-cpp .token.operator {
+            color: #ff7b72; /* Red-pink for operators */
+        }
+        
+        .language-cpp .token.punctuation {
+            color: #c9d1d9; /* Light gray for punctuation */
+        }
+        
+        .language-cpp .token.class-name {
+            color: #ffa657; /* Orange for class names */
+        }
+        
+        /* Line numbers styling */
+        .line-numbers .line-numbers-rows {
+            border-right: 1px solid #334155;
+            padding-right: 10px;
+        }
+        
+        .line-numbers-rows > span:before {
+            color: #64748b !important;
+        }
+        
+        /* PDF-specific styles - Enhanced to prevent code line breaks */
+        @media print {
+            body {
+                background-color: white;
+            }
+            
+            .container {
+                padding: 0;
+                max-width: 100%;
+            }
+            
+            header, .panel:first-child, .header-actions, .problem-actions, .quick-add-section,
+            .workbook-manager, .language-selector, .toast {
+                display: none !important;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .panel {
+                box-shadow: none;
+                padding: 0;
+            }
+            
+            .preview-content {
+                padding: 0;
+            }
+            
+            .preview-problem {
+                page-break-inside: avoid;
+                break-inside: avoid;
+                margin-bottom: 20px;
+                border: none;
+                padding: 0;
+            }
+            
+            .code-block {
+                overflow-wrap: break-word;
+                white-space: pre-wrap;
+                font-size: 10px;
+                line-height: 1.2;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            pre[class*="language-"] {
+                white-space: pre-wrap !important;
+                word-wrap: break-word;
+                font-size: 10px;
+                line-height: 1.2;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            /* Ensure code lines don't break across pages */
+            .line-numbers-rows > span {
+                display: inline-block;
+                width: 100%;
+                page-break-inside: avoid;
+            }
+            
+            .preview-header {
+                margin-bottom: 20px;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+            
+            .header-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .language-buttons {
+                flex-direction: column;
+            }
+            
+            .quick-add-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="cpp-header">
+            <h1><i class="fas fa-code"></i> C++ Coding Workbook Generator</h1>
+            <div class="header-actions">
+                <button class="btn-primary" id="addProblem">
+                    <i class="fas fa-plus"></i> Add Problem
+                </button>
+                <button class="btn-secondary" id="exportMarkdown">
+                    <i class="fas fa-download"></i> Export MD
+                </button>
+                <button class="btn-success" id="generatePDF">
+                    <i class="fas fa-file-pdf"></i> Generate PDF
+                </button>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="panel">
+                <div class="quick-add-title">
+                    <h2><i class="fas fa-tasks"></i> Problems <span class="problem-count" id="problemCount">0</span></h2>
+                    <button class="btn-primary" id="quickAddProblem" title="Quick Add">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div class="problem-list" id="problemList">
+                    <!-- Problems will be added here dynamically -->
+                </div>
+                
+                <div class="workbook-manager">
+                    <h3><i class="fas fa-history"></i> Workbook History</h3>
+                    <div class="workbook-selector">
+                        <select id="workbookSelector">
+                            <option value="default">Default Workbook</option>
+                        </select>
+                        <button class="btn-secondary" id="newWorkbook">
+                            <i class="fas fa-plus"></i> New
+                        </button>
+                    </div>
+                    <button class="btn-secondary" id="saveWorkbook">
+                        <i class="fas fa-save"></i> Save Current Workbook
+                    </button>
+                </div>
+                
+                <h2><i class="fas fa-edit"></i> Editor</h2>
+                
+                <div class="language-selector">
+                    <label>Set Language for All Problems:</label>
+                    <div class="language-buttons">
+                        <button data-lang="javascript">JavaScript</button>
+                        <button data-lang="python">Python</button>
+                        <button data-lang="java">Java</button>
+                        <button class="btn-cpp active" data-lang="cpp">C++</button>
+                    </div>
+                </div>
+                
+                <div id="editorForm">
+                    <div class="editor-section">
+                        <label for="problemTitle">Title</label>
+                        <input type="text" id="problemTitle" placeholder="Problem title">
+                    </div>
+                    
+                    <div class="editor-section form-row">
+                        <div>
+                            <label for="problemPlatform">Platform</label>
+                            <input type="text" id="problemPlatform" placeholder="LeetCode, HackerRank, etc.">
+                        </div>
+                        <div>
+                            <label for="problemLanguage">Language</label>
+                            <select id="problemLanguage">
+                                <option value="javascript">JavaScript</option>
+                                <option value="python">Python</option>
+                                <option value="java">Java</option>
+                                <option value="cpp" selected>C++</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="editor-section">
+                        <label for="problemLink">Link</label>
+                        <input type="text" id="problemLink" placeholder="Problem URL">
+                    </div>
+                    
+                    <div class="editor-section">
+                        <label for="problemCode">Code</label>
+                        <textarea id="problemCode" placeholder="Paste your C++ solution here"></textarea>
+                    </div>
+                </div>
+                
+                <div class="quick-add-section">
+                    <h3>C++ Quick Add Templates</h3>
+                    <div class="quick-add-buttons">
+                        <button class="btn-cpp" data-template="twosum">
+                            <i class="fas fa-bolt"></i> Two Sum
+                        </button>
+                        <button class="btn-cpp" data-template="binarysearch">
+                            <i class="fas fa-bolt"></i> Binary Search
+                        </button>
+                        <button class="btn-cpp" data-template="linkedlist">
+                            <i class="fas fa-bolt"></i> Linked List
+                        </button>
+                        <button class="btn-cpp" data-template="dfs">
+                            <i class="fas fa-bolt"></i> DFS
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2><i class="fas fa-eye"></i> Live Preview</h2>
+                <div class="preview-content" id="preview">
+                    <div class="preview-header">
+                        <h1>C++ Coding Workbook</h1>
+                        <p>Generated on <span id="currentDate"></span></p>
+                    </div>
+                    <div id="previewProblems">
+                        <!-- Preview content will be added here dynamically -->
+                    </div>
+                    <footer>
+                        Workbook generated by C++ Coding Workbook Generator
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date
+            document.getElementById('currentDate').textContent = new Date().toLocaleString();
+            
+            // Initialize data structure
+            let workbooks = {
+                'default': {
+                    name: 'Default Workbook',
+                    problems: [
+                        {
+                            id: Date.now(),
+                            title: "Two Sum",
+                            platform: "LeetCode",
+                            language: "cpp",
+                            link: "https://leetcode.com/problems/two-sum/",
+                            code: `class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> numMap;
+        for (int i = 0; i < nums.size(); i++) {
+            int complement = target - nums[i];
+            if (numMap.find(complement) != numMap.end()) {
+                return {numMap[complement], i};
+            }
+            numMap[nums[i]] = i;
+        }
+        return {};
+    }
+};`
+                        }
+                    ]
+                }
+            };
+            
+            let currentWorkbook = 'default';
+            let currentProblemId = workbooks[currentWorkbook].problems[0].id;
+            
+            // DOM elements
+            const problemList = document.getElementById('problemList');
+            const previewProblems = document.getElementById('previewProblems');
+            const problemTitle = document.getElementById('problemTitle');
+            const problemPlatform = document.getElementById('problemPlatform');
+            const problemLanguage = document.getElementById('problemLanguage');
+            const problemLink = document.getElementById('problemLink');
+            const problemCode = document.getElementById('problemCode');
+            const workbookSelector = document.getElementById('workbookSelector');
+            const problemCount = document.getElementById('problemCount');
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            // Initialize
+            loadWorkbooksFromStorage();
+            renderWorkbookSelector();
+            renderProblemList();
+            renderPreview();
+            loadProblemEditor(currentProblemId);
+            updateProblemCount();
+            
+            // Event listeners
+            document.getElementById('addProblem').addEventListener('click', addEmptyProblem);
+            document.getElementById('quickAddProblem').addEventListener('click', addEmptyProblem);
+            document.getElementById('exportMarkdown').addEventListener('click', exportMarkdown);
+            document.getElementById('generatePDF').addEventListener('click', generatePDF);
+            document.getElementById('newWorkbook').addEventListener('click', createNewWorkbook);
+            document.getElementById('saveWorkbook').addEventListener('click', saveCurrentWorkbook);
+            workbookSelector.addEventListener('change', switchWorkbook);
+            
+            // Quick add template buttons
+            document.querySelectorAll('[data-template]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const template = this.getAttribute('data-template');
+                    addTemplateProblem(template);
+                });
+            });
+            
+            // Language selector buttons
+            document.querySelectorAll('.language-buttons button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    setLanguageForAllProblems(lang);
+                    
+                    // Update active button styling
+                    document.querySelectorAll('.language-buttons button').forEach(btn => {
+                        btn.classList.remove('active', 'btn-cpp');
+                    });
+                    this.classList.add('active');
+                    if (lang === 'cpp') {
+                        this.classList.add('btn-cpp');
+                    }
+                });
+            });
+            
+            // Input events for live editing
+            problemTitle.addEventListener('input', updateCurrentProblem);
+            problemPlatform.addEventListener('input', updateCurrentProblem);
+            problemLanguage.addEventListener('change', updateCurrentProblem);
+            problemLink.addEventListener('input', updateCurrentProblem);
+            problemCode.addEventListener('input', updateCurrentProblem);
+            
+            // Function to show toast notification
+            function showToast(message, isSuccess = true) {
+                toastMessage.textContent = message;
+                toast.style.backgroundColor = isSuccess ? '#10b981' : '#ef4444';
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Function to load workbooks from localStorage
+            function loadWorkbooksFromStorage() {
+                const savedWorkbooks = localStorage.getItem('cppCodingWorkbooks');
+                if (savedWorkbooks) {
+                    workbooks = JSON.parse(savedWorkbooks);
+                    // Make sure default workbook exists
+                    if (!workbooks['default']) {
+                        workbooks['default'] = {
+                            name: 'Default Workbook',
+                            problems: []
+                        };
+                    }
+                }
+            }
+            
+            // Function to save workbooks to localStorage
+            function saveWorkbooksToStorage() {
+                localStorage.setItem('cppCodingWorkbooks', JSON.stringify(workbooks));
+            }
+            
+            // Function to update problem count
+            function updateProblemCount() {
+                problemCount.textContent = workbooks[currentWorkbook].problems.length;
+            }
+            
+            // Function to render workbook selector
+            function renderWorkbookSelector() {
+                workbookSelector.innerHTML = '';
+                for (const id in workbooks) {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.textContent = workbooks[id].name;
+                    option.selected = (id === currentWorkbook);
+                    workbookSelector.appendChild(option);
+                }
+            }
+            
+            // Function to create a new workbook
+            function createNewWorkbook() {
+                const workbookName = prompt('Enter workbook name:');
+                if (workbookName) {
+                    const id = 'workbook_' + Date.now();
+                    workbooks[id] = {
+                        name: workbookName,
+                        problems: []
+                    };
+                    currentWorkbook = id;
+                    saveWorkbooksToStorage();
+                    renderWorkbookSelector();
+                    renderProblemList();
+                    renderPreview();
+                    updateProblemCount();
+                    showToast('New workbook created');
+                }
+            }
+            
+            // Function to switch between workbooks
+            function switchWorkbook() {
+                currentWorkbook = workbookSelector.value;
+                if (workbooks[currentWorkbook].problems.length > 0) {
+                    currentProblemId = workbooks[currentWorkbook].problems[0].id;
+                } else {
+                    currentProblemId = null;
+                }
+                renderProblemList();
+                renderPreview();
+                updateProblemCount();
+                
+                if (currentProblemId) {
+                    loadProblemEditor(currentProblemId);
+                } else {
+                    // Clear editor if no problems
+                    problemTitle.value = '';
+                    problemPlatform.value = '';
+                    problemLanguage.value = 'cpp';
+                    problemLink.value = '';
+                    problemCode.value = '';
+                }
+                
+                showToast(`Switched to ${workbooks[currentWorkbook].name}`);
+            }
+            
+            // Function to save current workbook
+            function saveCurrentWorkbook() {
+                saveWorkbooksToStorage();
+                showToast('Workbook saved successfully!');
+            }
+            
+            // Function to set language for all problems
+            function setLanguageForAllProblems(lang) {
+                workbooks[currentWorkbook].problems.forEach(problem => {
+                    problem.language = lang;
+                });
+                
+                // Update the language selector in the editor
+                document.getElementById('problemLanguage').value = lang;
+                
+                // Update UI
+                renderProblemList();
+                renderPreview();
+                saveWorkbooksToStorage();
+                
+                // Highlight code in preview
+                if (window.Prism) {
+                    window.Prism.highlightAll();
+                }
+                
+                showToast(`All problems set to ${lang}`);
+            }
+            
+            // Function to add a template problem
+            function addTemplateProblem(template) {
+                let newProblem;
+                
+                switch(template) {
+                    case 'twosum':
+                        newProblem = {
+                            id: Date.now(),
+                            title: "Two Sum",
+                            platform: "LeetCode",
+                            language: "cpp",
+                            link: "https://leetcode.com/problems/two-sum/",
+                            code: `class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> numMap;
+        for (int i = 0; i < nums.size(); i++) {
+            int complement = target - nums[i];
+            if (numMap.find(complement) != numMap.end()) {
+                return {numMap[complement], i};
+            }
+            numMap[nums[i]] = i;
+        }
+        return {};
+    }
+};`
+                        };
+                        break;
+                    case 'binarysearch':
+                        newProblem = {
+                            id: Date.now(),
+                            title: "Binary Search",
+                            platform: "LeetCode",
+                            language: "cpp",
+                            link: "https://leetcode.com/problems/binary-search/",
+                            code: `class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int left = 0, right = nums.size() - 1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] == target) return mid;
+            if (nums[mid] < target) left = mid + 1;
+            else right = mid - 1;
+        }
+        return -1;
+    }
+};`
+                        };
+                        break;
+                    case 'linkedlist':
+                        newProblem = {
+                            id: Date.now(),
+                            title: "Reverse Linked List",
+                            platform: "LeetCode",
+                            language: "cpp",
+                            link: "https://leetcode.com/problems/reverse-linked-list/",
+                            code: `/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* prev = nullptr;
+        ListNode* curr = head;
+        while (curr != nullptr) {
+            ListNode* nextTemp = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = nextTemp;
+        }
+        return prev;
+    }
+};`
+                        };
+                        break;
+                    case 'dfs':
+                        newProblem = {
+                            id: Date.now(),
+                            title: "Number of Islands",
+                            platform: "LeetCode",
+                            language: "cpp",
+                            link: "https://leetcode.com/problems/number-of-islands/",
+                            code: `class Solution {
+public:
+    int numIslands(vector<vector<char>>& grid) {
+        if (grid.empty() || grid[0].empty()) return 0;
+        
+        int numIslands = 0;
+        for (int i = 0; i < grid.size(); i++) {
+            for (int j = 0; j < grid[0].size(); j++) {
+                if (grid[i][j] == '1') {
+                    numIslands++;
+                    dfs(grid, i, j);
+                }
+            }
+        }
+        return numIslands;
+    }
+    
+    void dfs(vector<vector<char>>& grid, int i, int j) {
+        if (i < 0 || i >= grid.size() || j < 0 || j >= grid[0].size() || grid[i][j] != '1') {
+            return;
+        }
+        
+        grid[i][j] = '0'; // Mark as visited
+        dfs(grid, i + 1, j);
+        dfs(grid, i - 1, j);
+        dfs(grid, i, j + 1);
+        dfs(grid, i, j - 1);
+    }
+};`
+                        };
+                        break;
+                    default:
+                        newProblem = {
+                            id: Date.now(),
+                            title: "New Problem",
+                            platform: "",
+                            language: "cpp",
+                            link: "",
+                            code: "// Your C++ solution here"
+                        };
+                }
+                
+                workbooks[currentWorkbook].problems.push(newProblem);
+                currentProblemId = newProblem.id;
+                
+                renderProblemList();
+                renderPreview();
+                loadProblemEditor(currentProblemId);
+                saveWorkbooksToStorage();
+                updateProblemCount();
+                
+                // Highlight code in preview
+                if (window.Prism) {
+                    window.Prism.highlightAll();
+                }
+                
+                showToast('C++ template problem added');
+            }
+            
+            // Function to add a new empty problem
+            function addEmptyProblem() {
+                const newProblem = {
+                    id: Date.now(),
+                    title: "New Problem",
+                    platform: "",
+                    language: workbooks[currentWorkbook].problems.length > 0 ? 
+                        workbooks[currentWorkbook].problems[0].language : "cpp",
+                    link: "",
+                    code: "// Your C++ solution here"
+                };
+                
+                workbooks[currentWorkbook].problems.push(newProblem);
+                currentProblemId = newProblem.id;
+                
+                renderProblemList();
+                renderPreview();
+                loadProblemEditor(currentProblemId);
+                saveWorkbooksToStorage();
+                updateProblemCount();
+                
+                // Highlight code in preview
+                if (window.Prism) {
+                    window.Prism.highlightAll();
+                }
+                
+                showToast('New problem added');
+            }
+            
+            // Function to render the problem list
+            function renderProblemList() {
+                problemList.innerHTML = '';
+                const problems = workbooks[currentWorkbook].problems;
+                
+                if (problems.length === 0) {
+                    problemList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-code"></i>
+                            <p>No problems added yet</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                problems.forEach(problem => {
+                    const isActive = problem.id === currentProblemId;
+                    const problemItem = document.createElement('div');
+                    problemItem.className = `problem-item ${isActive ? 'active' : ''}`;
+                    problemItem.innerHTML = `
+                        <div class="problem-header">
+                            <div>
+                                <div class="problem-title">${problem.title} ${problem.language === 'cpp' ? '<span class="cpp-tag">C++</span>' : ''}</div>
+                                <div class="problem-meta">${problem.platform} • ${problem.language}</div>
+                            </div>
+                            <div class="problem-actions">
+                                <button class="btn-danger" onclick="removeProblem(${problem.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="problem-actions">
+                            <button class="btn-secondary" onclick="setCurrentProblem(${problem.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn-secondary" onclick="moveProblem(${problem.id}, -1)">
+                                <i class="fas fa-arrow-up"></i>
+                            </button>
+                            <button class="btn-secondary" onclick="moveProblem(${problem.id}, 1)">
+                                <i class="fas fa-arrow-down"></i>
+                            </button>
+                            <button class="btn-secondary" onclick="copyCode(${problem.id})">
+                                <i class="fas fa-copy"></i> Code
+                            </button>
+                        </div>
+                    `;
+                    problemList.appendChild(problemItem);
+                });
+            }
+            
+            // Function to render the preview
+            function renderPreview() {
+                previewProblems.innerHTML = '';
+                const problems = workbooks[currentWorkbook].problems;
+                
+                if (problems.length === 0) {
+                    previewProblems.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-code"></i>
+                            <p>No problems to display</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                problems.forEach((problem, index) => {
+                    const problemElement = document.createElement('div');
+                    problemElement.className = 'preview-problem';
+                    problemElement.innerHTML = `
+                        <h3 class="preview-title">${index + 1}. ${problem.title}</h3>
+                        <div class="preview-meta">
+                            <strong>Platform:</strong> ${problem.platform || 'N/A'} • 
+                            <strong>Language:</strong> ${problem.language} • 
+                            <a href="${problem.link}" target="_blank" rel="noopener">Problem Link</a>
+                        </div>
+                        <div>
+                            <div class="code-header">
+                                <span>Solution:</span>
+                                <span>${problem.language}</span>
+                            </div>
+                            <pre class="language-${problem.language} line-numbers"><code class="language-${problem.language}">${escapeHtml(problem.code)}</code></pre>
+                        </div>
+                    `;
+                    previewProblems.appendChild(problemElement);
+                });
+                
+                // Highlight code in preview
+                if (window.Prism) {
+                    window.Prism.highlightAll();
+                }
+            }
+            
+            // Function to escape HTML for code display
+            function escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+            
+            // Function to load a problem into the editor
+            function loadProblemEditor(problemId) {
+                const problem = workbooks[currentWorkbook].problems.find(p => p.id === problemId);
+                if (problem) {
+                    problemTitle.value = problem.title;
+                    problemPlatform.value = problem.platform;
+                    problemLanguage.value = problem.language;
+                    problemLink.value = problem.link;
+                    problemCode.value = problem.code;
+                }
+            }
+            
+            // Function to update the current problem with editor values
+            function updateCurrentProblem() {
+                const problemIndex = workbooks[currentWorkbook].problems.findIndex(p => p.id === currentProblemId);
+                if (problemIndex !== -1) {
+                    workbooks[currentWorkbook].problems[problemIndex].title = problemTitle.value;
+                    workbooks[currentWorkbook].problems[problemIndex].platform = problemPlatform.value;
+                    workbooks[currentWorkbook].problems[problemIndex].language = problemLanguage.value;
+                    workbooks[currentWorkbook].problems[problemIndex].link = problemLink.value;
+                    workbooks[currentWorkbook].problems[problemIndex].code = problemCode.value;
+                    
+                    renderProblemList();
+                    renderPreview();
+                    saveWorkbooksToStorage();
+                }
+            }
+            
+            // Function to set the current problem
+            window.setCurrentProblem = function(problemId) {
+                currentProblemId = problemId;
+                renderProblemList();
+                loadProblemEditor(problemId);
+            };
+            
+            // Function to remove a problem
+            window.removeProblem = function(problemId) {
+                if (confirm('Are you sure you want to remove this problem?')) {
+                    workbooks[currentWorkbook].problems = workbooks[currentWorkbook].problems.filter(p => p.id !== problemId);
+                    
+                    if (workbooks[currentWorkbook].problems.length > 0) {
+                        currentProblemId = workbooks[currentWorkbook].problems[0].id;
+                    } else {
+                        currentProblemId = null;
+                    }
+                    
+                    renderProblemList();
+                    renderPreview();
+                    saveWorkbooksToStorage();
+                    updateProblemCount();
+                    
+                    if (currentProblemId) {
+                        loadProblemEditor(currentProblemId);
+                    } else {
+                        // Clear editor if no problems
+                        problemTitle.value = '';
+                        problemPlatform.value = '';
+                        problemLanguage.value = 'cpp';
+                        problemLink.value = '';
+                        problemCode.value = '';
+                    }
+                    
+                    showToast('Problem removed');
+                }
+            };
+            
+            // Function to move a problem up or down
+            window.moveProblem = function(problemId, direction) {
+                const problems = workbooks[currentWorkbook].problems;
+                const index = problems.findIndex(p => p.id === problemId);
+                if ((direction === -1 && index === 0) || (direction === 1 && index === problems.length - 1)) {
+                    return;
+                }
+                
+                const newIndex = index + direction;
+                const temp = problems[newIndex];
+                problems[newIndex] = problems[index];
+                problems[index] = temp;
+                
+                renderProblemList();
+                renderPreview();
+                saveWorkbooksToStorage();
+                
+                showToast('Problem order updated');
+            };
+            
+            // Function to copy code to clipboard
+            window.copyCode = function(problemId) {
+                const problem = workbooks[currentWorkbook].problems.find(p => p.id === problemId);
+                if (problem) {
+                    navigator.clipboard.writeText(problem.code)
+                        .then(() => {
+                            showToast('Code copied to clipboard!');
+                        })
+                        .catch(err => {
+                            console.error('Failed to copy: ', err);
+                            showToast('Failed to copy code', false);
+                        });
+                }
+            };
+            
+            // Function to export as Markdown
+            function exportMarkdown() {
+                const problems = workbooks[currentWorkbook].problems;
+                let markdown = `# C++ Coding Workbook\n\n`;
+                markdown += `*Generated on ${new Date().toLocaleString()}*\n\n`;
+                
+                problems.forEach((problem, index) => {
+                    markdown += `## ${index + 1}. ${problem.title}\n\n`;
+                    markdown += `**Platform:** ${problem.platform || 'N/A'}  \n`;
+                    markdown += `**Language:** ${problem.language}  \n`;
+                    markdown += `**Link:** ${problem.link || 'N/A'}  \n\n`;
+                    markdown += `\`\`\`${problem.language}\n${problem.code}\n\`\`\`\n\n`;
+                    markdown += `---\n\n`;
+                });
+                
+                const blob = new Blob([markdown], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'cpp-coding-workbook.md';
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                showToast('Markdown exported successfully');
+            }
+            
+            // Function to generate PDF - Enhanced to prevent code line breaks
+            function generatePDF() {
+                const element = document.getElementById('preview');
+                const opt = {
+                    margin: [10, 10, 10, 10],
+                    filename: `cpp-coding-workbook-${new Date().toISOString().slice(0, 10)}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true,
+                        logging: false
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                };
+                
+                // Create a clone of the element to modify for PDF
+                const clone = element.cloneNode(true);
+                
+                // Remove interactive elements
+                const buttons = clone.querySelectorAll('button');
+                buttons.forEach(button => button.remove());
+                
+                // Add styles for PDF to prevent code line breaks
+                const style = document.createElement('style');
+                style.textContent = `
+                    .preview-problem {
+                        page-break-inside: avoid;
+                        break-inside: avoid;
+                    }
+                    pre[class*="language-"] {
+                        white-space: pre-wrap !important;
+                        word-wrap: break-word;
+                        font-size: 10px;
+                        line-height: 1.2;
+                        page-break-inside: avoid;
+                        break-inside: avoid;
+                    }
+                    .code-block {
+                        overflow-wrap: break-word;
+                        page-break-inside: avoid;
+                    }
+                    /* Ensure code lines don't break across pages */
+                    .line-numbers-rows > span {
+                        display: inline-block;
+                        width: 100%;
+                        page-break-inside: avoid;
+                    }
+                `;
+                clone.appendChild(style);
+                
+                // Generate PDF
+                html2pdf().set(opt).from(clone).save();
+                
+                showToast('PDF generated successfully');
+            }
+        });
+    </script>
+</body>
+</html>
