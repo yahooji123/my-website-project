@@ -662,6 +662,32 @@
                 grid-template-columns: 1fr;
             }
         }
+        
+        /* Delete workbook button styling */
+        .delete-workbook-btn {
+            background-color: var(--danger);
+            color: white;
+            padding: 8px 12px;
+            font-size: 14px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .delete-workbook-btn:hover {
+            background-color: #dc2626;
+            transform: translateY(-2px);
+        }
+        
+        /* Workbook actions container */
+        .workbook-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .workbook-actions button {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
@@ -703,9 +729,14 @@
                             <i class="fas fa-plus"></i> New
                         </button>
                     </div>
-                    <button class="btn-secondary" id="saveWorkbook">
-                        <i class="fas fa-save"></i> Save Current Workbook
-                    </button>
+                    <div class="workbook-actions">
+                        <button class="btn-secondary" id="saveWorkbook">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button class="btn-danger delete-workbook-btn" id="deleteWorkbook">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
                 </div>
                 
                 <h2><i class="fas fa-edit"></i> Editor</h2>
@@ -862,6 +893,7 @@ public:
             document.getElementById('generatePDF').addEventListener('click', generatePDF);
             document.getElementById('newWorkbook').addEventListener('click', createNewWorkbook);
             document.getElementById('saveWorkbook').addEventListener('click', saveCurrentWorkbook);
+            document.getElementById('deleteWorkbook').addEventListener('click', deleteCurrentWorkbook);
             workbookSelector.addEventListener('change', switchWorkbook);
             
             // Quick add template buttons
@@ -960,6 +992,46 @@ public:
                     renderPreview();
                     updateProblemCount();
                     showToast('New workbook created');
+                }
+            }
+            
+            // Function to delete the current workbook
+            function deleteCurrentWorkbook() {
+                if (Object.keys(workbooks).length <= 1) {
+                    showToast('Cannot delete the only workbook', false);
+                    return;
+                }
+                
+                const workbookName = workbooks[currentWorkbook].name;
+                if (confirm(`Are you sure you want to delete the workbook "${workbookName}"? This action cannot be undone.`)) {
+                    delete workbooks[currentWorkbook];
+                    
+                    // Switch to the default workbook
+                    currentWorkbook = 'default';
+                    if (workbooks[currentWorkbook].problems.length > 0) {
+                        currentProblemId = workbooks[currentWorkbook].problems[0].id;
+                    } else {
+                        currentProblemId = null;
+                    }
+                    
+                    saveWorkbooksToStorage();
+                    renderWorkbookSelector();
+                    renderProblemList();
+                    renderPreview();
+                    updateProblemCount();
+                    
+                    if (currentProblemId) {
+                        loadProblemEditor(currentProblemId);
+                    } else {
+                        // Clear editor if no problems
+                        problemTitle.value = '';
+                        problemPlatform.value = '';
+                        problemLanguage.value = 'cpp';
+                        problemLink.value = '';
+                        problemCode.value = '';
+                    }
+                    
+                    showToast(`Workbook "${workbookName}" deleted`);
                 }
             }
             
@@ -1428,7 +1500,7 @@ public:
             function generatePDF() {
                 const element = document.getElementById('preview');
                 const opt = {
-                    margin: [10, 10, 10, 10],
+                    margin: [15, 10, 10, 15],
                     filename: `cpp-coding-workbook-${new Date().toISOString().slice(0, 10)}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { 
