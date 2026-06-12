@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Topic Tracker</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#f5f5f5;
+    padding:30px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.controls{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+textarea{
+    width:100%;
+    height:180px;
+    padding:10px;
+    resize:none;
+}
+
+button{
+    border:none;
+    cursor:pointer;
+}
+
+.import-btn,
+.pdf-btn{
+    padding:10px 20px;
+    color:white;
+    border-radius:5px;
+    margin-top:10px;
+}
+
+.import-btn{
+    background:#2563eb;
+}
+
+.pdf-btn{
+    background:#16a34a;
+    margin-left:10px;
+}
+
+.search{
+    width:100%;
+    padding:10px;
+    margin-top:15px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+th{
+    background:#e5e7eb;
+    padding:12px;
+    text-align:left;
+}
+
+td{
+    padding:12px;
+    border-bottom:1px solid #ddd;
+}
+
+tr:nth-child(even){
+    background:#f8f8f8;
+}
+
+.youtube-btn{
+    background:#ff0000;
+    color:white;
+    padding:8px 15px;
+    border-radius:5px;
+}
+
+.youtube-btn:hover{
+    opacity:0.9;
+}
+
+.delete-btn{
+    background:#dc2626;
+    color:white;
+    padding:8px 12px;
+    border-radius:5px;
+}
+
+.count{
+    margin-top:15px;
+    font-weight:bold;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>📚 Study Topic Tracker</h1>
+
+<div class="controls">
+
+<h3>Bulk Import Topics</h3>
+
+<textarea id="bulkInput"
+placeholder="Paste one topic per line"></textarea>
+
+<br>
+
+<button class="import-btn" onclick="importTopics()">
+Import Topics
+</button>
+
+<button class="pdf-btn" onclick="exportPDF()">
+Export PDF
+</button>
+
+<input
+type="text"
+id="searchBox"
+class="search"
+placeholder="Search Topic..."
+onkeyup="renderTopics()">
+
+<div class="count" id="count"></div>
+
+</div>
+
+<table>
+
+<thead>
+<tr>
+<th width="80">No.</th>
+<th>Topic</th>
+<th width="150">YouTube</th>
+<th width="100">Delete</th>
+</tr>
+</thead>
+
+<tbody id="topicTable"></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+let topics =
+JSON.parse(
+localStorage.getItem("study_topics")
+) || [];
+
+function saveData(){
+
+    localStorage.setItem(
+        "study_topics",
+        JSON.stringify(topics)
+    );
+}
+
+function importTopics(){
+
+    let text =
+    document.getElementById(
+        "bulkInput"
+    ).value.trim();
+
+    if(!text) return;
+
+    let lines =
+    text.split("\n");
+
+    lines.forEach(line=>{
+
+        line = line.trim();
+
+        if(line){
+
+            topics.push({
+
+                topic: line,
+
+                youtube: ""
+
+            });
+        }
+    });
+
+    saveData();
+
+    renderTopics();
+
+    document.getElementById(
+        "bulkInput"
+    ).value="";
+}
+
+function renderTopics(){
+
+    let table =
+    document.getElementById(
+        "topicTable"
+    );
+
+    let search =
+    document.getElementById(
+        "searchBox"
+    ).value.toLowerCase();
+
+    table.innerHTML="";
+
+    let visible=0;
+
+    topics.forEach((item,index)=>{
+
+        if(
+        !item.topic
+        .toLowerCase()
+        .includes(search)
+        ){
+            return;
+        }
+
+        visible++;
+
+        table.innerHTML += `
+
+        <tr>
+
+        <td>${index+1}</td>
+
+        <td>${item.topic}</td>
+
+        <td>
+
+        <button
+        class="youtube-btn"
+        onclick="youtubeAction(${index})">
+
+        🎥 YouTube
+
+        </button>
+
+        </td>
+
+        <td>
+
+        <button
+        class="delete-btn"
+        onclick="deleteTopic(${index})">
+
+        Delete
+
+        </button>
+
+        </td>
+
+        </tr>
+
+        `;
+    });
+
+    document.getElementById(
+        "count"
+    ).innerHTML =
+    `Total Topics: ${visible}`;
+}
+
+function youtubeAction(index){
+
+    let topic =
+    topics[index];
+
+    if(!topic.youtube){
+
+        let url = prompt(
+            "Paste YouTube URL:"
+        );
+
+        if(url){
+
+            topic.youtube = url;
+
+            saveData();
+
+            window.open(
+                url,
+                "_blank"
+            );
+        }
+    }
+    else{
+
+        window.open(
+            topic.youtube,
+            "_blank"
+        );
+    }
+}
+
+function deleteTopic(index){
+
+    if(confirm(
+        "Delete Topic?"
+    )){
+
+        topics.splice(index,1);
+
+        saveData();
+
+        renderTopics();
+    }
+}
+
+async function exportPDF(){
+
+    const { jsPDF } =
+    window.jspdf;
+
+    const doc =
+    new jsPDF();
+
+    let y=20;
+
+    doc.setFontSize(18);
+
+    doc.text(
+        "Study Topics",
+        20,
+        y
+    );
+
+    y += 15;
+
+    doc.setFontSize(11);
+
+    topics.forEach((item,index)=>{
+
+        if(y>270){
+
+            doc.addPage();
+
+            y=20;
+        }
+
+        doc.text(
+            `${index+1}. ${item.topic}`,
+            15,
+            y
+        );
+
+        if(item.youtube){
+
+            doc.textWithLink(
+                "YouTube",
+                180,
+                y,
+                {
+                    url:item.youtube
+                }
+            );
+        }
+
+        y += 10;
+    });
+
+    doc.save(
+        "Study_Topics.pdf"
+    );
+}
+
+renderTopics();
+
+</script>
+
+</body>
+</html>
