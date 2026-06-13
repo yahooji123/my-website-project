@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Study Topic Tracker</title>
+<title>Study Topic Tracker - Subject Wise with PDF</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-
 *{
     margin:0;
     padding:0;
@@ -22,13 +21,14 @@ body{
 }
 
 .container{
-    max-width:1200px;
+    max-width:1400px;
     margin:auto;
 }
 
 h1{
     text-align:center;
     margin-bottom:25px;
+    color:#1e293b;
 }
 
 .controls{
@@ -39,11 +39,35 @@ h1{
     box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
+.subject-controls{
+    display:flex;
+    gap:15px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+    align-items:center;
+}
+
+.subject-selector{
+    flex:1;
+    padding:10px;
+    border:1px solid #ddd;
+    border-radius:5px;
+    font-size:14px;
+}
+
+.add-subject-btn{
+    background:#8b5cf6;
+    color:white;
+    padding:10px 20px;
+    border-radius:5px;
+}
+
 textarea{
     width:100%;
-    height:180px;
+    height:120px;
     padding:10px;
     resize:none;
+    margin-top:10px;
 }
 
 button{
@@ -52,7 +76,8 @@ button{
 }
 
 .import-btn,
-.pdf-btn{
+.pdf-btn,
+.subject-pdf-btn{
     padding:10px 20px;
     color:white;
     border-radius:5px;
@@ -65,6 +90,11 @@ button{
 
 .pdf-btn{
     background:#16a34a;
+    margin-left:10px;
+}
+
+.subject-pdf-btn{
+    background:#dc2626;
     margin-left:10px;
 }
 
@@ -114,11 +144,93 @@ tr:nth-child(even){
     border-radius:5px;
 }
 
+.delete-subject-btn{
+    background:#ef4444;
+    color:white;
+    padding:6px 12px;
+    border-radius:5px;
+    font-size:12px;
+    margin-left:10px;
+}
+
 .count{
     margin-top:15px;
     font-weight:bold;
 }
 
+.subject-card{
+    background:white;
+    border-radius:10px;
+    margin-bottom:25px;
+    overflow:hidden;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+.subject-header{
+    background:#f1f5f9;
+    padding:15px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:2px solid #e2e8f0;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.subject-name{
+    font-size:1.3rem;
+    font-weight:bold;
+    color:#1e293b;
+}
+
+.subject-stats{
+    font-size:0.85rem;
+    color:#64748b;
+}
+
+.topic-input-area{
+    padding:15px 20px;
+    background:#fafafa;
+    display:flex;
+    gap:10px;
+    border-bottom:1px solid #e2e8f0;
+    flex-wrap:wrap;
+}
+
+.topic-input{
+    flex:2;
+    padding:8px 12px;
+    border:1px solid #ddd;
+    border-radius:5px;
+}
+
+.add-topic-btn{
+    background:#3b82f6;
+    color:white;
+    padding:8px 20px;
+    border-radius:5px;
+}
+
+.table-wrapper{
+    overflow-x:auto;
+}
+
+.empty-message{
+    text-align:center;
+    padding:40px;
+    color:#94a3b8;
+}
+
+.bulk-import-area{
+    margin-top:15px;
+    padding-top:15px;
+    border-top:1px solid #e2e8f0;
+}
+
+.bulk-import-area h4{
+    margin-bottom:10px;
+    color:#475569;
+}
 </style>
 </head>
 <body>
@@ -129,276 +241,409 @@ tr:nth-child(even){
 
 <div class="controls">
 
-<h3>Bulk Import Topics</h3>
+<div class="subject-controls">
+    <select id="currentSubjectSelect" class="subject-selector">
+        <option value="">-- Select Subject --</option>
+    </select>
+    <button class="add-subject-btn" onclick="showAddSubjectDialog()">➕ New Subject</button>
+    <button class="pdf-btn" onclick="exportAllSubjectsPDF()">📑 Export All Subjects PDF</button>
+</div>
 
-<textarea id="bulkInput"
-placeholder="Paste one topic per line"></textarea>
+<div class="bulk-import-area">
+    <h4>📥 Bulk Import Topics to Selected Subject</h4>
+    <textarea id="bulkInput" placeholder="Paste one topic per line"></textarea>
+    <br>
+    <button class="import-btn" onclick="importTopicsToSubject()">Import Topics to Subject</button>
+</div>
 
-<br>
-
-<button class="import-btn" onclick="importTopics()">
-Import Topics
-</button>
-
-<button class="pdf-btn" onclick="exportPDF()">
-Export PDF
-</button>
-
-<input
-type="text"
-id="searchBox"
-class="search"
-placeholder="Search Topic..."
-onkeyup="renderTopics()">
+<input type="text" id="searchBox" class="search" placeholder="Search Topic across all subjects..." onkeyup="renderAllSubjects()">
 
 <div class="count" id="count"></div>
 
 </div>
 
-<table>
-
-<thead>
-<tr>
-<th width="80">No.</th>
-<th>Topic</th>
-<th width="150">YouTube</th>
-<th width="100">Delete</th>
-</tr>
-</thead>
-
-<tbody id="topicTable"></tbody>
-
-</table>
+<div id="subjectsContainer"></div>
 
 </div>
 
 <script>
 
-let topics =
-JSON.parse(
-localStorage.getItem("study_topics")
-) || [];
+// Data structure: subjects array
+let subjects = [];
+
+function loadData(){
+    const stored = localStorage.getItem("study_topics_subjects");
+    if(stored){
+        try{
+            subjects = JSON.parse(stored);
+            subjects.forEach(s => {
+                if(!s.topics) s.topics = [];
+                s.topics = s.topics.map(t => ({ topic: t.topic || '', youtube: t.youtube || '' }));
+                if(!s.id) s.id = Date.now() + '-' + Math.random();
+            });
+        } catch(e){ subjects = []; }
+    }
+    if(subjects.length === 0){
+        // Default demo data
+        subjects = [
+            { id: "math1", name: "Mathematics", topics: [
+                { topic: "Linear Algebra Basics", youtube: "" },
+                { topic: "Calculus Derivatives", youtube: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" }
+            ]},
+            { id: "phy1", name: "Physics", topics: [
+                { topic: "Newton's Laws", youtube: "" },
+                { topic: "Thermodynamics", youtube: "" }
+            ]}
+        ];
+    }
+    updateSubjectSelect();
+    renderAllSubjects();
+}
 
 function saveData(){
-
-    localStorage.setItem(
-        "study_topics",
-        JSON.stringify(topics)
-    );
+    localStorage.setItem("study_topics_subjects", JSON.stringify(subjects));
 }
 
-function importTopics(){
+function generateId(){
+    return Date.now() + '-' + Math.random().toString(36).substr(2, 8);
+}
 
-    let text =
-    document.getElementById(
-        "bulkInput"
-    ).value.trim();
+function updateSubjectSelect(){
+    const select = document.getElementById("currentSubjectSelect");
+    if(!select) return;
+    select.innerHTML = '<option value="">-- Select Subject --</option>';
+    subjects.forEach((sub, idx) => {
+        const option = document.createElement("option");
+        option.value = sub.id;
+        option.textContent = `${sub.name} (${sub.topics.length} topics)`;
+        select.appendChild(option);
+    });
+    if(subjects.length > 0 && select.value === ""){
+        select.value = subjects[0].id;
+    }
+}
 
+function showAddSubjectDialog(){
+    let name = prompt("Enter subject name:", "New Subject");
+    if(name && name.trim()){
+        subjects.push({
+            id: generateId(),
+            name: name.trim(),
+            topics: []
+        });
+        saveData();
+        updateSubjectSelect();
+        renderAllSubjects();
+    }
+}
+
+function deleteSubject(subjectId){
+    if(confirm("Delete this subject and all its topics?")){
+        subjects = subjects.filter(s => s.id !== subjectId);
+        saveData();
+        updateSubjectSelect();
+        renderAllSubjects();
+    }
+}
+
+function importTopicsToSubject(){
+    const select = document.getElementById("currentSubjectSelect");
+    const subjectId = select.value;
+    if(!subjectId){
+        alert("Please select a subject first!");
+        return;
+    }
+    const text = document.getElementById("bulkInput").value.trim();
     if(!text) return;
-
-    let lines =
-    text.split("\n");
-
-    lines.forEach(line=>{
-
+    
+    const subject = subjects.find(s => s.id === subjectId);
+    if(!subject) return;
+    
+    const lines = text.split("\n");
+    let added = 0;
+    lines.forEach(line => {
         line = line.trim();
-
         if(line){
-
-            topics.push({
-
+            subject.topics.push({
                 topic: line,
-
                 youtube: ""
-
             });
+            added++;
         }
     });
-
-    saveData();
-
-    renderTopics();
-
-    document.getElementById(
-        "bulkInput"
-    ).value="";
+    
+    if(added > 0){
+        saveData();
+        renderAllSubjects();
+        document.getElementById("bulkInput").value = "";
+        alert(`Added ${added} topics to "${subject.name}"`);
+        updateSubjectSelect();
+    }
 }
 
-function renderTopics(){
-
-    let table =
-    document.getElementById(
-        "topicTable"
-    );
-
-    let search =
-    document.getElementById(
-        "searchBox"
-    ).value.toLowerCase();
-
-    table.innerHTML="";
-
-    let visible=0;
-
-    topics.forEach((item,index)=>{
-
-        if(
-        !item.topic
-        .toLowerCase()
-        .includes(search)
-        ){
-            return;
-        }
-
-        visible++;
-
-        table.innerHTML += `
-
-        <tr>
-
-        <td>${index+1}</td>
-
-        <td>${item.topic}</td>
-
-        <td>
-
-        <button
-        class="youtube-btn"
-        onclick="youtubeAction(${index})">
-
-        🎥 YouTube
-
-        </button>
-
-        </td>
-
-        <td>
-
-        <button
-        class="delete-btn"
-        onclick="deleteTopic(${index})">
-
-        Delete
-
-        </button>
-
-        </td>
-
-        </tr>
-
-        `;
-    });
-
-    document.getElementById(
-        "count"
-    ).innerHTML =
-    `Total Topics: ${visible}`;
+function addTopicToSubject(subjectId){
+    const inputElem = document.getElementById(`topicInput_${subjectId}`);
+    if(!inputElem) return;
+    const newTopic = inputElem.value.trim();
+    if(!newTopic){
+        alert("Please enter a topic name");
+        return;
+    }
+    const subject = subjects.find(s => s.id === subjectId);
+    if(subject){
+        subject.topics.push({
+            topic: newTopic,
+            youtube: ""
+        });
+        saveData();
+        renderAllSubjects();
+        updateSubjectSelect();
+    }
 }
 
-function youtubeAction(index){
-
-    let topic =
-    topics[index];
-
+function youtubeAction(subjectId, topicIndex){
+    const subject = subjects.find(s => s.id === subjectId);
+    if(!subject) return;
+    const topic = subject.topics[topicIndex];
+    if(!topic) return;
+    
     if(!topic.youtube){
-
-        let url = prompt(
-            "Paste YouTube URL:"
-        );
-
+        let url = prompt("Paste YouTube URL for: " + topic.topic);
         if(url){
-
             topic.youtube = url;
-
             saveData();
-
-            window.open(
-                url,
-                "_blank"
-            );
+            window.open(url, "_blank");
+            renderAllSubjects();
         }
     }
     else{
-
-        window.open(
-            topic.youtube,
-            "_blank"
-        );
+        window.open(topic.youtube, "_blank");
     }
 }
 
-function deleteTopic(index){
-
-    if(confirm(
-        "Delete Topic?"
-    )){
-
-        topics.splice(index,1);
-
-        saveData();
-
-        renderTopics();
-    }
-}
-
-async function exportPDF(){
-
-    const { jsPDF } =
-    window.jspdf;
-
-    const doc =
-    new jsPDF();
-
-    let y=20;
-
-    doc.setFontSize(18);
-
-    doc.text(
-        "Study Topics",
-        20,
-        y
-    );
-
-    y += 15;
-
-    doc.setFontSize(11);
-
-    topics.forEach((item,index)=>{
-
-        if(y>270){
-
-            doc.addPage();
-
-            y=20;
+function deleteTopic(subjectId, topicIndex){
+    if(confirm("Delete this topic?")){
+        const subject = subjects.find(s => s.id === subjectId);
+        if(subject){
+            subject.topics.splice(topicIndex, 1);
+            saveData();
+            renderAllSubjects();
+            updateSubjectSelect();
         }
+    }
+}
 
-        doc.text(
-            `${index+1}. ${item.topic}`,
-            15,
-            y
-        );
-
-        if(item.youtube){
-
-            doc.textWithLink(
-                "YouTube",
-                180,
-                y,
-                {
-                    url:item.youtube
+function renderAllSubjects(){
+    const container = document.getElementById("subjectsContainer");
+    if(!container) return;
+    
+    const searchTerm = document.getElementById("searchBox").value.toLowerCase();
+    let totalVisibleTopics = 0;
+    let html = '';
+    
+    for(let sIdx = 0; sIdx < subjects.length; sIdx++){
+        const subject = subjects[sIdx];
+        
+        // Filter topics by search
+        let filteredTopics = [];
+        let visibleIndexMap = [];
+        
+        if(searchTerm === ""){
+            filteredTopics = subject.topics;
+            for(let i=0; i<filteredTopics.length; i++) visibleIndexMap.push(i);
+        } else {
+            subject.topics.forEach((topic, idx) => {
+                if(topic.topic.toLowerCase().includes(searchTerm)){
+                    filteredTopics.push(topic);
+                    visibleIndexMap.push(idx);
                 }
-            );
+            });
         }
+        
+        if(filteredTopics.length === 0 && searchTerm !== "") continue;
+        
+        totalVisibleTopics += filteredTopics.length;
+        
+        // Build topics table rows
+        let tableRows = '';
+        if(filteredTopics.length === 0){
+            tableRows = `<tr><td colspan="4" style="text-align:center; padding:30px;">📭 No topics yet. Add topics using the input above.</td></tr>`;
+        } else {
+            filteredTopics.forEach((topic, viewIdx) => {
+                const realIdx = visibleIndexMap[viewIdx];
+                tableRows += `
+                    <tr>
+                        <td width="80">${viewIdx+1}</td>
+                        <td>${escapeHtml(topic.topic)}</td>
+                        <td width="150">
+                            <button class="youtube-btn" onclick="youtubeAction('${subject.id}', ${realIdx})">
+                                🎥 YouTube
+                            </button>
+                        </td>
+                        <td width="100">
+                            <button class="delete-btn" onclick="deleteTopic('${subject.id}', ${realIdx})">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        
+        html += `
+            <div class="subject-card">
+                <div class="subject-header">
+                    <div>
+                        <span class="subject-name">📖 ${escapeHtml(subject.name)}</span>
+                        <span class="subject-stats"> (${subject.topics.length} topics)</span>
+                    </div>
+                    <div>
+                        <button class="subject-pdf-btn" onclick="exportSingleSubjectPDF('${subject.id}')">
+                            📄 PDF This Subject
+                        </button>
+                        <button class="delete-subject-btn" onclick="deleteSubject('${subject.id}')">
+                            🗑 Delete Subject
+                        </button>
+                    </div>
+                </div>
+                <div class="topic-input-area">
+                    <input type="text" id="topicInput_${subject.id}" class="topic-input" placeholder="New topic name...">
+                    <button class="add-topic-btn" onclick="addTopicToSubject('${subject.id}')">+ Add Topic</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="80">No.</th>
+                                <th>Topic</th>
+                                <th width="150">YouTube</th>
+                                <th width="100">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+    
+    if(html === ""){
+        container.innerHTML = `<div class="subject-card" style="padding:40px; text-align:center;">🔍 No topics found matching "${searchTerm}"</div>`;
+    } else {
+        container.innerHTML = html;
+    }
+    
+    document.getElementById("count").innerHTML = `📊 Total Topics: ${totalVisibleTopics} (across all subjects)`;
+}
 
+function escapeHtml(str){
+    if(!str) return '';
+    return str.replace(/[&<>]/g, function(m){
+        if(m === '&') return '&amp;';
+        if(m === '<') return '&lt;';
+        if(m === '>') return '&gt;';
+        return m;
+    });
+}
+
+// PDF EXPORT - Single Subject (matches original style)
+async function exportSingleSubjectPDF(subjectId){
+    const subject = subjects.find(s => s.id === subjectId);
+    if(!subject) return;
+    
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    let y = 20;
+    
+    doc.setFontSize(18);
+    doc.text(subject.name + " - Study Topics", 20, y);
+    y += 15;
+    doc.setFontSize(11);
+    
+    const visibleTopics = subject.topics;
+    
+    visibleTopics.forEach((item, index) => {
+        if(y > 270){
+            doc.addPage();
+            y = 20;
+            doc.setFontSize(11);
+        }
+        
+        doc.text(`${index+1}. ${item.topic}`, 15, y);
+        
+        if(item.youtube && item.youtube.trim() !== ""){
+            // Position the "YouTube" link at the right side (similar to original)
+            // Calculate position near right margin
+            const rightX = 170;
+            doc.textWithLink("YouTube", rightX, y, { url: item.youtube });
+        }
+        
         y += 10;
     });
-
-    doc.save(
-        "Study_Topics.pdf"
-    );
+    
+    const fileName = subject.name.replace(/[^a-z0-9]/gi, '_') + "_Topics.pdf";
+    doc.save(fileName);
 }
 
-renderTopics();
+// Export ALL subjects PDF (style similar to original, but with subject headers)
+async function exportAllSubjectsPDF(){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    let y = 20;
+    
+    doc.setFontSize(18);
+    doc.text("All Study Topics", 20, y);
+    y += 15;
+    doc.setFontSize(12);
+    doc.text(`Total Subjects: ${subjects.length}`, 20, y);
+    y += 10;
+    doc.setFontSize(11);
+    
+    for(let sIdx = 0; sIdx < subjects.length; sIdx++){
+        const subject = subjects[sIdx];
+        
+        if(y > 260){
+            doc.addPage();
+            y = 20;
+        }
+        
+        doc.setFontSize(13);
+        doc.setFont(undefined, 'bold');
+        doc.text(`📚 ${subject.name} (${subject.topics.length} topics)`, 15, y);
+        y += 8;
+        doc.setFontSize(11);
+        doc.setFont(undefined, 'normal');
+        
+        if(subject.topics.length === 0){
+            doc.text("   No topics yet.", 20, y);
+            y += 8;
+        } else {
+            subject.topics.forEach((item, idx) => {
+                if(y > 270){
+                    doc.addPage();
+                    y = 20;
+                }
+                doc.text(`${idx+1}. ${item.topic}`, 20, y);
+                
+                if(item.youtube && item.youtube.trim() !== ""){
+                    doc.textWithLink("YouTube", 170, y, { url: item.youtube });
+                }
+                y += 9;
+            });
+        }
+        y += 5; // extra space between subjects
+    }
+    
+    doc.save("All_Subjects_Study_Topics.pdf");
+}
+
+// Keep original exportPDF function for compatibility but adapt
+window.exportPDF = exportAllSubjectsPDF;
+
+// Initial render
+loadData();
 
 </script>
 
