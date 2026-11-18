@@ -1,0 +1,323 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DriveTube - My Video Library</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #0f0f0f;
+    color: white;
+}
+
+header {
+    background: #181818;
+    padding: 20px 5%;
+    border-bottom: 1px solid #333;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff3333;
+}
+
+header span {
+    color: white;
+}
+
+.container {
+    max-width: 1250px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.player {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: black;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.video-info {
+    margin: 18px 0 30px;
+}
+
+.video-info h2 {
+    margin-bottom: 8px;
+}
+
+.video-info p {
+    color: #999;
+}
+
+.library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.video-count {
+    color: #aaa;
+    font-size: 14px;
+}
+
+.video-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+.video-card {
+    background: #202020;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    transition: .2s;
+}
+
+.video-card:hover {
+    border-color: #ff3333;
+    transform: translateY(-3px);
+}
+
+.thumbnail {
+    height: 115px;
+    background: #303030;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.video-card h3 {
+    font-size: 15px;
+    margin-bottom: 12px;
+    overflow-wrap: anywhere;
+}
+
+.video-card button {
+    width: 100%;
+    background: #ff3333;
+    color: white;
+    border: none;
+    padding: 11px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.video-card button:hover {
+    background: #d92323;
+}
+
+.video-card.active {
+    border: 1px solid #ff3333;
+}
+
+@media(max-width:600px) {
+    .library-header {
+        align-items: flex-start;
+        gap: 10px;
+        flex-direction: column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>▶ Drive<span>Tube</span></header>
+
+<div class="container">
+
+    <!-- MAIN VIDEO PLAYER -->
+    <div class="player">
+        <iframe
+            id="videoPlayer"
+            src=""
+            allow="autoplay; fullscreen"
+            allowfullscreen>
+        </iframe>
+    </div>
+
+    <div class="video-info">
+        <h2 id="videoTitle">Welcome to DriveTube</h2>
+        <p id="videoDescription">Select a video from your library.</p>
+    </div>
+
+    <!-- VIDEO LIBRARY -->
+    <div class="library-header">
+        <h2>My Video Library</h2>
+        <span class="video-count" id="videoCount"></span>
+    </div>
+
+    <div class="video-list" id="videoList"></div>
+
+</div>
+
+<script>
+
+// ==========================================
+// ADD ALL YOUR GOOGLE DRIVE VIDEOS HERE
+// ==========================================
+
+const videos = [
+
+    {
+        title: "DSA Introduction",
+        url: "https://drive.google.com/file/d/FILE_ID_1/view"
+    },
+
+    {
+        title: "Arrays Complete Tutorial",
+        url: "https://drive.google.com/file/d/FILE_ID_2/view"
+    },
+
+    {
+        title: "Binary Search",
+        url: "https://drive.google.com/file/d/FILE_ID_3/view"
+    },
+
+    {
+        title: "Recursion",
+        url: "https://drive.google.com/file/d/FILE_ID_4/view"
+    },
+
+    {
+        title: "Dynamic Programming-L1",
+        url: "https://drive.google.com/file/d/1aXyl_XhrMT3T7yKgEE-k9y6BtcOLIajs/view?usp=drive_link"
+    }
+
+    // Add as many videos as you want.
+    // Remember to add a comma between objects.
+
+];
+
+
+// ==========================================
+// EXTRACT GOOGLE DRIVE FILE ID
+// ==========================================
+
+function extractFileId(url) {
+
+    const patterns = [
+        /\/file\/d\/([a-zA-Z0-9_-]+)/,
+        /[?&]id=([a-zA-Z0-9_-]+)/,
+        /\/d\/([a-zA-Z0-9_-]+)/
+    ];
+
+    for (const pattern of patterns) {
+        const match = url.match(pattern);
+
+        if (match) return match[1];
+    }
+
+    return null;
+}
+
+
+// ==========================================
+// PLAY VIDEO
+// ==========================================
+
+function playVideo(index) {
+
+    const video = videos[index];
+    const fileId = extractFileId(video.url);
+
+    if (!fileId) {
+        alert("Invalid Google Drive link!");
+        return;
+    }
+
+    document.getElementById("videoPlayer").src =
+        `https://drive.google.com/file/d/${fileId}/preview`;
+
+    document.getElementById("videoTitle").textContent =
+        video.title;
+
+    document.getElementById("videoDescription").textContent =
+        `Video ${index + 1} of ${videos.length}`;
+
+    // Highlight active video
+    document.querySelectorAll(".video-card").forEach(card => {
+        card.classList.remove("active");
+    });
+
+    document.querySelectorAll(".video-card")[index]
+        .classList.add("active");
+}
+
+
+// ==========================================
+// AUTOMATICALLY DISPLAY ALL VIDEOS
+// ==========================================
+
+function loadVideos() {
+
+    const videoList = document.getElementById("videoList");
+
+    videoList.innerHTML = "";
+
+    document.getElementById("videoCount").textContent =
+        `${videos.length} Videos`;
+
+    videos.forEach((video, index) => {
+
+        const card = document.createElement("div");
+        card.className = "video-card";
+
+        const thumbnail = document.createElement("div");
+        thumbnail.className = "thumbnail";
+        thumbnail.textContent = "▶";
+
+        const title = document.createElement("h3");
+        title.textContent = video.title;
+
+        const button = document.createElement("button");
+        button.textContent = "▶ Play Video";
+
+        button.onclick = () => playVideo(index);
+
+        card.appendChild(thumbnail);
+        card.appendChild(title);
+        card.appendChild(button);
+
+        videoList.appendChild(card);
+
+    });
+
+}
+
+
+// ==========================================
+// INITIALIZE WEBSITE
+// ==========================================
+
+loadVideos();
+
+// Automatically play first video if available
+if (videos.length > 0) {
+    playVideo(0);
+}
+
+</script>
+
+</body>
+</html>
